@@ -1,7 +1,6 @@
 import { Box, Typography, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
-import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
 import { colors, spacing, borderRadius } from '../styles/theme';
 
@@ -19,7 +18,9 @@ const LayerCard = styled(Box)(({ theme, selected }) => ({
   padding: '20px',
   marginBottom: spacing.md,
   cursor: 'pointer',
-  backgroundColor: selected ? theme.palette.primary.main : colors.background.default,
+  backgroundColor: selected
+    ? theme.palette.primary.main
+    : colors.background.default,
   border: 'none',
   borderRadius: borderRadius.xlarge,
   transition: 'all 0.2s ease',
@@ -143,11 +144,26 @@ const mockLayers = [
  */
 function SidePanel({ selectedLayer, onLayerSelect }) {
   const handleLayerClick = (layer) => {
-    const bounds = new mapboxgl.LngLatBounds();
-    layer.bounds.forEach((coord) => {
-      bounds.extend(coord);
+    // Calculate bounds from the coordinates
+    const [minLng, minLat, maxLng, maxLat] = layer.bounds.reduce(
+      ([minX, minY, maxX, maxY], [x, y]) => [
+        Math.min(minX, x),
+        Math.min(minY, y),
+        Math.max(maxX, x),
+        Math.max(maxY, y),
+      ],
+      [Infinity, Infinity, -Infinity, -Infinity]
+    );
+
+    const bounds = [
+      [minLng, minLat],
+      [maxLng, maxLat],
+    ];
+
+    onLayerSelect({
+      ...layer,
+      bounds: bounds,
     });
-    onLayerSelect({ ...layer, bounds });
   };
 
   return (
@@ -155,9 +171,9 @@ function SidePanel({ selectedLayer, onLayerSelect }) {
       {mockLayers.map((layer) => {
         const isSelected = selectedLayer?.id === layer.id;
         return (
-          <LayerCard 
-            key={layer.id} 
-            selected={isSelected} 
+          <LayerCard
+            key={layer.id}
+            selected={isSelected}
             onClick={() => handleLayerClick(layer)}
           >
             <ThumbnailContainer>

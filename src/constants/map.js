@@ -1,7 +1,6 @@
 /**
  * Mapbox configuration
  */
-export const MAPBOX_TOKEN = 'pk.eyJ1IjoibTFuZXJhbCIsImEiOiJja2V6MHd2bnQwYzRqMnlwaTV6ejU2cTMyIn0.ghyrh-G8uQtyg4N4VcfTOw';
 
 export const MAP_CONFIG = {
   center: [10.4, 43.7], // Monte Pisano center coordinates
@@ -110,4 +109,4 @@ export const MOCK_WARNING_POINTS = {
       },
     },
   ],
-}; 
+};
