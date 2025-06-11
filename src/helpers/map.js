@@ -17,6 +17,10 @@ export const flyTo = ({ feature, setViewState }) => {
     return;
   }
 
+  if (coordinates.length === 0) {
+    return;
+  }
+
   // Calculate center point of the coordinates
   const features = turf.points(coordinates);
   const center = turf.center(features);
