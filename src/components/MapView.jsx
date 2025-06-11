@@ -1,149 +1,123 @@
-import { useCallback, useMemo, useRef, useEffect } from 'react';
-import Map, { Source, Layer, NavigationControl } from 'react-map-gl/mapbox';
+import { useCallback, useRef, useEffect, useState } from 'react';
+import Map, { NavigationControl } from 'react-map-gl/mapbox';
+import { DeckGL } from '@deck.gl/react';
+import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Box } from '@mui/material';
 import {
   MAP_CONFIG,
-  LAYER_STYLES,
   MOCK_FOREST_AREAS,
   MOCK_WARNING_POINTS,
 } from '../constants/map';
 
-const forestAreaFillLayer = {
-  id: 'forest-areas-fill',
-  type: 'fill',
-  paint: {
-    'fill-color': LAYER_STYLES.areas.fill.color,
-    'fill-opacity': LAYER_STYLES.areas.fill.opacity,
-  },
-};
-
-const forestAreaOutlineLayer = {
-  id: 'forest-areas-outline',
-  type: 'line',
-  paint: {
-    'line-color': LAYER_STYLES.areas.outline.color,
-    'line-width': LAYER_STYLES.areas.outline.width,
-  },
-};
-
-const forestAreaSelectedLayer = {
-  id: 'forest-areas-selected',
-  type: 'fill',
-  paint: {
-    'fill-color': LAYER_STYLES.areas.selected.color,
-    'fill-opacity': LAYER_STYLES.areas.selected.opacity,
-  },
-  filter: ['==', 'id', 0],
-};
-
-const warningPointsLayer = {
-  id: 'warning-points',
-  type: 'symbol',
-  layout: {
-    'icon-image': LAYER_STYLES.warnings.icon.image,
-    'icon-size': LAYER_STYLES.warnings.icon.size,
-  },
-  paint: {
-    'icon-color': LAYER_STYLES.warnings.icon.color,
-  },
-};
+import { flyTo } from '../helpers/map';
 
 function MapView({ selectedLayer, onLayerSelect }) {
   const mapRef = useRef(null);
 
-  const selectedFilter = useMemo(() => {
-    return ['==', 'id', selectedLayer?.id || 0];
-  }, [selectedLayer]);
+  const [viewState, setViewState] = useState({
+    longitude: MAP_CONFIG.center[0],
+    latitude: MAP_CONFIG.center[1],
+    zoom: MAP_CONFIG.defaultZoom,
+    pitch: 0,
+    bearing: 0,
+  });
+
+  // Define deck.gl layers inside the component to access selectedLayer
+  const layers = [
+    new GeoJsonLayer({
+      id: 'geojson-layer',
+      data: MOCK_FOREST_AREAS,
+      filled: true,
+      stroked: true,
+      getFillColor: (d) =>
+        d.properties.id === selectedLayer?.id
+          ? [255, 68, 68, 150]
+          : [255, 68, 68, 75],
+      getLineColor: (d) =>
+        d.properties.id === selectedLayer?.id
+          ? [255, 215, 0, 255]
+          : [255, 68, 68, 0],
+      getLineWidth: (d) => (d.properties.id === selectedLayer?.id ? 50 : 10),
+      pickable: true,
+      // autoHighlight: true,
+      highlightColor: [255, 68, 68, 100],
+      updateTriggers: {
+        getFillColor: [selectedLayer?.id],
+        getLineColor: [selectedLayer?.id],
+        getLineWidth: [selectedLayer?.id],
+      },
+    }),
+  ];
 
   const onClick = useCallback(
     (event) => {
-      const feature = event.features?.[0];
-      if (!feature) return;
+      if (!event.object) return;
 
-      const [minLng, minLat, maxLng, maxLat] =
-        feature.geometry.coordinates[0].reduce(
-          ([minX, minY, maxX, maxY], [x, y]) => [
-            Math.min(minX, x),
-            Math.min(minY, y),
-            Math.max(maxX, x),
-            Math.max(maxY, y),
-          ],
-          [Infinity, Infinity, -Infinity, -Infinity]
-        );
-
-      const bounds = [
-        [minLng, minLat],
-        [maxLng, maxLat],
-      ];
+      const feature = event.object;
 
       // First call onLayerSelect with the feature data
       onLayerSelect({
-        id: feature.properties.id,
-        title: feature.properties.title,
-        area: feature.properties.area,
-        bounds: bounds,
+        ...feature.properties,
       });
 
-      // Then fit bounds with animation
-      mapRef.current?.fitBounds(bounds, {
-        padding: MAP_CONFIG.padding.default,
-        duration: MAP_CONFIG.animation.duration,
-      });
+      // Fly to the layer
+      flyTo({ feature, setViewState });
     },
     [onLayerSelect]
   );
 
-  const onMouseEnter = useCallback(() => {
+  const onHover = useCallback((info) => {
     if (mapRef.current) {
-      mapRef.current.getCanvas().style.cursor = 'pointer';
-    }
-  }, []);
-
-  const onMouseLeave = useCallback(() => {
-    if (mapRef.current) {
-      mapRef.current.getCanvas().style.cursor = '';
+      mapRef.current.getCanvas().style.cursor = info.object ? 'pointer' : '';
     }
   }, []);
 
   // Update bounds when selectedLayer changes
   useEffect(() => {
-    if (mapRef.current && selectedLayer?.bounds) {
-      mapRef.current.fitBounds(selectedLayer.bounds, {
-        padding: MAP_CONFIG.padding.default,
-        duration: MAP_CONFIG.animation.duration,
-      });
+    if (mapRef.current && selectedLayer) {
+      const feature = MOCK_FOREST_AREAS?.features?.find(
+        (feature) => feature.properties.id === selectedLayer.id
+      );
+      flyTo({ feature, setViewState });
     }
   }, [selectedLayer]);
 
   return (
     <Box sx={{ flex: 1, height: '100%', position: 'relative' }}>
-      <Map
-        ref={mapRef}
-        initialViewState={{
-          longitude: MAP_CONFIG.center[0],
-          latitude: MAP_CONFIG.center[1],
-          zoom: MAP_CONFIG.defaultZoom,
-        }}
-        mapStyle={MAP_CONFIG.style}
-        mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
-        interactiveLayerIds={['forest-areas-fill']}
+      <DeckGL
+        initialViewState={viewState}
+        controller={true}
+        layers={layers}
+        onViewStateChange={({ viewState }) =>
+          setViewState((prev) => ({ ...prev, ...viewState }))
+        }
         onClick={onClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        onHover={onHover}
+        getTooltip={({ object }) =>
+          object && {
+            html: `
+            <div>
+              <b>${object.properties?.title || 'Warning Point'}</b>
+              ${
+                object.properties?.area
+                  ? `<br/>Area: ${object.properties.area}`
+                  : ''
+              }
+            </div>
+          `,
+          }
+        }
       >
-        <NavigationControl position="top-right" />
-
-        <Source type="geojson" data={MOCK_FOREST_AREAS}>
-          <Layer {...forestAreaFillLayer} />
-          <Layer {...forestAreaOutlineLayer} />
-          <Layer {...forestAreaSelectedLayer} filter={selectedFilter} />
-        </Source>
-
-        <Source type="geojson" data={MOCK_WARNING_POINTS}>
-          <Layer {...warningPointsLayer} />
-        </Source>
-      </Map>
+        <Map
+          ref={mapRef}
+          {...viewState}
+          mapStyle={MAP_CONFIG.style}
+          mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+        >
+          <NavigationControl position="top-right" />
+        </Map>
+      </DeckGL>
     </Box>
   );
 }
