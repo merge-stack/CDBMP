@@ -112,13 +112,6 @@ const mockLayers = [
     category: 'reforest',
     thumbnail: '/public/images/forest1.jpeg',
     area: 462,
-    bounds: [
-      [10.38, 43.72],
-      [10.42, 43.72],
-      [10.42, 43.68],
-      [10.38, 43.68],
-      [10.38, 43.72],
-    ],
   },
   {
     id: 2,
@@ -128,13 +121,6 @@ const mockLayers = [
     category: 'reforest',
     thumbnail: '/public/images/forest2.jpeg',
     area: 350,
-    bounds: [
-      [10.35, 43.7],
-      [10.38, 43.7],
-      [10.38, 43.67],
-      [10.35, 43.67],
-      [10.35, 43.7],
-    ],
   },
 ];
 
@@ -144,26 +130,7 @@ const mockLayers = [
  */
 function SidePanel({ selectedLayer, onLayerSelect }) {
   const handleLayerClick = (layer) => {
-    // Calculate bounds from the coordinates
-    const [minLng, minLat, maxLng, maxLat] = layer.bounds.reduce(
-      ([minX, minY, maxX, maxY], [x, y]) => [
-        Math.min(minX, x),
-        Math.min(minY, y),
-        Math.max(maxX, x),
-        Math.max(maxY, y),
-      ],
-      [Infinity, Infinity, -Infinity, -Infinity]
-    );
-
-    const bounds = [
-      [minLng, minLat],
-      [maxLng, maxLat],
-    ];
-
-    onLayerSelect({
-      ...layer,
-      bounds: bounds,
-    });
+    onLayerSelect(layer);
   };
 
   return (
