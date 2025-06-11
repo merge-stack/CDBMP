@@ -5,9 +5,13 @@
 export const MAP_CONFIG = {
   center: [10.4, 43.7], // Monte Pisano center coordinates
   defaultZoom: 12,
+  maxZoom: 18,
   style: 'mapbox://styles/mapbox/outdoors-v12',
   padding: {
-    default: 100,
+    top: 200,
+    bottom: 200,
+    left: 600,
+    right: 1200,
   },
   animation: {
     duration: 1000,
