@@ -19,6 +19,7 @@ import Footer from './components/Footer';
 function App() {
   const [selectedLayer, setSelectedLayer] = useState(null);
   const [showDetailPanel, setShowDetailPanel] = useState(false);
+  const [geoJsonData, setGeoJsonData] = useState(null);
 
   const handleLayerSelect = (layer) => {
     setSelectedLayer(layer);
@@ -54,10 +55,13 @@ function App() {
           <SidePanel
             onLayerSelect={handleLayerSelect}
             selectedLayer={selectedLayer}
+            geoJsonData={geoJsonData}
           />
           <MapView
             onLayerSelect={handleLayerSelect}
             selectedLayer={selectedLayer}
+            geoJsonData={geoJsonData}
+            setGeoJsonData={setGeoJsonData}
           />
           {showDetailPanel && (
             <DetailPanel

@@ -6,19 +6,35 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { Box } from '@mui/material';
 import {
   MAP_CONFIG,
-  MOCK_FOREST_AREAS,
   MOCK_WARNING_POINTS,
+  MOCK_FOREST_AREAS,
 } from '../constants/map';
-
 import { flyTo } from '../helpers/map';
 
-function MapView({ selectedLayer, onLayerSelect }) {
+function MapView({
+  selectedLayer,
+  onLayerSelect,
+  geoJsonData,
+  setGeoJsonData,
+}) {
   const mapRef = useRef(null);
+
+  // Fetch GeoJSON data
+  useEffect(() => {
+    fetch('/src/assets/sisteco.geojson')
+      .then((response) => response.json())
+      .then((data) => {
+        setGeoJsonData(data);
+      })
+      .catch((error) => console.error('Error loading GeoJSON:', error));
+  }, [setGeoJsonData]);
 
   const [viewState, setViewState] = useState({
     longitude: MAP_CONFIG.center[0],
     latitude: MAP_CONFIG.center[1],
     zoom: MAP_CONFIG.defaultZoom,
+    maxZoom: MAP_CONFIG.maxZoom,
+    padding: MAP_CONFIG.padding,
     pitch: 0,
     bearing: 0,
   });
@@ -27,7 +43,7 @@ function MapView({ selectedLayer, onLayerSelect }) {
   const layers = [
     new GeoJsonLayer({
       id: 'geojson-layer',
-      data: MOCK_FOREST_AREAS,
+      data: geoJsonData,
       filled: true,
       stroked: true,
       getFillColor: (d) =>
@@ -38,7 +54,7 @@ function MapView({ selectedLayer, onLayerSelect }) {
         d.properties.id === selectedLayer?.id
           ? [255, 215, 0, 255]
           : [255, 68, 68, 0],
-      getLineWidth: (d) => (d.properties.id === selectedLayer?.id ? 50 : 10),
+      getLineWidth: (d) => (d.properties.id === selectedLayer?.id ? 20 : 10),
       pickable: true,
       // autoHighlight: true,
       highlightColor: [255, 68, 68, 100],
@@ -76,12 +92,12 @@ function MapView({ selectedLayer, onLayerSelect }) {
   // Update bounds when selectedLayer changes
   useEffect(() => {
     if (mapRef.current && selectedLayer) {
-      const feature = MOCK_FOREST_AREAS?.features?.find(
+      const feature = geoJsonData?.features?.find(
         (feature) => feature.properties.id === selectedLayer.id
       );
       flyTo({ feature, setViewState });
     }
-  }, [selectedLayer]);
+  }, [selectedLayer, geoJsonData]);
 
   return (
     <Box sx={{ flex: 1, height: '100%', position: 'relative' }}>
@@ -98,7 +114,7 @@ function MapView({ selectedLayer, onLayerSelect }) {
           object && {
             html: `
             <div>
-              <b>${object.properties?.title || 'Warning Point'}</b>
+              <b>${object.properties?.code || 'Warning Point'}</b>
               ${
                 object.properties?.area
                   ? `<br/>Area: ${object.properties.area}`

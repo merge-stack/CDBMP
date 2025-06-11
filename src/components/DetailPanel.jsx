@@ -165,7 +165,7 @@ function DetailPanel({ layer, onClose }) {
   return (
     <DetailContainer>
       <Box sx={{ position: 'relative' }}>
-        <HeaderImage src={layer.thumbnail} alt={layer.title} />
+        <HeaderImage src={'/public/images/forest1.jpeg'} alt={layer.code} />
         <CloseButton onClick={onClose}>
           <CloseIcon />
         </CloseButton>
@@ -174,8 +174,8 @@ function DetailPanel({ layer, onClose }) {
       <ContentSection>
         <Header>
           <Box sx={{ textAlign: 'center', width: '100%' }}>
-            <Title>Località Santa Caterina</Title>
-            <Subtitle>area {layer.area || 462}</Subtitle>
+            <Title>{layer.code}</Title>
+            <Subtitle>Municipality {layer.municipality}</Subtitle>
             <ShareButton>
               <IosShareIcon />
             </ShareButton>

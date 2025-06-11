@@ -100,42 +100,18 @@ const AddButton = styled(IconButton)(({ theme, selected }) => ({
 }));
 
 /**
- * Mock data for forest layers
- * @type {Array<Object>}
- */
-const mockLayers = [
-  {
-    id: 1,
-    title: 'Layer Title #1',
-    dimensione: '462 ha',
-    budgetRange: '20-30k',
-    category: 'reforest',
-    thumbnail: '/public/images/forest1.jpeg',
-    area: 462,
-  },
-  {
-    id: 2,
-    title: 'Layer Title #2',
-    dimensione: '350 ha',
-    budgetRange: '20-30k',
-    category: 'reforest',
-    thumbnail: '/public/images/forest2.jpeg',
-    area: 350,
-  },
-];
-
-/**
  * SidePanel Component
  * Displays a list of forest layers with their details and allows selection
  */
-function SidePanel({ selectedLayer, onLayerSelect }) {
+function SidePanel({ selectedLayer, onLayerSelect, geoJsonData }) {
   const handleLayerClick = (layer) => {
     onLayerSelect(layer);
   };
 
   return (
     <PanelContainer>
-      {mockLayers.map((layer) => {
+      {geoJsonData?.features?.map((feature) => {
+        const layer = feature.properties;
         const isSelected = selectedLayer?.id === layer.id;
         return (
           <LayerCard
@@ -144,20 +120,18 @@ function SidePanel({ selectedLayer, onLayerSelect }) {
             onClick={() => handleLayerClick(layer)}
           >
             <ThumbnailContainer>
-              <Thumbnail src={layer.thumbnail} alt={layer.title} />
+              <Thumbnail src={'/public/images/forest1.jpeg'} alt={layer.code} />
             </ThumbnailContainer>
             <ContentContainer>
-              <Title selected={isSelected}>{layer.title}</Title>
+              <Title selected={isSelected}>{layer.code}</Title>
               <DetailsSection>
                 <DetailsList>
+                  <DetailText selected={isSelected}>ID: {layer.id}</DetailText>
                   <DetailText selected={isSelected}>
-                    Dimensione: {layer.dimensione}
+                    Code: {layer.code}
                   </DetailText>
                   <DetailText selected={isSelected}>
-                    Budget Range: {layer.budgetRange}
-                  </DetailText>
-                  <DetailText selected={isSelected}>
-                    Category: {layer.category}
+                    Municipality: {layer.municipality}
                   </DetailText>
                 </DetailsList>
                 <AddButton size="small" selected={isSelected}>
