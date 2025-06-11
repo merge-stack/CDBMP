@@ -25,6 +25,11 @@ function App() {
     setShowDetailPanel(true);
   };
 
+  const handleDetailPanelClose = () => {
+    setShowDetailPanel(false);
+    setSelectedLayer(null);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -57,7 +62,7 @@ function App() {
           {showDetailPanel && (
             <DetailPanel
               layer={selectedLayer}
-              onClose={() => setShowDetailPanel(false)}
+              onClose={handleDetailPanelClose}
             />
           )}
         </Box>

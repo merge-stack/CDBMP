@@ -54,6 +54,7 @@ export const MOCK_FOREST_AREAS = {
         id: 1,
         title: 'Layer Title #1',
         area: 462,
+        thumbnail: '/public/images/forest1.jpeg',
       },
       geometry: {
         type: 'Polygon',
@@ -75,6 +76,7 @@ export const MOCK_FOREST_AREAS = {
         id: 2,
         title: 'Layer Title #2',
         area: 350,
+        thumbnail: '/public/images/forest2.jpeg',
       },
       geometry: {
         type: 'Polygon',
