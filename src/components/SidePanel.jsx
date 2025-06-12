@@ -1,4 +1,5 @@
-import { Box, Typography, IconButton } from '@mui/material';
+import { useCallback, useMemo } from 'react';
+import { Box, Typography, IconButton, Skeleton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import PropTypes from 'prop-types';
@@ -13,7 +14,7 @@ const PanelContainer = styled(Box)({
   borderRight: `1px solid ${colors.primary.main}10`,
 });
 
-const LayerCard = styled(Box)(({ theme, selected }) => ({
+const LayerCardContainer = styled(Box)(({ theme, selected }) => ({
   display: 'flex',
   padding: '20px',
   marginBottom: spacing.md,
@@ -99,47 +100,181 @@ const AddButton = styled(IconButton)(({ theme, selected }) => ({
   },
 }));
 
+const LayerCardSkeleton = () => (
+  <Box
+    sx={{
+      display: 'flex',
+      padding: '20px',
+      marginBottom: spacing.md,
+      backgroundColor: colors.background.default,
+      borderRadius: borderRadius.xlarge,
+      boxShadow: '0px 2px 8px rgba(47, 68, 50, 0.08)',
+    }}
+  >
+    <Skeleton
+      variant="rectangular"
+      width={80}
+      height={80}
+      sx={{ borderRadius: '12px', mr: 3 }}
+    />
+    <Box sx={{ flex: 1 }}>
+      <Skeleton variant="text" width="60%" height={32} sx={{ mb: 1 }} />
+      <Skeleton variant="text" width="40%" height={24} />
+      <Skeleton variant="text" width="70%" height={24} />
+      <Skeleton variant="text" width="50%" height={24} />
+    </Box>
+  </Box>
+);
+
+const LayerCard = ({ layer, selected, onClick, onAddClick }) => {
+  const handleAddClick = useCallback(
+    (e) => {
+      e.stopPropagation();
+      onAddClick(layer);
+    },
+    [layer, onAddClick]
+  );
+
+  const imageUrl = useMemo(() => {
+    try {
+      return new URL('/public/images/forest1.jpeg', window.location.origin)
+        .href;
+    } catch {
+      console.error('Error creating image URL');
+      return '';
+    }
+  }, []);
+
+  return (
+    <LayerCardContainer selected={selected} onClick={onClick}>
+      <ThumbnailContainer>
+        {imageUrl ? (
+          <Thumbnail
+            src={imageUrl}
+            alt={layer.code}
+            onError={(e) => {
+              e.target.src = '/public/images/placeholder.jpg';
+            }}
+          />
+        ) : (
+          <Box
+            sx={{
+              width: '80px',
+              height: '80px',
+              backgroundColor: 'secondary.light',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography variant="caption" color="text.secondary">
+              No image
+            </Typography>
+          </Box>
+        )}
+      </ThumbnailContainer>
+      <ContentContainer>
+        <Title selected={selected}>{layer.code}</Title>
+        <DetailsSection>
+          <DetailsList>
+            <DetailText selected={selected}>ID: {layer.id}</DetailText>
+            <DetailText selected={selected}>Code: {layer.code}</DetailText>
+            <DetailText selected={selected}>
+              Municipality: {layer.municipality || 'N/A'}
+            </DetailText>
+          </DetailsList>
+          <AddButton
+            size="small"
+            selected={selected}
+            onClick={handleAddClick}
+            aria-label="add to selection"
+          >
+            <AddIcon fontSize="small" />
+          </AddButton>
+        </DetailsSection>
+      </ContentContainer>
+    </LayerCardContainer>
+  );
+};
+
+LayerCard.propTypes = {
+  layer: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    code: PropTypes.string.isRequired,
+    municipality: PropTypes.string,
+  }).isRequired,
+  selected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+  onAddClick: PropTypes.func.isRequired,
+};
+
 /**
  * SidePanel Component
  * Displays a list of forest layers with their details and allows selection
  */
-function SidePanel({ selectedLayer, onLayerSelect, geoJsonData }) {
-  const handleLayerClick = (layer) => {
-    onLayerSelect(layer);
-  };
+function SidePanel({
+  selectedLayer,
+  onLayerSelect,
+  onLayerAdd,
+  geoJsonData,
+  isLoading,
+}) {
+  const handleLayerClick = useCallback(
+    (layer) => {
+      onLayerSelect(layer);
+    },
+    [onLayerSelect]
+  );
+
+  const handleLayerAdd = useCallback(
+    (layer) => {
+      onLayerAdd?.(layer);
+    },
+    [onLayerAdd]
+  );
+
+  if (isLoading) {
+    return (
+      <PanelContainer>
+        {[1, 2, 3].map((key) => (
+          <LayerCardSkeleton key={key} />
+        ))}
+      </PanelContainer>
+    );
+  }
+
+  if (!geoJsonData?.features?.length) {
+    return (
+      <PanelContainer>
+        <Box
+          sx={{
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'text.secondary',
+          }}
+        >
+          No layers available
+        </Box>
+      </PanelContainer>
+    );
+  }
 
   return (
     <PanelContainer>
-      {geoJsonData?.features?.map((feature) => {
+      {geoJsonData.features.map((feature) => {
         const layer = feature.properties;
         const isSelected = selectedLayer?.id === layer.id;
         return (
           <LayerCard
             key={layer.id}
+            layer={layer}
             selected={isSelected}
             onClick={() => handleLayerClick(layer)}
-          >
-            <ThumbnailContainer>
-              <Thumbnail src={'/public/images/forest1.jpeg'} alt={layer.code} />
-            </ThumbnailContainer>
-            <ContentContainer>
-              <Title selected={isSelected}>{layer.code}</Title>
-              <DetailsSection>
-                <DetailsList>
-                  <DetailText selected={isSelected}>ID: {layer.id}</DetailText>
-                  <DetailText selected={isSelected}>
-                    Code: {layer.code}
-                  </DetailText>
-                  <DetailText selected={isSelected}>
-                    Municipality: {layer.municipality}
-                  </DetailText>
-                </DetailsList>
-                <AddButton size="small" selected={isSelected}>
-                  <AddIcon fontSize="small" />
-                </AddButton>
-              </DetailsSection>
-            </ContentContainer>
-          </LayerCard>
+            onAddClick={handleLayerAdd}
+          />
         );
       })}
     </PanelContainer>
@@ -147,27 +282,25 @@ function SidePanel({ selectedLayer, onLayerSelect, geoJsonData }) {
 }
 
 SidePanel.propTypes = {
-  /**
-   * Currently selected layer object
-   */
   selectedLayer: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
-    dimensione: PropTypes.string.isRequired,
-    budgetRange: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    thumbnail: PropTypes.string.isRequired,
-    area: PropTypes.number.isRequired,
-    bounds: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
+    code: PropTypes.string.isRequired,
+    municipality: PropTypes.string,
   }),
-  /**
-   * Callback function when a layer is selected
-   */
   onLayerSelect: PropTypes.func.isRequired,
-};
-
-SidePanel.defaultProps = {
-  selectedLayer: null,
+  onLayerAdd: PropTypes.func,
+  geoJsonData: PropTypes.shape({
+    features: PropTypes.arrayOf(
+      PropTypes.shape({
+        properties: PropTypes.shape({
+          id: PropTypes.number.isRequired,
+          code: PropTypes.string.isRequired,
+          municipality: PropTypes.string,
+        }).isRequired,
+      })
+    ),
+  }),
+  isLoading: PropTypes.bool,
 };
 
 export default SidePanel;

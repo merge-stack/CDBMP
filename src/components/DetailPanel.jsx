@@ -1,9 +1,12 @@
+import { useCallback, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { Box, IconButton, Typography, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import IosShareIcon from '@mui/icons-material/IosShare';
+import { TECHNICAL_DETAILS } from '../constants/details';
 
-const DetailContainer = styled(Paper)(({ theme }) => ({
+const DetailContainer = styled(Paper)({
   position: 'absolute',
   top: '20px',
   right: '20px',
@@ -14,7 +17,7 @@ const DetailContainer = styled(Paper)(({ theme }) => ({
   borderRadius: '12px',
   boxShadow: '0 8px 32px rgba(47, 68, 50, 0.15)',
   zIndex: 1000,
-}));
+});
 
 const HeaderImage = styled('img')({
   width: '100%',
@@ -132,41 +135,92 @@ const TechnicalValue = styled(Typography)(({ theme }) => ({
   whiteSpace: 'pre-line',
 }));
 
+const TechnicalDetails = ({ details }) => {
+  return (
+    <TechnicalSection>
+      {details.map((detail) => (
+        <TechnicalRow key={detail.id}>
+          <TechnicalLabel>{detail.label}</TechnicalLabel>
+          <TechnicalValue>{detail.formatter(detail.value)}</TechnicalValue>
+        </TechnicalRow>
+      ))}
+    </TechnicalSection>
+  );
+};
+
+TechnicalDetails.propTypes = {
+  details: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      value: PropTypes.any.isRequired,
+      formatter: PropTypes.func.isRequired,
+    })
+  ).isRequired,
+};
+
 function DetailPanel({ layer, onClose }) {
+  const handleShare = useCallback(() => {
+    try {
+      // Implement sharing functionality
+      navigator
+        .share({
+          title: layer?.code,
+          text: `Check out this forest area: ${layer?.code}`,
+          url: window.location.href,
+        })
+        .catch(() => {
+          console.warn('Sharing failed');
+        });
+    } catch {
+      console.warn('Share API not supported');
+    }
+  }, [layer?.code]);
+
+  // Memoize the image URL to prevent unnecessary re-renders
+  const imageUrl = useMemo(() => {
+    if (!layer) return '';
+
+    try {
+      return new URL(`/public/images/forest1.jpeg`, window.location.origin)
+        .href;
+    } catch {
+      console.error('Error creating image URL');
+      return '';
+    }
+  }, [layer]);
+
+  // Early return if no layer
   if (!layer) return null;
-
-  const technicalDetails = [
-    { label: 'Stima', value: '5.575,21 €' },
-    { label: 'Superficie', value: '0,3339 ha' },
-    {
-      label: 'Pendenza (min / avg / max / classe)',
-      value: '8,53 deg / 10,60 deg / 12,29 deg / A',
-    },
-    {
-      label: 'Trasporto (strade / sentieri / classe)',
-      value: '25,47 m / 0,00 m / 1',
-    },
-    {
-      label: "Sentieri presenti nell'area (metri / dettaglio)",
-      value: 'TOTALE: 46 m\nSentiero 135: 46 m',
-    },
-  ];
-
-  // Duplicate the technical details for the second section as shown in the design
-  const technicalDetails2 = [
-    { label: 'Stima', value: '5.575,21 €' },
-    { label: 'Superficie', value: '0,3339 ha' },
-    {
-      label: 'Pendenza (min / avg / max / classe)',
-      value: '8,53 deg / 10,60 deg / 12,29 deg / A',
-    },
-  ];
 
   return (
     <DetailContainer>
       <Box sx={{ position: 'relative' }}>
-        <HeaderImage src={'/public/images/forest1.jpeg'} alt={layer.code} />
-        <CloseButton onClick={onClose}>
+        {imageUrl ? (
+          <HeaderImage
+            src={imageUrl}
+            alt={layer.code}
+            onError={(e) => {
+              e.target.src = '/public/images/placeholder.jpg';
+            }}
+          />
+        ) : (
+          <Box
+            sx={{
+              height: '200px',
+              backgroundColor: 'secondary.light',
+              borderRadius: '12px 12px 0 0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              Image not available
+            </Typography>
+          </Box>
+        )}
+        <CloseButton onClick={onClose} aria-label="close panel">
           <CloseIcon />
         </CloseButton>
       </Box>
@@ -175,8 +229,12 @@ function DetailPanel({ layer, onClose }) {
         <Header>
           <Box sx={{ textAlign: 'center', width: '100%' }}>
             <Title>{layer.code}</Title>
-            <Subtitle>Municipality {layer.municipality}</Subtitle>
-            <ShareButton>
+            <Subtitle>
+              {layer.municipality
+                ? `Municipality ${layer.municipality}`
+                : 'No municipality specified'}
+            </Subtitle>
+            <ShareButton onClick={handleShare} aria-label="share">
               <IosShareIcon />
             </ShareButton>
           </Box>
@@ -189,30 +247,27 @@ function DetailPanel({ layer, onClose }) {
           ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
           Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse
           molestie consequat, vel illum dolore eu feugiat nulla facilisis at
-          vero eros et accumsan et iusto odio dignissim qui blandit praesent
-          luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+          vero eros et accumsan.
         </Description>
 
-        <TechnicalSection sx={{ mb: 2 }}>
-          {technicalDetails.map((detail, index) => (
-            <TechnicalRow key={index}>
-              <TechnicalLabel>{detail.label}</TechnicalLabel>
-              <TechnicalValue>{detail.value}</TechnicalValue>
-            </TechnicalRow>
-          ))}
-        </TechnicalSection>
+        <TechnicalDetails details={TECHNICAL_DETAILS.primary} />
 
-        <TechnicalSection>
-          {technicalDetails2.map((detail, index) => (
-            <TechnicalRow key={index}>
-              <TechnicalLabel>{detail.label}</TechnicalLabel>
-              <TechnicalValue>{detail.value}</TechnicalValue>
-            </TechnicalRow>
-          ))}
-        </TechnicalSection>
+        <Box sx={{ mt: 2 }}>
+          <TechnicalDetails details={TECHNICAL_DETAILS.secondary} />
+        </Box>
       </ContentSection>
     </DetailContainer>
   );
 }
+
+DetailPanel.propTypes = {
+  layer: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    code: PropTypes.string.isRequired,
+    municipality: PropTypes.string,
+    description: PropTypes.string,
+  }),
+  onClose: PropTypes.func.isRequired,
+};
 
 export default DetailPanel;
