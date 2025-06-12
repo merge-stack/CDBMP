@@ -11,6 +11,8 @@ import MapView from './components/MapView';
 import SidePanel from './components/SidePanel';
 import DetailPanel from './components/DetailPanel';
 import Footer from './components/Footer';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 /**
  * Main App Component
@@ -71,6 +73,18 @@ function App() {
           )}
         </Box>
         <Footer />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </Box>
     </ThemeProvider>
   );

@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import PropTypes from 'prop-types';
 import { colors, spacing, borderRadius } from '../styles/theme';
+import { toast } from 'react-toastify';
 
 const PanelContainer = styled(Box)({
   width: '450px',
@@ -140,7 +141,7 @@ const LayerCard = ({ layer, selected, onClick, onAddClick }) => {
       return new URL('/public/images/forest1.jpeg', window.location.origin)
         .href;
     } catch {
-      console.error('Error creating image URL');
+      toast.error('Error creating image URL');
       return '';
     }
   }, []);

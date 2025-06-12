@@ -12,6 +12,7 @@ import {
   INTERACTION_CONFIG,
 } from '../constants/map';
 import { flyTo } from '../helpers/map';
+import { toast } from 'react-toastify';
 
 function MapView({
   selectedLayer,
@@ -42,7 +43,7 @@ function MapView({
         setIsLoading(false);
       })
       .catch((error) => {
-        console.error('Error loading GeoJSON:', error);
+        toast.error('Error loading GeoJSON: ' + error.message);
         setError(error.message);
         setIsLoading(false);
       });

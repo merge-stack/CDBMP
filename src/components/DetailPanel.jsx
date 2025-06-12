@@ -5,6 +5,7 @@ import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { TECHNICAL_DETAILS } from '../constants/details';
+import { toast } from 'react-toastify';
 
 const DetailContainer = styled(Paper)({
   position: 'absolute',
@@ -170,10 +171,10 @@ function DetailPanel({ layer, onClose }) {
           url: window.location.href,
         })
         .catch(() => {
-          console.warn('Sharing failed');
+          toast.error('Sharing failed');
         });
     } catch {
-      console.warn('Share API not supported');
+      toast.error('Share API not supported');
     }
   }, [layer?.code]);
 
@@ -185,7 +186,7 @@ function DetailPanel({ layer, onClose }) {
       return new URL(`/public/images/forest1.jpeg`, window.location.origin)
         .href;
     } catch {
-      console.error('Error creating image URL');
+      toast.error('Error creating image URL');
       return '';
     }
   }, [layer]);

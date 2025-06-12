@@ -1,16 +1,17 @@
 import * as turf from '@turf/turf';
 import { FlyToInterpolator } from '@deck.gl/core';
 import { easeCubic } from 'd3-ease';
+import { toast } from 'react-toastify';
 
 const DEFAULT_TRANSITION_PROPS = {
   transitionDuration: 1000,
   transitionInterpolator: new FlyToInterpolator(),
-  transitionEasing: easeCubic
+  transitionEasing: easeCubic,
 };
 
 export const flyTo = ({ feature, setViewState, options = {} }) => {
   if (!feature || !feature.geometry) {
-    console.warn('Invalid feature provided to flyTo');
+    toast.error('Invalid feature provided to flyTo');
     return;
   }
 
@@ -37,12 +38,12 @@ export const flyTo = ({ feature, setViewState, options = {} }) => {
         coordinates = feature.geometry.coordinates.flat();
         break;
       default:
-        console.warn(`Unsupported geometry type: ${feature.geometry.type}`);
+        toast.error(`Unsupported geometry type: ${feature.geometry.type}`);
         return;
     }
 
     if (!coordinates || coordinates.length === 0) {
-      console.warn('No valid coordinates found in feature');
+      toast.error('No valid coordinates found in feature');
       return;
     }
 
@@ -52,7 +53,7 @@ export const flyTo = ({ feature, setViewState, options = {} }) => {
 
     // Calculate the area and extent of the feature
     const bbox = turf.bbox(feature);
-    
+
     // Add padding to the bbox
     const padding = options.padding || 0.1; // 10% padding by default
     const width = Math.abs(bbox[2] - bbox[0]);
@@ -61,7 +62,7 @@ export const flyTo = ({ feature, setViewState, options = {} }) => {
       bbox[0] - width * padding,
       bbox[1] - height * padding,
       bbox[2] + width * padding,
-      bbox[3] + height * padding
+      bbox[3] + height * padding,
     ];
 
     // Calculate the extent in degrees
@@ -79,15 +80,15 @@ export const flyTo = ({ feature, setViewState, options = {} }) => {
       )
     );
 
-    setViewState(prev => ({
+    setViewState((prev) => ({
       ...prev,
       longitude: center.geometry.coordinates[0],
       latitude: center.geometry.coordinates[1],
       zoom,
       ...DEFAULT_TRANSITION_PROPS,
-      ...options
+      ...options,
     }));
   } catch (error) {
-    console.error('Error in flyTo:', error);
+    toast.error('Error in flyTo: ' + error.message);
   }
 };
