@@ -5,7 +5,7 @@ import { createTheme } from '@mui/material/styles';
  */
 export const colors = {
   primary: {
-    main: '#2F4432', // Dark green
+    main: '#476A48', // Dark green
     dark: '#1e2d21',
     light: '#3a5340',
   },

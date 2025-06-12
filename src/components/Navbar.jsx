@@ -1,197 +1,120 @@
 import { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import {
-  AppBar,
-  Toolbar,
-  Button,
-  Box,
-  Typography,
-  IconButton,
-  Menu,
-  MenuItem,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
 
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  boxShadow: 'none',
-  zIndex: theme.zIndex.drawer + 1,
-}));
+function Navbar({ onLogoClick, onSignInClick }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-const StyledToolbar = styled(Toolbar)({
-  display: 'flex',
-  justifyContent: 'space-between',
-  minHeight: '64px !important',
-  padding: '0 24px',
-});
+  const handleMobileMenuOpen = useCallback(() => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  }, [isMobileMenuOpen]);
 
-const LogoContainer = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-  cursor: 'pointer',
-});
-
-const LogoIcon = styled(Box)({
-  width: '40px',
-  height: '40px',
-  backgroundColor: '#8BA888',
-  borderRadius: '8px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  position: 'relative',
-  transition: 'transform 0.2s ease-in-out',
-  '&:hover': {
-    transform: 'scale(1.05)',
-  },
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: '8px',
-    left: '8px',
-    width: '6px',
-    height: '6px',
-    backgroundColor: '#FFD700',
-    borderRadius: '50%',
-  },
-});
-
-const LogoText = styled(Typography)({
-  color: '#FFFFFF',
-  fontWeight: 600,
-  fontSize: '1.1rem',
-  lineHeight: 1.2,
-});
-
-const NavButton = styled(Button)({
-  color: '#FFFFFF',
-  fontSize: '0.95rem',
-  fontWeight: 400,
-  padding: '8px 16px',
-  '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-});
-
-const AssociateButton = styled(Button)(({ theme }) => ({
-  backgroundColor: '#FFFFFF',
-  color: theme.palette.primary.main,
-  fontSize: '0.95rem',
-  fontWeight: 500,
-  padding: '8px 20px',
-  '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  },
-}));
-
-const menuItems = [
-  { id: 'menu1', label: 'Menu 1', href: '/menu1' },
-  { id: 'menu2', label: 'Menu 2', href: '/menu2' },
-  { id: 'menu3', label: 'Menu 3', href: '/menu3' },
-  { id: 'menu4', label: 'Menu 4', href: '/menu4' },
-];
-
-function Navbar({ onLogoClick, onSignInClick, isAuthenticated, userName }) {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [mobileMenuAnchor, setMobileMenuAnchor] = useState(null);
-
-  const handleMobileMenuOpen = useCallback((event) => {
-    setMobileMenuAnchor(event.currentTarget);
-  }, []);
-
-  const handleMobileMenuClose = useCallback(() => {
-    setMobileMenuAnchor(null);
-  }, []);
-
-  const handleMenuItemClick = useCallback(
-    (href) => {
-      handleMobileMenuClose();
-      window.location.href = href;
-    },
-    [handleMobileMenuClose]
-  );
+  const menuItems = [
+    { label: 'Il Progetto', href: '/Il_Progetto' },
+    { label: 'La Mappa', href: '/La_Mappa' },
+  ];
 
   return (
-    <StyledAppBar position="fixed">
-      <StyledToolbar>
-        <LogoContainer onClick={onLogoClick} role="button" tabIndex={0}>
-          <LogoIcon aria-hidden="true" />
-          <LogoText>Application Title</LogoText>
-        </LogoContainer>
+    <nav className="fixed top-0 left-0 right-0 bg-primary z-50">
+      <div className="flex justify-between items-center min-h-[95px] px-10">
+        {/* Logo */}
+        <div
+          onClick={onLogoClick}
+          className="flex items-center gap-3 cursor-pointer"
+          role="button"
+          tabIndex={0}
+        >
+          <img
+            src="/svg/logo.svg"
+            alt="Company Logo"
+            className="w-[224px] h-[38px]"
+          />
+        </div>
 
-        {isMobile ? (
-          <>
-            <IconButton
-              color="inherit"
-              aria-label="open menu"
-              onClick={handleMobileMenuOpen}
-              edge="end"
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-3">
+          {menuItems.map((item, index) => (
+            <a
+              key={index}
+              href={item.href}
+              className="text-white px-4 w-[126px] h-[38px] rounded-md hover:bg-white/10 text-[0.95rem] font-normal text-center leading-[38px]"
             >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              anchorEl={mobileMenuAnchor}
-              open={Boolean(mobileMenuAnchor)}
-              onClose={handleMobileMenuClose}
-              keepMounted
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              {item.label}
+            </a>
+          ))}
+          <button
+            onClick={onSignInClick}
+            className="bg-white text-primary px-6 py-3 w-[126px] h-[38px] rounded-md hover:bg-white/90 font-medium flex items-center justify-center gap-2"
+          >
+            Contattaci
+            <img src="/svg/mailIcon.svg" alt="Mail icon" className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Mobile Menu Container */}
+        <div className="md:hidden relative">
+          {/* Mobile Menu Button */}
+          <button
+            className="text-white p-2"
+            onClick={handleMobileMenuOpen}
+            aria-label="Toggle menu"
+            aria-expanded={isMobileMenuOpen}
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              {menuItems.map((item) => (
-                <MenuItem
-                  key={item.id}
-                  onClick={() => handleMenuItemClick(item.href)}
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+
+          {/* Mobile Menu Dropdown */}
+          {isMobileMenuOpen && (
+            <div className="absolute right-0 top-full mt-2 w-48 bg-secondary shadow-lg rounded-md overflow-hidden">
+              <div className="py-2">
+                {menuItems.map((item, index) => (
+                  <a
+                    key={index}
+                    href={item.href}
+                    className="block px-4 py-3 text-secondary-text hover:bg-white/10 text-[0.95rem] font-normal"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+                <button
+                  onClick={() => {
+                    onSignInClick();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-3 text-secondary-text hover:bg-white/10 text-[0.95rem] font-normal flex items-center gap-2"
                 >
-                  {item.label}
-                </MenuItem>
-              ))}
-              <MenuItem
-                onClick={() => {
-                  handleMobileMenuClose();
-                  onSignInClick();
-                }}
-              >
-                {isAuthenticated ? userName : 'Sign In'}
-              </MenuItem>
-            </Menu>
-          </>
-        ) : (
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            {menuItems.map((item) => (
-              <NavButton key={item.id} href={item.href} aria-label={item.label}>
-                {item.label}
-              </NavButton>
-            ))}
-            <AssociateButton
-              variant="contained"
-              onClick={onSignInClick}
-              aria-label={isAuthenticated ? 'account menu' : 'sign in'}
-            >
-              {isAuthenticated ? userName : 'Sign In'}
-            </AssociateButton>
-          </Box>
-        )}
-      </StyledToolbar>
-    </StyledAppBar>
+                  Contattaci
+                  <img
+                    src="/svg/mailIcon.svg"
+                    alt="Mail icon"
+                    className="w-4 h-4"
+                  />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
   );
 }
 
 Navbar.propTypes = {
   onLogoClick: PropTypes.func,
   onSignInClick: PropTypes.func.isRequired,
-  isAuthenticated: PropTypes.bool,
-  userName: PropTypes.string,
 };
 
 Navbar.defaultProps = {
   onLogoClick: () => {},
-  isAuthenticated: false,
-  userName: '',
 };
 
 export default Navbar;
