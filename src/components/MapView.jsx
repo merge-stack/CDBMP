@@ -3,7 +3,6 @@ import Map, { NavigationControl } from 'react-map-gl/mapbox';
 import { DeckGL } from '@deck.gl/react';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Box } from '@mui/material';
 import debounce from 'lodash/debounce';
 import {
   MAP_CONFIG,
@@ -13,6 +12,8 @@ import {
 } from '../constants/map';
 import { flyTo } from '../helpers/map';
 import { toast } from 'react-toastify';
+import { LayerCard } from './SidePanel';
+import ReactDOMServer from 'react-dom/server';
 
 function MapView({
   selectedLayer,
@@ -70,22 +71,15 @@ function MapView({
         stroked: true,
         getFillColor: (d) =>
           d.properties.id === selectedLayer?.id
-            ? LAYER_CONFIG.areas.styles.selected.fillColor
-            : LAYER_CONFIG.areas.styles.default.fillColor,
-        getLineColor: (d) =>
-          d.properties.id === selectedLayer?.id
-            ? LAYER_CONFIG.areas.styles.selected.lineColor
-            : LAYER_CONFIG.areas.styles.default.lineColor,
-        getLineWidth: (d) =>
-          d.properties.id === selectedLayer?.id
-            ? LAYER_CONFIG.areas.styles.selected.lineWidth
-            : LAYER_CONFIG.areas.styles.default.lineWidth,
+            ? [0, 200, 0, 150]
+            : [0, 0, 0, 0],
+        getLineColor: [255, 0, 0, 255],
+        getLineWidth: 20,
         pickable: LAYER_CONFIG.areas.pickable,
-        highlightColor: LAYER_CONFIG.areas.styles.highlight.color,
+        highlightColor: [0, 200, 0, 150],
+        autoHighlight: true,
         updateTriggers: {
           getFillColor: [selectedLayer?.id],
-          getLineColor: [selectedLayer?.id],
-          getLineWidth: [selectedLayer?.id],
         },
       }),
     ],
@@ -149,47 +143,18 @@ function MapView({
   // Add error boundary for map rendering
   if (error) {
     return (
-      <Box
-        sx={{
-          flex: 1,
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'error.main',
-        }}
-      >
+      <div className="flex-1 h-full flex items-center justify-center text-red-500">
         Error loading map data: {error}
-      </Box>
+      </div>
     );
   }
 
   return (
-    <Box
-      sx={{
-        flex: 1,
-        height: 'calc(100vh - 163px)',
-        marginTop: '163px',
-        position: 'relative',
-      }}
-    >
+    <div className="flex-1 h-[calc(100vh-163px)] mt-[163px] relative">
       {isLoading && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.7)',
-            zIndex: 1000,
-          }}
-        >
+        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 z-1000">
           Loading map data...
-        </Box>
+        </div>
       )}
       <DeckGL
         initialViewState={viewState}
@@ -202,19 +167,19 @@ function MapView({
         onHover={INTERACTION_CONFIG.hover.enabled ? onHover : undefined}
         getTooltip={
           INTERACTION_CONFIG.tooltip.enabled
-            ? ({ object }) =>
-                object && {
-                  html: `
-                  <div>
-                    <b>${object.properties?.code || 'Warning Point'}</b>
-                    ${
-                      object.properties?.area
-                        ? `<br/>Area: ${object.properties.area}`
-                        : ''
-                    }
-                  </div>
-                `,
-                }
+            ? ({ object }) => {
+                if (!object) return null;
+
+                const layer = object.properties;
+                const htmlString = ReactDOMServer.renderToStaticMarkup(
+                  <LayerCard layer={layer} isMapTooltip={true} />
+                );
+
+                return {
+                  html: htmlString,
+                  style: { background: 'none' },
+                };
+              }
             : undefined
         }
       >
@@ -227,7 +192,7 @@ function MapView({
           <NavigationControl position="top-right" />
         </Map>
       </DeckGL>
-    </Box>
+    </div>
   );
 }
 

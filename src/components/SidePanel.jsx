@@ -3,7 +3,13 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { Plus, X } from 'lucide-react';
 
-const LayerCard = ({ layer, selected, onClick, onAddClick }) => {
+export const LayerCard = ({
+  layer,
+  selected,
+  onClick,
+  onAddClick,
+  isMapTooltip = false,
+}) => {
   const handleAddClick = useCallback(
     (e) => {
       e.stopPropagation();
@@ -59,7 +65,11 @@ const LayerCard = ({ layer, selected, onClick, onAddClick }) => {
   return (
     <div
       className={`flex p-5 mb-4 cursor-pointer rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 ${
-        selected ? 'bg-[#719374] text-white' : 'bg-[#DEE8DC]'
+        selected
+          ? 'bg-[#719374] text-white'
+          : isMapTooltip
+          ? 'bg-white'
+          : 'bg-[#DEE8DC]'
       }`}
       onClick={onClick}
     >
@@ -80,7 +90,7 @@ const LayerCard = ({ layer, selected, onClick, onAddClick }) => {
         )}
       </div>
       <div className="flex-1 flex flex-col min-w-0 gap-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <h3
             className={`text-lg font-medium max-w-[150px] truncate ${
               selected ? 'text-white' : 'text-[#484747]'
@@ -143,21 +153,25 @@ const LayerCard = ({ layer, selected, onClick, onAddClick }) => {
               {layer.budget || '200-250K euro'}
             </p>
           </div>
-          <button
-            className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ml-4 ${
-              selected
-                ? 'bg-[#DEE8DC] text-[#426345] hover:bg-gray-50'
-                : 'bg-[#426345] text-white hover:bg-[#5C7A5E]'
-            }`}
-            onClick={handleAddClick}
-            aria-label={selected ? 'remove from selection' : 'add to selection'}
-          >
-            {selected ? (
-              <X className="text-2xl" />
-            ) : (
-              <Plus className="text-2xl" />
-            )}
-          </button>
+          {!isMapTooltip && (
+            <button
+              className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ml-4 ${
+                selected
+                  ? 'bg-[#DEE8DC] text-[#426345] hover:bg-gray-50'
+                  : 'bg-[#426345] text-white hover:bg-[#5C7A5E]'
+              }`}
+              onClick={handleAddClick}
+              aria-label={
+                selected ? 'remove from selection' : 'add to selection'
+              }
+            >
+              {selected ? (
+                <X className="text-2xl" />
+              ) : (
+                <Plus className="text-2xl" />
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -176,6 +190,7 @@ LayerCard.propTypes = {
   selected: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
   onAddClick: PropTypes.func.isRequired,
+  isMapTooltip: PropTypes.bool.isRequired,
 };
 
 const LayerCardSkeleton = () => (
@@ -228,7 +243,7 @@ function SidePanel({
 
   if (isLoading) {
     return (
-      <div className="w-[450px] mb-40 h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
+      <div className="w-[450px] h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
         {[1, 2, 3].map((key) => (
           <LayerCardSkeleton key={key} />
         ))}
@@ -238,7 +253,7 @@ function SidePanel({
 
   if (!geoJsonData?.features?.length) {
     return (
-      <div className="w-[450px] mb-40 h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
+      <div className="w-[450px] h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
         <div className="h-full flex items-center justify-center text-gray-500">
           No layers available
         </div>
