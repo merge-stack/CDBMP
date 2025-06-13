@@ -228,7 +228,7 @@ function SidePanel({
 
   if (isLoading) {
     return (
-      <div className="w-[450px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
+      <div className="w-[450px] mb-40 h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
         {[1, 2, 3].map((key) => (
           <LayerCardSkeleton key={key} />
         ))}
@@ -238,7 +238,7 @@ function SidePanel({
 
   if (!geoJsonData?.features?.length) {
     return (
-      <div className="w-[450px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
+      <div className="w-[450px] mb-40 h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
         <div className="h-full flex items-center justify-center text-gray-500">
           No layers available
         </div>
@@ -247,7 +247,7 @@ function SidePanel({
   }
 
   return (
-    <div className="w-[450px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
+    <div className="w-[450px] h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
       {geoJsonData.features.map((feature) => {
         const layer = feature.properties;
         const isSelected = selectedLayer?.id === layer.id;
