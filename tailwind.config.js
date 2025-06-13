@@ -10,7 +10,7 @@ export default {
           dark: '#426345',
         },
         secondary: {
-          DEFAULT: '#DEE8DC',
+          DEFAULT: '#6F8D70',
         },
       },
       spacing: {
