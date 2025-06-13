@@ -165,7 +165,14 @@ function MapView({
   }
 
   return (
-    <Box sx={{ flex: 1, height: '100%', position: 'relative' }}>
+    <Box
+      sx={{
+        flex: 1,
+        height: 'calc(100vh - 163px)',
+        marginTop: '163px',
+        position: 'relative',
+      }}
+    >
       {isLoading && (
         <Box
           sx={{
