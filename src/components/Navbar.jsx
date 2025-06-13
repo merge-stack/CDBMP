@@ -15,7 +15,7 @@ function Navbar({ onLogoClick, onSignInClick }) {
 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-primary z-50">
-      <div className="flex justify-between items-center min-h-[95px] px-10">
+      <div className="flex justify-between items-center min-h-[95px] px-6 md:px-12">
         {/* Logo */}
         <div
           onClick={onLogoClick}
@@ -36,14 +36,14 @@ function Navbar({ onLogoClick, onSignInClick }) {
             <a
               key={index}
               href={item.href}
-              className="text-white px-4 w-[126px] h-[38px] rounded-md hover:bg-white/10 text-[0.95rem] font-normal text-center leading-[38px]"
+              className="text-white px-2 w-[126px] h-[38px] rounded-md hover:bg-white/10 text-[0.95rem] font-normal text-center leading-[38px]"
             >
               {item.label}
             </a>
           ))}
           <button
             onClick={onSignInClick}
-            className="bg-white text-primary px-6 py-3 w-[126px] h-[38px] rounded-md hover:bg-white/90 font-medium flex items-center justify-center gap-2"
+            className="bg-white text-primary p-2 w-[126px] h-[38px] rounded-md hover:bg-white/90 font-medium flex items-center justify-center gap-2"
           >
             Contattaci
             <img src="/svg/mailIcon.svg" alt="Mail icon" className="w-4 h-4" />
@@ -74,7 +74,7 @@ function Navbar({ onLogoClick, onSignInClick }) {
 
           {/* Mobile Menu Dropdown */}
           {isMobileMenuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-secondary shadow-lg rounded-md overflow-hidden">
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden">
               <div className="py-2">
                 {menuItems.map((item, index) => (
                   <a
