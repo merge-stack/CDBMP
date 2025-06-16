@@ -1,151 +1,93 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Box, IconButton, Typography, Paper } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import CloseIcon from '@mui/icons-material/Close';
-import IosShareIcon from '@mui/icons-material/IosShare';
 import { TECHNICAL_DETAILS } from '../constants/details';
 import { toast } from 'react-toastify';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const DetailContainer = styled(Paper)({
-  position: 'absolute',
-  top: '20px',
-  right: '20px',
-  width: '600px',
-  maxHeight: 'calc(100% - 40px)',
-  overflowY: 'auto',
-  backgroundColor: '#FFFFFF',
-  borderRadius: '12px',
-  boxShadow: '0 8px 32px rgba(47, 68, 50, 0.15)',
-  zIndex: 1000,
-});
+const ImageCarousel = ({ images, currentIndex, onImageSelect }) => {
+  return (
+    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+      <div className="bg-[#D9D9D9] bg-opacity-50 backdrop-blur-sm rounded-2xl p-2">
+        <div className="flex gap-2">
+          {images.map((image, index) => (
+            <button
+              key={index}
+              onClick={() => onImageSelect(index)}
+              className={`relative overflow-hidden rounded-lg transition-all duration-200 ${
+                index === currentIndex
+                  ? 'ring-2 ring-white ring-offset-2 ring-offset-transparent scale-105'
+                  : 'hover:scale-105'
+              }`}
+            >
+              <img
+                src={image || '/placeholder.svg'}
+                alt={`Thumbnail ${index + 1}`}
+                className="w-12 aspect-square object-cover"
+                onError={(e) => {
+                  e.target.src = '/placeholder.jpg';
+                }}
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
-const HeaderImage = styled('img')({
-  width: '100%',
-  height: '200px',
-  objectFit: 'cover',
-  borderRadius: '12px 12px 0 0',
-});
-
-const ContentSection = styled(Box)({
-  padding: '24px',
-});
-
-const Header = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  marginBottom: '24px',
-  position: 'relative',
-  width: '100%',
-  paddingRight: '48px',
-});
-
-const CloseButton = styled(IconButton)(({ theme }) => ({
-  position: 'absolute',
-  top: '12px',
-  left: '12px',
-  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  color: theme.palette.text.primary,
-  '&:hover': {
-    backgroundColor: '#FFFFFF',
-  },
-}));
-
-const ShareButton = styled(IconButton)(({ theme }) => ({
-  position: 'absolute',
-  right: 0,
-  top: '50%',
-  transform: 'translateY(-50%)',
-  backgroundColor: theme.palette.secondary.light,
-  width: '55px',
-  height: '55px',
-  borderRadius: '50%',
-  transition: 'all 0.2s ease-in-out',
-  '&:hover': {
-    backgroundColor: '#E8EBE8',
-    transform: 'translateY(-50%) scale(1.05)',
-  },
-  '& svg': {
-    color: theme.palette.text.primary,
-    fontSize: '30px',
-    transition: 'transform 0.2s ease-in-out',
-  },
-  '&:hover svg': {
-    transform: 'scale(1.1)',
-  },
-}));
-
-const Title = styled(Typography)(({ theme }) => ({
-  fontSize: '1.5rem',
-  fontWeight: 600,
-  color: theme.palette.text.primary,
-  marginBottom: '4px',
-  textAlign: 'center',
-  width: '100%',
-}));
-
-const Subtitle = styled(Typography)(({ theme }) => ({
-  fontSize: '1rem',
-  color: theme.palette.text.secondary,
-  fontStyle: 'italic',
-  textAlign: 'center',
-  width: '100%',
-}));
-
-const Description = styled(Typography)(({ theme }) => ({
-  fontSize: '0.95rem',
-  color: theme.palette.text.primary,
-  lineHeight: 1.6,
-  marginBottom: '24px',
-  textAlign: 'center',
-  width: '100%',
-}));
-
-const TechnicalSection = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.light,
-  borderRadius: '8px',
-  padding: '8px 24px',
-  marginBottom: '16px',
-}));
-
-const TechnicalRow = styled(Box)({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '12px 0',
-  borderBottom: '2px solid #FFFFFF',
-  '&:last-child': {
-    borderBottom: 'none',
-  },
-});
-
-const TechnicalLabel = styled(Typography)(({ theme }) => ({
-  fontSize: '0.875rem',
-  color: theme.palette.text.primary,
-  fontWeight: 600,
-  flex: 1,
-}));
-
-const TechnicalValue = styled(Typography)(({ theme }) => ({
-  fontSize: '0.875rem',
-  color: theme.palette.text.primary,
-  fontWeight: 600,
-  textAlign: 'right',
-  flex: 1,
-  whiteSpace: 'pre-line',
-}));
+ImageCarousel.propTypes = {
+  images: PropTypes.arrayOf(PropTypes.string).isRequired,
+  currentIndex: PropTypes.number.isRequired,
+  onImageSelect: PropTypes.func.isRequired,
+};
 
 const TechnicalDetails = ({ details }) => {
   return (
-    <TechnicalSection>
-      {details.map((detail) => (
-        <TechnicalRow key={detail.id}>
-          <TechnicalLabel>{detail.label}</TechnicalLabel>
-          <TechnicalValue>{detail.formatter(detail.value)}</TechnicalValue>
-        </TechnicalRow>
+    <div className="bg-[#E3F1E4] rounded-lg p-4 mb-6">
+      {details.map((detail, index) => (
+        <div
+          key={detail.id}
+          className={`flex items-start py-3 ${
+            index < details.length - 1 ? 'border-b border-gray-200' : ''
+          }`}
+        >
+          <div className="p-2 rounded-md mr-3 flex-shrink-0">
+            {detail.id === 'slope' && (
+              <img
+                src="/svg/slopeIcon.svg"
+                alt="Pendenza"
+                className="w-5 h-5"
+              />
+            )}
+            {detail.id === 'transport' && (
+              <img
+                src="/svg/transportIcon.svg"
+                alt="Trasporto"
+                className="w-5 h-5"
+              />
+            )}
+          </div>
+          <div className="flex-1 flex justify-between items-start">
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-gray-900 mb-0.5">
+                {detail.title}
+              </p>
+              {detail.subTitle && (
+                <p className="text-xs text-gray-600">{detail.subTitle}</p>
+              )}
+            </div>
+            <div className="text-right ml-4">
+              <p className="text-sm font-semibold text-gray-900 whitespace-pre-line">
+                {detail.formatter(detail.value)}
+              </p>
+            </div>
+          </div>
+        </div>
       ))}
-    </TechnicalSection>
+      <button className="text-sm text-[#4F7E53] font-semibold underline mt-3 hover:text-[#3d6340] transition-colors">
+        Carica altre
+      </button>
+    </div>
   );
 };
 
@@ -153,14 +95,44 @@ TechnicalDetails.propTypes = {
   details: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
       value: PropTypes.any.isRequired,
       formatter: PropTypes.func.isRequired,
+      subTitle: PropTypes.string,
     })
   ).isRequired,
 };
 
 function DetailPanel({ layer, onClose }) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Memoize the image URLs to prevent unnecessary re-renders
+  const images = useMemo(() => {
+    // Using different images for demo purposes
+    return [
+      '/public/images/forest1.jpeg',
+      '/public/images/forest2.jpeg',
+      '/public/images/forest1.jpeg',
+      '/public/images/forest2.jpeg',
+      '/public/images/forest1.jpeg',
+    ];
+  }, []);
+
+  const currentImage =
+    images[currentImageIndex] || '/public/images/forest1.jpeg';
+
+  const handleImageSelect = useCallback((index) => {
+    setCurrentImageIndex(index);
+  }, []);
+
+  const handlePrevImage = useCallback(() => {
+    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+  }, [images.length]);
+
+  const handleNextImage = useCallback(() => {
+    setCurrentImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+  }, [images.length]);
+
   const handleShare = useCallback(() => {
     try {
       // Implement sharing functionality
@@ -178,86 +150,167 @@ function DetailPanel({ layer, onClose }) {
     }
   }, [layer?.code]);
 
-  // Memoize the image URL to prevent unnecessary re-renders
-  const imageUrl = useMemo(() => {
-    if (!layer) return '';
-
-    try {
-      return new URL(`/public/images/forest1.jpeg`, window.location.origin)
-        .href;
-    } catch {
-      toast.error('Error creating image URL');
-      return '';
-    }
-  }, [layer]);
-
   // Early return if no layer
   if (!layer) return null;
 
   return (
-    <DetailContainer>
-      <Box sx={{ position: 'relative' }}>
-        {imageUrl ? (
-          <HeaderImage
-            src={imageUrl}
-            alt={layer.code}
+    <div className="absolute top-[180px] right-5 w-[500px] max-h-[calc(100vh-200px)] overflow-y-auto bg-white rounded-xl shadow-lg z-[1000]">
+      <div className="relative">
+        <div className="relative group">
+          <img
+            src={currentImage || '/placeholder.svg'}
+            alt={`${layer.code || layer.title} - Image ${
+              currentImageIndex + 1
+            }`}
+            className="w-full h-[300px] object-cover"
             onError={(e) => {
-              e.target.src = '/public/images/placeholder.jpg';
+              e.target.src = '/placeholder.jpg';
             }}
           />
-        ) : (
-          <Box
-            sx={{
-              height: '200px',
-              backgroundColor: 'secondary.light',
-              borderRadius: '12px 12px 0 0',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
+
+          {/* Navigation arrows */}
+          <button
+            onClick={handlePrevImage}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/40 text-white p-2 rounded-full transition-colors duration-200 hover:bg-black/60"
+            aria-label="Previous image"
           >
-            <Typography variant="body2" color="text.secondary">
-              Image not available
-            </Typography>
-          </Box>
-        )}
-        <CloseButton onClick={onClose} aria-label="close panel">
-          <CloseIcon />
-        </CloseButton>
-      </Box>
+            <ChevronLeft className="w-5 h-5" />
+          </button>
 
-      <ContentSection>
-        <Header>
-          <Box sx={{ textAlign: 'center', width: '100%' }}>
-            <Title>{layer.code}</Title>
-            <Subtitle>
-              {layer.municipality
-                ? `Municipality ${layer.municipality}`
-                : 'No municipality specified'}
-            </Subtitle>
-            <ShareButton onClick={handleShare} aria-label="share">
-              <IosShareIcon />
-            </ShareButton>
-          </Box>
-        </Header>
+          <button
+            onClick={handleNextImage}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/40 text-white p-2 rounded-full transition-colors duration-200 hover:bg-black/60"
+            aria-label="Next image"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
 
-        <Description>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam
-          nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-          volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
-          ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
-          Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse
-          molestie consequat, vel illum dolore eu feugiat nulla facilisis at
-          vero eros et accumsan.
-        </Description>
+          {/* Image carousel */}
+          <ImageCarousel
+            images={images}
+            currentIndex={currentImageIndex}
+            onImageSelect={handleImageSelect}
+          />
+        </div>
+        <button
+          onClick={onClose}
+          aria-label="close panel"
+          className="absolute top-3 left-3 bg-[#E3F1E4] text-[#426345] rounded-full w-10 h-10 flex items-center justify-center"
+        >
+          <X className="w-6 h-6" />
+        </button>
 
-        <TechnicalDetails details={TECHNICAL_DETAILS.primary} />
+        {/* Image thumbnails (old, will be removed if carousel is fully implemented here) */}
+        {/* <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 bg-white/50 p-1 rounded-lg backdrop-blur-sm">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="w-16 h-16 rounded-lg overflow-hidden border-2 border-white shadow-md"
+            >
+              <img
+                src="/public/images/forest1.jpeg" // Replace with dynamic image source
+                alt="Thumbnail"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div> */}
+      </div>
 
-        <Box sx={{ mt: 2 }}>
-          <TechnicalDetails details={TECHNICAL_DETAILS.secondary} />
-        </Box>
-      </ContentSection>
-    </DetailContainer>
+      <div className="p-6">
+        <div className="flex flex-col items-start mb-3 relative w-full">
+          <h3 className="text-4xl font-extrabold text-gray-900 mb-1 w-full text-left">
+            {layer.code}
+          </h3>
+          <p className="text-base text-gray-600 w-full text-left mb-4">
+            {layer.coordinates || '40.4002192 N - 12.302934 O'}
+          </p>
+
+          {/* Info Blocks */}
+          <div className="flex justify-between w-full mb-6 gap-x-4">
+            {/* Area */}
+            <div className="flex flex-col w-[20%] items-center justify-center bg-[#E3F1E4] rounded-lg px-4 py-2 text-center">
+              <div className="flex items-center justify-center mb-1">
+                <img
+                  src="/public/svg/areaIcon.svg"
+                  alt="Area"
+                  className={`w-4 h-4 mr-2`}
+                />
+
+                <p className="text-lg font-bold text-[#40523F]">
+                  {layer.area || '12ha'}
+                </p>
+              </div>
+              <p className="text-xs text-[#818181]">Dimensioni</p>
+            </div>
+
+            {/* Intervento */}
+            <div className="flex flex-col w-[50%] items-center justify-center bg-[#E3F1E4] rounded-lg px-4 py-2 text-center">
+              <div className="flex items-center justify-center mb-1">
+                <img
+                  src="/public/svg/treeIcon.svg"
+                  alt="Area"
+                  className={`w-4 h-4 mr-2`}
+                />
+                <p className="text-lg font-bold text-[#40523F]">
+                  {layer.intervent || 'Manutenzione'}
+                </p>
+              </div>
+              <p className="text-xs text-[#818181]">Intervento</p>
+            </div>
+
+            {/* Budget */}
+            <div className="flex flex-col w-[30%] items-center justify-center bg-[#E3F1E4] rounded-lg px-4 py-2 text-center">
+              <div className="flex items-center justify-center mb-1">
+                <img
+                  src="/public/svg/budgetIcon.svg"
+                  alt="Area"
+                  className={`w-4 h-4 mr-2`}
+                />
+                <p className="text-lg font-bold text-[#40523F]">
+                  {layer.budget_estimated || '€200K'}
+                </p>
+              </div>
+              <p className="text-xs text-[#818181]">Budget stimato</p>
+            </div>
+          </div>
+
+          <p className="text-base text-[#484848] leading-relaxed mb-6 text-left w-full">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam
+            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
+            volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
+            ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
+            consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate
+            velit esse molestie consequat, vel illum dolore eu feugiat nulla
+            facilisis at vero eros et accumsan.
+          </p>
+
+          <h4 className="text-xl font-bold text-gray-900 mb-4">
+            Dettagli area
+          </h4>
+
+          <div className="mt-2">
+            <TechnicalDetails details={TECHNICAL_DETAILS.primary} />
+          </div>
+        </div>
+        {/* Contact Buttons */}
+        <div className="flex gap-3">
+          <button className="bg-[#426345] text-white py-3 px-6 rounded-lg flex-1 font-medium">
+            Contattaci
+          </button>
+          <button
+            onClick={handleShare}
+            className="bg-[#E3F1E4] text-[#426345] p-3 rounded-lg"
+          >
+            <img
+              src="/public/svg/shareIcon.svg"
+              alt="Area"
+              className={`w-5 h-5`}
+            />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -267,6 +320,10 @@ DetailPanel.propTypes = {
     code: PropTypes.string.isRequired,
     municipality: PropTypes.string,
     description: PropTypes.string,
+    coordinates: PropTypes.string,
+    area: PropTypes.string,
+    intervent: PropTypes.string,
+    budget_estimated: PropTypes.string,
   }),
   onClose: PropTypes.func.isRequired,
 };
