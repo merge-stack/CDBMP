@@ -24,6 +24,7 @@ function MapView({
   const mapRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [hoveredObject, setHoveredObject] = useState(null);
 
   // Fetch GeoJSON data
   useEffect(() => {
@@ -61,29 +62,72 @@ function MapView({
     bearing: 0,
   });
 
+  const onHover = useCallback((info) => {;
+    if (mapRef.current && INTERACTION_CONFIG.hover.enabled) {
+      mapRef.current.getCanvas().style.cursor = info.object ? 'pointer' : '';
+    }
+    setHoveredObject(info.object);
+  }, []);
+
+  const onClick = useCallback(
+    (event) => {
+      if (!event.object) return;
+
+      const feature = event.object;
+
+      // First call onLayerSelect with the feature data
+      onLayerSelect({
+        ...feature.properties,
+      });
+    },
+    [onLayerSelect]
+  );
+
   // Define deck.gl layers inside the component to access selectedLayer
   const layers = useMemo(
     () => [
+      // Layer for the fill (with dynamic highlight)
       new GeoJsonLayer({
-        id: LAYER_CONFIG.areas.id,
+        id: LAYER_CONFIG.areas.id + '-fill',
         data: geoJsonData,
         filled: true,
-        stroked: true,
-        getFillColor: (d) =>
-          d.properties.id === selectedLayer?.id
-            ? [0, 200, 0, 150]
-            : [0, 0, 0, 0],
-        getLineColor: [255, 0, 0, 255],
-        getLineWidth: 20,
-        pickable: LAYER_CONFIG.areas.pickable,
-        highlightColor: [0, 200, 0, 150],
-        autoHighlight: true,
+        stroked: false, // This layer only handles the fill
+        getFillColor: (d) => {
+          if (
+            d.properties.id === selectedLayer?.id ||
+            d.properties.id === hoveredObject?.properties?.id
+          ) {
+            return [0, 200, 0, 150]; // Highlight fill color for selected or hovered
+          }
+          return [0, 0, 0, 0]; // Default transparent fill
+        },
+        pickable: LAYER_CONFIG.areas.pickable, // Still pickable for click/hover events
+        autoHighlight: false, // Disable autoHighlight for this layer
         updateTriggers: {
-          getFillColor: [selectedLayer?.id],
+          getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
+        },
+        parameters: {
+          depthTest: false,
+        },
+        onClick: INTERACTION_CONFIG.click.enabled ? onClick : undefined,
+        onHover: INTERACTION_CONFIG.hover.enabled ? onHover : undefined,
+      }),
+      // Layer for the border (always red)
+      new GeoJsonLayer({
+        id: LAYER_CONFIG.areas.id + '-border',
+        data: geoJsonData,
+        filled: false, // This layer only handles the border
+        stroked: true,
+        getLineColor: [255, 0, 0, 255], // Always red border
+        getLineWidth: 20,
+        pickable: false, // Border layer should not be pickable for hover/click
+        autoHighlight: false, // Disable autoHighlight for this layer
+        parameters: {
+          depthTest: false,
         },
       }),
     ],
-    [geoJsonData, selectedLayer]
+    [geoJsonData, selectedLayer, hoveredObject, onClick, onHover]
   );
 
   const debouncedViewStateUpdate = useMemo(
@@ -100,26 +144,6 @@ function MapView({
       debouncedViewStateUpdate.cancel();
     };
   }, [debouncedViewStateUpdate]);
-
-  const onClick = useCallback(
-    (event) => {
-      if (!event.object) return;
-
-      const feature = event.object;
-
-      // First call onLayerSelect with the feature data
-      onLayerSelect({
-        ...feature.properties,
-      });
-    },
-    [onLayerSelect]
-  );
-
-  const onHover = useCallback((info) => {
-    if (mapRef.current && INTERACTION_CONFIG.hover.enabled) {
-      mapRef.current.getCanvas().style.cursor = info.object ? 'pointer' : '';
-    }
-  }, []);
 
   // Update bounds when selectedLayer changes
   useEffect(() => {
@@ -163,8 +187,6 @@ function MapView({
         onViewStateChange={({ viewState }) =>
           debouncedViewStateUpdate(viewState)
         }
-        onClick={INTERACTION_CONFIG.click.enabled ? onClick : undefined}
-        onHover={INTERACTION_CONFIG.hover.enabled ? onHover : undefined}
         getTooltip={
           INTERACTION_CONFIG.tooltip.enabled
             ? ({ object }) => {
