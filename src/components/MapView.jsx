@@ -30,7 +30,7 @@ function MapView({
   useEffect(() => {
     setIsLoading(true);
     setError(null);
-    fetch('dist/assets/sisteco.geojson')
+    fetch('assets/sisteco.geojson')
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
