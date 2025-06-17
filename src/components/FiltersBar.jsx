@@ -152,10 +152,14 @@ function DefaultFilterDropdown({
   );
 }
 
-function FiltersBar({ isLoading = false }) {
+function FiltersBar({
+  isLoading = false,
+  selectedFilters,
+  setSelectedFilters,
+}) {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [dropdownRect, setDropdownRect] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState(initialFilterState);
+
   const buttonRefs = useRef({});
 
   // Memoize the current filter values

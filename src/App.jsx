@@ -20,6 +20,7 @@ function App() {
   const [selectedLayer, setSelectedLayer] = useState(null);
   const [showDetailPanel, setShowDetailPanel] = useState(false);
   const [geoJsonData, setGeoJsonData] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
   const handleLayerSelect = (layer) => {
     setSelectedLayer(layer);
@@ -43,7 +44,10 @@ function App() {
         }}
       >
         <Navbar />
-        <FiltersBar />
+        <FiltersBar
+          selectedFilters={selectedFilters}
+          setSelectedFilters={setSelectedFilters}
+        />
         <LayersButton />
         <Box
           sx={{
@@ -63,6 +67,7 @@ function App() {
             selectedLayer={selectedLayer}
             geoJsonData={geoJsonData}
             setGeoJsonData={setGeoJsonData}
+            selectedFilters={selectedFilters}
           />
           {showDetailPanel && (
             <DetailPanel

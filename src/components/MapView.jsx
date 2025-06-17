@@ -14,42 +14,66 @@ import { flyTo } from '../helpers/map';
 import { toast } from 'react-toastify';
 import { LayerCard } from './SidePanel';
 import ReactDOMServer from 'react-dom/server';
+import { useApi } from '../hooks/useApi';
+import apiService from '../services/api';
+import PropTypes from 'prop-types';
 
 function MapView({
   selectedLayer,
   onLayerSelect,
   geoJsonData,
   setGeoJsonData,
+  selectedFilters,
 }) {
   const mapRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hoveredObject, setHoveredObject] = useState(null);
 
-  // Fetch GeoJSON data
+  // Fetch GeoJSON data from API
+  const { execute: getMapAreas } = useApi(apiService.getMapAreas);
+
+  // Fetch GeoJSON data when filters change
   useEffect(() => {
-    setIsLoading(true);
-    setError(null);
-    fetch('assets/sisteco.geojson')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Convert filters to query parameters
+        const queryParams = Object.entries(selectedFilters || {})
+          .filter(
+            ([, value]) => value !== null && value !== undefined && value !== ''
+          )
+          .reduce((acc, [key, value]) => {
+            if (typeof value === 'object') {
+              // Handle range filters (budget)
+              if (value.min) acc[`${key}_min`] = value.min;
+              if (value.max) acc[`${key}_max`] = value.max;
+            } else {
+              acc[key] = value;
+            }
+            return acc;
+          }, {});
+
+        const data = await getMapAreas(queryParams);
+
         if (!data || !data.features) {
           throw new Error('Invalid GeoJSON data format');
         }
+
         setGeoJsonData(data);
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message;
+        toast.error('Error loading map data: ' + errorMessage);
+        setError(errorMessage);
+      } finally {
         setIsLoading(false);
-      })
-      .catch((error) => {
-        toast.error('Error loading GeoJSON: ' + error.message);
-        setError(error.message);
-        setIsLoading(false);
-      });
-  }, [setGeoJsonData]);
+      }
+    };
+
+    fetchData();
+  }, [selectedFilters, getMapAreas, setGeoJsonData]);
 
   const [viewState, setViewState] = useState({
     longitude: MAP_CONFIG.center[0],
@@ -62,7 +86,7 @@ function MapView({
     bearing: 0,
   });
 
-  const onHover = useCallback((info) => {;
+  const onHover = useCallback((info) => {
     if (mapRef.current && INTERACTION_CONFIG.hover.enabled) {
       mapRef.current.getCanvas().style.cursor = info.object ? 'pointer' : '';
     }
@@ -217,5 +241,13 @@ function MapView({
     </div>
   );
 }
+
+MapView.propTypes = {
+  selectedLayer: PropTypes.object,
+  onLayerSelect: PropTypes.func.isRequired,
+  geoJsonData: PropTypes.object,
+  setGeoJsonData: PropTypes.func.isRequired,
+  selectedFilters: PropTypes.object,
+};
 
 export default MapView;
