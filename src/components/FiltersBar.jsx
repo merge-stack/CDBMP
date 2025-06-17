@@ -1,109 +1,57 @@
 import { useCallback, useState, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
-import CustomSelect from './shared/fields/CustomSelectField';
+import { FILTERS } from '../constants/filters';
+import SimpleSelect from './shared/Fields/SimpleSelect';
 
-const defaultOptions = [
-  { label: 'Option1', value: 'value1' },
-  { label: 'Option2', value: 'value2' },
-  { label: 'Option3', value: 'value3' },
-  { label: 'Option4', value: 'value4' },
-  { label: 'Option5', value: 'value5' },
-];
-
-const defaultFilters = [
-  {
-    id: 'area',
-    label: "Stato dell'area",
-    options: defaultOptions,
-  },
-  {
-    id: 'intervention',
-    label: 'Tipo di intervento',
-    options: defaultOptions,
-  },
-  {
-    id: 'budget',
-    label: 'Budget stimato',
-    type: 'range',
-    icon: (
-      <img
-        src="/svg/rangeFilterIcon.svg"
-        alt="Range filter"
-        className="w-4 h-4"
-      />
-    ),
-    options: {
-      min: 1000,
-      max: 15000,
-      step: 1000,
-    },
-  },
-  {
-    id: 'priority',
-    label: 'Priorità',
-    options: defaultOptions,
-  },
-  {
-    id: 'participation',
-    label: 'Modalità di partecipazione',
-    options: defaultOptions,
-  },
-];
-
-function BudgetFilterDropdown({ filter, onSelect, buttonRect, onClose }) {
+const BudgetFilterDropdown = ({ filter, onSelect, buttonRect, onClose }) => {
   const [range, setRange] = useState({
-    min: filter.options.min,
-    max: filter.options.max,
+    min: 0,
+    max: 0,
   });
 
-  const generateOptions = (min, max, step) =>
-    Array.from({ length: Math.floor((max - min) / step) + 1 }, (_, i) => {
-      const value = min + i * step;
-      return {
-        label: `€${value.toLocaleString()}`,
-        value,
-      };
-    });
+  // Memoize options to prevent unnecessary re-renders
+  const options = useMemo(() => filter.options, [filter.options]);
 
-  const minOptions = useMemo(
-    () => generateOptions(filter.options.min, range.max, filter.options.step),
-    [range.max, filter.options]
+  // Memoize the change handler
+  const handleChange = useCallback(
+    (key) => (value) => {
+      const newValue = Number(value);
+      setRange((prev) => {
+        const newRange = { ...prev, [key]: newValue };
+
+        // Only trigger onSelect if both min and max are set
+        if (key === 'max' && prev.min !== 0) {
+          onSelect(filter.id, { min: prev.min, max: newValue });
+          onClose();
+        } else if (key === 'min' && prev.max !== 0) {
+          onSelect(filter.id, { min: newValue, max: prev.max });
+          onClose();
+        }
+
+        return newRange;
+      });
+    },
+    [filter.id, onSelect, onClose]
   );
 
-  const maxOptions = useMemo(
-    () => generateOptions(range.min, filter.options.max, filter.options.step),
-    [range.min, filter.options]
+  // Memoize the select component render
+  const renderSelect = useCallback(
+    (label, value, options, onChange) => (
+      <div>
+        <label className="block text-sm font-medium mb-2">{label}</label>
+        <SimpleSelect
+          value={value}
+          onChange={onChange}
+          options={options}
+          placeholder={`Select ${label.toLowerCase()}`}
+        />
+      </div>
+    ),
+    []
   );
 
   if (!buttonRect) return null;
-
-  const handleChange = (key) => (value) =>
-    setRange((prev) => ({ ...prev, [key]: Number(value) }));
-
-  const renderSelect = (label, value, options, onChange) => (
-    <div>
-      <label className="block text-sm font-medium mb-2">{label}</label>
-      <div className="relative">
-        <CustomSelect value={value} onChange={onChange} options={options} />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-          <svg
-            className="w-4 h-4 text-gray-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
 
   return createPortal(
     <div
@@ -115,14 +63,32 @@ function BudgetFilterDropdown({ filter, onSelect, buttonRect, onClose }) {
     >
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
-          {renderSelect('Min', range.min, minOptions, handleChange('min'))}
-          {renderSelect('Max', range.max, maxOptions, handleChange('max'))}
+          {renderSelect('Min', range.min, options, handleChange('min'))}
+          {renderSelect('Max', range.max, options, handleChange('max'))}
         </div>
       </div>
     </div>,
     document.body
   );
-}
+};
+
+BudgetFilterDropdown.propTypes = {
+  filter: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    options: PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.string.isRequired,
+        label: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+  }).isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  buttonRect: PropTypes.shape({
+    bottom: PropTypes.number.isRequired,
+    left: PropTypes.number.isRequired,
+  }),
+};
 
 function DefaultFilterDropdown({
   filter,
@@ -147,7 +113,7 @@ function DefaultFilterDropdown({
         width: `${buttonRect.width}px`,
       }}
     >
-      <div className="py-1 max-h-60 overflow-auto">
+      <div className="py-1 max-h-64 overflow-auto">
         {filter.options.map((option) => (
           <button
             key={option.value}
@@ -174,7 +140,7 @@ function DefaultFilterDropdown({
 }
 
 function FiltersBar({
-  filters = defaultFilters,
+  filters = FILTERS,
   selectedFilters = {},
   onFilterSelect = () => {},
   isLoading = false,
@@ -240,7 +206,13 @@ function FiltersBar({
             >
               <div className="flex items-center justify-between gap-2 w-full">
                 <span>{filter.label}</span>
-                {filter.icon || (
+                {filter.type === 'range' ? (
+                  <img
+                    src="/svg/rangeFilterIcon.svg"
+                    alt="Range filter"
+                    className="w-4 h-4"
+                  />
+                ) : (
                   <svg
                     className={`w-4 h-4 transition-transform duration-200 text-black ${
                       openDropdown === filter.id ? 'rotate-180' : ''
