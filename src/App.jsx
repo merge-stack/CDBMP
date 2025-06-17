@@ -1,5 +1,3 @@
-'use client';
-
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -12,6 +10,7 @@ import SidePanel from './components/SidePanel';
 import DetailPanel from './components/DetailPanel';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LayersButton from './components/LayersButton';
 
 /**
  * Main App Component
@@ -45,6 +44,7 @@ function App() {
       >
         <Navbar />
         <FiltersBar />
+        <LayersButton />
         <Box
           sx={{
             display: 'flex',
