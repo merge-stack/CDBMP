@@ -57,7 +57,7 @@ export const FILTERS = [
         value: 5000,
       },
       {
-        label: '10K',
+        label: '€10K',
         value: 10000,
       },
       {

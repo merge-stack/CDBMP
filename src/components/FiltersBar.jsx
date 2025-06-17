@@ -1,13 +1,29 @@
 import { useCallback, useState, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
-import { FILTERS } from '../constants/filters';
 import SimpleSelect from './shared/Fields/SimpleSelect';
+import { FILTERS } from '../constants/filters';
+import { toast } from 'react-toastify';
 
-const BudgetFilterDropdown = ({ filter, onSelect, buttonRect, onClose }) => {
+// Initial state for filters
+const initialFilterState = {
+  area: '',
+  intervention: '',
+  budget: { min: 0, max: 0 },
+  priority: '',
+  participation: '',
+};
+
+const BudgetFilterDropdown = ({
+  filter,
+  onSelect,
+  selectedValue,
+  buttonRect,
+  onClose,
+}) => {
   const [range, setRange] = useState({
-    min: 0,
-    max: 0,
+    min: selectedValue?.min || 0,
+    max: selectedValue?.max || 0,
   });
 
   // Memoize options to prevent unnecessary re-renders
@@ -17,14 +33,29 @@ const BudgetFilterDropdown = ({ filter, onSelect, buttonRect, onClose }) => {
   const handleChange = useCallback(
     (key) => (value) => {
       const newValue = Number(value);
+
+      // Validate the new value
+      if (isNaN(newValue)) {
+        toast.error('Please select a valid number');
+        return;
+      }
+
       setRange((prev) => {
         const newRange = { ...prev, [key]: newValue };
 
         // Only trigger onSelect if both min and max are set
         if (key === 'max' && prev.min !== 0) {
+          if (newValue < prev.min) {
+            toast.error('Max value cannot be lesser than min value');
+            return prev;
+          }
           onSelect(filter.id, { min: prev.min, max: newValue });
           onClose();
         } else if (key === 'min' && prev.max !== 0) {
+          if (newValue > prev.max) {
+            toast.error('Min value cannot be greater than max value');
+            return prev;
+          }
           onSelect(filter.id, { min: newValue, max: prev.max });
           onClose();
         }
@@ -70,24 +101,6 @@ const BudgetFilterDropdown = ({ filter, onSelect, buttonRect, onClose }) => {
     </div>,
     document.body
   );
-};
-
-BudgetFilterDropdown.propTypes = {
-  filter: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    options: PropTypes.arrayOf(
-      PropTypes.shape({
-        value: PropTypes.string.isRequired,
-        label: PropTypes.string.isRequired,
-      })
-    ).isRequired,
-  }).isRequired,
-  onSelect: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  buttonRect: PropTypes.shape({
-    bottom: PropTypes.number.isRequired,
-    left: PropTypes.number.isRequired,
-  }),
 };
 
 function DefaultFilterDropdown({
@@ -139,15 +152,20 @@ function DefaultFilterDropdown({
   );
 }
 
-function FiltersBar({
-  filters = FILTERS,
-  selectedFilters = {},
-  onFilterSelect = () => {},
-  isLoading = false,
-}) {
+function FiltersBar({ isLoading = false }) {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [dropdownRect, setDropdownRect] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState(initialFilterState);
   const buttonRefs = useRef({});
+
+  // Memoize the current filter values
+  const currentFilters = useMemo(
+    () => ({
+      ...initialFilterState,
+      ...selectedFilters,
+    }),
+    [selectedFilters]
+  );
 
   const handleFilterClick = useCallback(
     (filterId) => {
@@ -165,20 +183,103 @@ function FiltersBar({
   );
 
   const handleOptionSelect = useCallback(
-    (filterId, option) => {
+    (filterId, value) => {
       if (!isLoading) {
-        onFilterSelect(filterId, option);
+        // Update the filter state
+        setSelectedFilters((prev) => ({
+          ...prev,
+          [filterId]: value,
+        }));
         setOpenDropdown(null);
         setDropdownRect(null);
       }
     },
-    [isLoading, onFilterSelect]
+    [isLoading]
   );
 
   const handleCloseDropdown = useCallback(() => {
     setOpenDropdown(null);
     setDropdownRect(null);
   }, []);
+
+  // Memoize the filter buttons to prevent unnecessary re-renders
+  const filterButtons = useMemo(
+    () =>
+      FILTERS.map((filter) => (
+        <div key={filter.id} className="flex-none">
+          <button
+            ref={(el) => (buttonRefs.current[filter.id] = el)}
+            className={`
+            filter-button
+            px-4 py-2 text-sm font-medium whitespace-nowrap rounded-md
+            transition-colors duration-200 min-w-[165px] md:min-w-[140px] w-fit
+            bg-white text-black hover:bg-white/90
+            flex items-center justify-between gap-2
+            ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+          `}
+            onClick={() => handleFilterClick(filter.id)}
+            disabled={isLoading}
+            aria-expanded={openDropdown === filter.id}
+            aria-haspopup="true"
+          >
+            <div className="flex items-center justify-between gap-2 w-full">
+              <span>{filter.label}</span>
+              {filter.type === 'range' ? (
+                <img
+                  src="/svg/rangeFilterIcon.svg"
+                  alt="Range filter"
+                  className="w-4 h-4"
+                />
+              ) : (
+                <svg
+                  className={`w-4 h-4 transition-transform duration-200 text-black ${
+                    openDropdown === filter.id ? 'rotate-180' : ''
+                  }`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              )}
+            </div>
+          </button>
+
+          {openDropdown === filter.id &&
+            (filter.type === 'range' ? (
+              <BudgetFilterDropdown
+                filter={filter}
+                selectedValue={currentFilters[filter.id]}
+                onSelect={handleOptionSelect}
+                buttonRect={dropdownRect}
+                onClose={handleCloseDropdown}
+              />
+            ) : (
+              <DefaultFilterDropdown
+                filter={filter}
+                selectedValue={currentFilters[filter.id]}
+                onSelect={handleOptionSelect}
+                buttonRect={dropdownRect}
+                onClose={handleCloseDropdown}
+              />
+            ))}
+        </div>
+      )),
+    [
+      currentFilters,
+      openDropdown,
+      dropdownRect,
+      isLoading,
+      handleFilterClick,
+      handleOptionSelect,
+      handleCloseDropdown,
+    ]
+  );
 
   return (
     <div className="fixed top-[95px] left-0 right-0 z-40">
@@ -187,99 +288,13 @@ function FiltersBar({
         role="toolbar"
         aria-label="Filter options"
       >
-        {filters.map((filter) => (
-          <div key={filter.id} className="flex-none">
-            <button
-              ref={(el) => (buttonRefs.current[filter.id] = el)}
-              className={`
-                filter-button
-                px-4 py-2 text-sm font-medium whitespace-nowrap rounded-md
-                transition-colors duration-200 min-w-[165px] md:min-w-[140px] w-fit
-                bg-white text-black hover:bg-white/90
-                flex items-center justify-between gap-2
-                ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
-              `}
-              onClick={() => handleFilterClick(filter.id)}
-              disabled={isLoading}
-              aria-expanded={openDropdown === filter.id}
-              aria-haspopup="true"
-            >
-              <div className="flex items-center justify-between gap-2 w-full">
-                <span>{filter.label}</span>
-                {filter.type === 'range' ? (
-                  <img
-                    src="/svg/rangeFilterIcon.svg"
-                    alt="Range filter"
-                    className="w-4 h-4"
-                  />
-                ) : (
-                  <svg
-                    className={`w-4 h-4 transition-transform duration-200 text-black ${
-                      openDropdown === filter.id ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                )}
-              </div>
-            </button>
-
-            {openDropdown === filter.id &&
-              (filter.type === 'range' ? (
-                <BudgetFilterDropdown
-                  filter={filter}
-                  onSelect={handleOptionSelect}
-                  buttonRect={dropdownRect}
-                  onClose={handleCloseDropdown}
-                />
-              ) : (
-                <DefaultFilterDropdown
-                  filter={filter}
-                  selectedValue={selectedFilters[filter.id]}
-                  onSelect={handleOptionSelect}
-                  buttonRect={dropdownRect}
-                  onClose={handleCloseDropdown}
-                />
-              ))}
-          </div>
-        ))}
+        {filterButtons}
       </div>
     </div>
   );
 }
 
 FiltersBar.propTypes = {
-  filters: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['default', 'range']),
-      icon: PropTypes.node,
-      options: PropTypes.oneOfType([
-        PropTypes.arrayOf(
-          PropTypes.shape({
-            value: PropTypes.string.isRequired,
-            label: PropTypes.string.isRequired,
-          })
-        ),
-        PropTypes.shape({
-          min: PropTypes.number.isRequired,
-          max: PropTypes.number.isRequired,
-          step: PropTypes.number,
-        }),
-      ]).isRequired,
-    })
-  ).isRequired,
-  selectedFilters: PropTypes.object,
-  onFilterSelect: PropTypes.func.isRequired,
   isLoading: PropTypes.bool,
 };
 
