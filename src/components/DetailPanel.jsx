@@ -20,11 +20,11 @@ const ImageCarousel = ({ images, currentIndex, onImageSelect }) => {
               }`}
             >
               <img
-                src={image || '/placeholder.svg'}
+                src={image || 'images/placeholder.jpg'}
                 alt={`Thumbnail ${index + 1}`}
                 className="w-12 aspect-square object-cover"
                 onError={(e) => {
-                  e.target.src = '/placeholder.jpg';
+                  e.target.src = 'images/placeholder.jpg';
                 }}
               />
             </button>
@@ -110,16 +110,15 @@ function DetailPanel({ layer, onClose }) {
   const images = useMemo(() => {
     // Using different images for demo purposes
     return [
-      '/public/images/forest1.jpeg',
-      '/public/images/forest2.jpeg',
-      '/public/images/forest1.jpeg',
-      '/public/images/forest2.jpeg',
-      '/public/images/forest1.jpeg',
+      '/images/forest1.jpeg',
+      '/images/forest2.jpeg',
+      '/images/forest1.jpeg',
+      '/images/forest2.jpeg',
+      '/images/forest1.jpeg',
     ];
   }, []);
 
-  const currentImage =
-    images[currentImageIndex] || '/public/images/forest1.jpeg';
+  const currentImage = images[currentImageIndex] || '/images/forest1.jpeg';
 
   const handleImageSelect = useCallback((index) => {
     setCurrentImageIndex(index);
@@ -158,13 +157,13 @@ function DetailPanel({ layer, onClose }) {
       <div className="relative">
         <div className="relative group">
           <img
-            src={currentImage || '/placeholder.svg'}
+            src={currentImage || 'images/placeholder.jpg'}
             alt={`${layer.code || layer.title} - Image ${
               currentImageIndex + 1
             }`}
             className="w-full h-[300px] object-cover"
             onError={(e) => {
-              e.target.src = '/placeholder.jpg';
+              e.target.src = 'images/placeholder.jpg';
             }}
           />
 
@@ -199,22 +198,6 @@ function DetailPanel({ layer, onClose }) {
         >
           <X className="w-6 h-6" />
         </button>
-
-        {/* Image thumbnails (old, will be removed if carousel is fully implemented here) */}
-        {/* <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 bg-white/50 p-1 rounded-lg backdrop-blur-sm">
-          {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="w-16 h-16 rounded-lg overflow-hidden border-2 border-white shadow-md"
-            >
-              <img
-                src="/public/images/forest1.jpeg" // Replace with dynamic image source
-                alt="Thumbnail"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ))}
-        </div> */}
       </div>
 
       <div className="p-6">

@@ -20,7 +20,7 @@ export const LayerCard = ({
 
   const imageUrl = useMemo(() => {
     try {
-      return new URL('/public/images/forest1.jpeg', window.location.origin)
+      return new URL('/images/forest1.jpeg', window.location.origin)
         .href;
     } catch {
       toast.error('Error creating image URL');
@@ -80,7 +80,7 @@ export const LayerCard = ({
             alt={layer.code}
             className="w-24 h-24 object-cover rounded-2xl"
             onError={(e) => {
-              e.target.src = '/public/images/placeholder.jpg';
+              e.target.src = '/images/placeholder.jpg';
             }}
           />
         ) : (

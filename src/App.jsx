@@ -1,5 +1,3 @@
-'use client';
-
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -12,6 +10,7 @@ import SidePanel from './components/SidePanel';
 import DetailPanel from './components/DetailPanel';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LayersButton from './components/LayersButton';
 
 /**
  * Main App Component
@@ -21,6 +20,7 @@ function App() {
   const [selectedLayer, setSelectedLayer] = useState(null);
   const [showDetailPanel, setShowDetailPanel] = useState(false);
   const [geoJsonData, setGeoJsonData] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
   const handleLayerSelect = (layer) => {
     setSelectedLayer(layer);
@@ -44,7 +44,11 @@ function App() {
         }}
       >
         <Navbar />
-        <FiltersBar />
+        <FiltersBar
+          selectedFilters={selectedFilters}
+          setSelectedFilters={setSelectedFilters}
+        />
+        <LayersButton />
         <Box
           sx={{
             display: 'flex',
@@ -63,6 +67,7 @@ function App() {
             selectedLayer={selectedLayer}
             geoJsonData={geoJsonData}
             setGeoJsonData={setGeoJsonData}
+            selectedFilters={selectedFilters}
           />
           {showDetailPanel && (
             <DetailPanel
