@@ -143,7 +143,7 @@ function MapView({
         filled: false, // This layer only handles the border
         stroked: true,
         getLineColor: [255, 0, 0, 255], // Always red border
-        getLineWidth: 20,
+        getLineWidth: 10,
         pickable: false, // Border layer should not be pickable for hover/click
         autoHighlight: false, // Disable autoHighlight for this layer
         parameters: {
