@@ -14,7 +14,10 @@ export const useFiltersStore = create(
     selectedFilters: initialFiltersState,
     setSelectedFilters: (filters) =>
       set((state) => {
-        state.selectedFilters = filters;
+        state.selectedFilters = {
+          ...state.selectedFilters,
+          ...filters,
+        };
       }),
     resetFilters: () =>
       set((state) => {

@@ -150,7 +150,6 @@ function FiltersBar() {
 
   // Filter store states
   const { selectedFilters, setSelectedFilters } = useFiltersStore();
-  console.log('selectedFilters: ', selectedFilters);
 
   const buttonRefs = useRef({});
 
@@ -172,10 +171,9 @@ function FiltersBar() {
   const handleOptionSelect = useCallback(
     (filterId, value) => {
       // Update the filter state
-      setSelectedFilters((prev) => ({
-        ...prev,
+      setSelectedFilters({
         [filterId]: value,
-      }));
+      });
       setOpenDropdown(null);
       setDropdownRect(null);
     },
