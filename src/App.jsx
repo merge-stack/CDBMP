@@ -1,8 +1,4 @@
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
 import { useState } from 'react';
-import theme from './styles/theme';
 import Navbar from './components/Navbar';
 import FiltersBar from './components/FiltersBar';
 import MapView from './components/MapView';
@@ -14,7 +10,7 @@ import LayersButton from './components/LayersButton';
 
 /**
  * Main App Component
- * Provides theme context and manages global state
+ * Provides global state and layout using Tailwind CSS
  */
 function App() {
   const [selectedLayer, setSelectedLayer] = useState(null);
@@ -33,64 +29,43 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100vh',
-          overflow: 'hidden',
-        }}
-      >
-        <Navbar />
-        <FiltersBar
+    <div className="flex flex-col h-screen overflow-hidden">
+      <Navbar />
+      <FiltersBar
+        selectedFilters={selectedFilters}
+        setSelectedFilters={setSelectedFilters}
+      />
+      <LayersButton />
+      <div className="flex flex-1 relative overflow-hidden">
+        <SidePanel
+          onLayerSelect={handleLayerSelect}
+          selectedLayer={selectedLayer}
+          geoJsonData={geoJsonData}
+        />
+        <MapView
+          onLayerSelect={handleLayerSelect}
+          selectedLayer={selectedLayer}
+          geoJsonData={geoJsonData}
+          setGeoJsonData={setGeoJsonData}
           selectedFilters={selectedFilters}
-          setSelectedFilters={setSelectedFilters}
         />
-        <LayersButton />
-        <Box
-          sx={{
-            display: 'flex',
-            flex: 1,
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <SidePanel
-            onLayerSelect={handleLayerSelect}
-            selectedLayer={selectedLayer}
-            geoJsonData={geoJsonData}
-          />
-          <MapView
-            onLayerSelect={handleLayerSelect}
-            selectedLayer={selectedLayer}
-            geoJsonData={geoJsonData}
-            setGeoJsonData={setGeoJsonData}
-            selectedFilters={selectedFilters}
-          />
-          {showDetailPanel && (
-            <DetailPanel
-              layer={selectedLayer}
-              onClose={handleDetailPanelClose}
-            />
-          )}
-        </Box>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </Box>
-    </ThemeProvider>
+        {showDetailPanel && (
+          <DetailPanel layer={selectedLayer} onClose={handleDetailPanelClose} />
+        )}
+      </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    </div>
   );
 }
 
