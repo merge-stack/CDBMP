@@ -12,10 +12,17 @@ const initialMapViewState = {
   bearing: 0,
 };
 
+const initialSelectedMapLayerState = {
+  id: 'attractions',
+  name: 'Attrazioni',
+  icon: '/svg/attrazioni.svg',
+};
+
 const useMapStore = create((set) => ({
   geoJsonData: null,
   selectedLayer: null,
   mapViewState: initialMapViewState,
+  selectedMapLayer: initialSelectedMapLayerState,
 
   setGeoJsonData: (data) => set((state) => ({ ...state, geoJsonData: data })),
 
@@ -28,6 +35,9 @@ const useMapStore = create((set) => ({
       mapViewState: { ...state.mapViewState, ...viewState },
     })),
 
+  setSelectedMapLayer: (mapLayer) =>
+    set((state) => ({ ...state, selectedMapLayer: mapLayer })),
+
   resetMapViewState: () =>
     set((state) => ({ ...state, mapViewState: initialMapViewState })),
 
@@ -36,6 +46,7 @@ const useMapStore = create((set) => ({
       geoJsonData: null,
       selectedLayer: null,
       mapViewState: initialMapViewState,
+      selectedMapLayer: initialSelectedMapLayerState,
     }),
 }));
 

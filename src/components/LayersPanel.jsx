@@ -1,11 +1,11 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
+import useMapStore from '../store/useMapStore';
 
 const LayerCard = ({ layer, isActive, onToggle }) => {
   return (
     <div
       className="flex flex-col items-center cursor-pointer transition-all duration-200 p-3"
-      onClick={() => onToggle(layer.id)}
+      onClick={() => onToggle(layer)}
     >
       {/* Icon Container */}
       <div
@@ -42,35 +42,36 @@ LayerCard.propTypes = {
   onToggle: PropTypes.func.isRequired,
 };
 
+const layers = [
+  {
+    id: 'attractions',
+    name: 'Attrazioni',
+    icon: '/svg/attrazioni.svg',
+  },
+  {
+    id: 'fire2018',
+    name: 'Incendio 2018',
+    icon: '/svg/incendio.svg',
+  },
+  {
+    id: 'paths',
+    name: 'Sentieri',
+    icon: '/svg/sentieri.svg',
+  },
+  {
+    id: 'fountains',
+    name: 'Fonti',
+    icon: '/svg/fonti.svg',
+  },
+];
+
 const LayersPanel = ({ isOpen, position }) => {
-  const [activeLayer, setActiveLayer] = useState('attractions');
+  const { selectedMapLayer, setSelectedMapLayer } = useMapStore();
 
-  const layers = [
-    {
-      id: 'attractions',
-      name: 'Attrazioni',
-      icon: '/svg/attrazioni.svg',
-    },
-    {
-      id: 'fire2018',
-      name: 'Incendio 2018',
-      icon: '/svg/incendio.svg',
-    },
-    {
-      id: 'paths',
-      name: 'Sentieri',
-      icon: '/svg/sentieri.svg',
-    },
-    {
-      id: 'fountains',
-      name: 'Fonti',
-      icon: '/svg/fonti.svg',
-    },
-  ];
-
-  const handleLayerToggle = (layerId) => {
-    const newActiveLayer = layerId === activeLayer ? '' : layerId;
-    setActiveLayer(newActiveLayer);
+  const handleLayerToggle = (layer) => {
+    const newActiveMapLayer =
+      layer.id === selectedMapLayer.id ? selectedMapLayer : layer;
+    setSelectedMapLayer(newActiveMapLayer);
   };
 
   if (!isOpen) return null;
@@ -91,7 +92,7 @@ const LayersPanel = ({ isOpen, position }) => {
             <LayerCard
               key={layer.id}
               layer={layer}
-              isActive={activeLayer === layer.id}
+              isActive={selectedMapLayer.id === layer.id}
               onToggle={handleLayerToggle}
             />
           ))}
@@ -103,7 +104,6 @@ const LayersPanel = ({ isOpen, position }) => {
 
 LayersPanel.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
   position: PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
