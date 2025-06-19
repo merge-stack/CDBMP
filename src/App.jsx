@@ -1,11 +1,11 @@
 import { useState } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './components/Navbar';
 import FiltersBar from './components/FiltersBar';
 import MapView from './components/MapView';
 import SidePanel from './components/SidePanel';
 import DetailPanel from './components/DetailPanel';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import LayersButton from './components/LayersButton';
 
 /**
@@ -16,7 +16,6 @@ function App() {
   const [selectedLayer, setSelectedLayer] = useState(null);
   const [showDetailPanel, setShowDetailPanel] = useState(false);
   const [geoJsonData, setGeoJsonData] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState([]);
 
   const handleLayerSelect = (layer) => {
     setSelectedLayer(layer);
@@ -31,10 +30,7 @@ function App() {
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <Navbar />
-      <FiltersBar
-        selectedFilters={selectedFilters}
-        setSelectedFilters={setSelectedFilters}
-      />
+      <FiltersBar />
       <LayersButton />
       <div className="flex flex-1 relative overflow-hidden">
         <SidePanel
@@ -47,7 +43,6 @@ function App() {
           selectedLayer={selectedLayer}
           geoJsonData={geoJsonData}
           setGeoJsonData={setGeoJsonData}
-          selectedFilters={selectedFilters}
         />
         {showDetailPanel && (
           <DetailPanel layer={selectedLayer} onClose={handleDetailPanelClose} />

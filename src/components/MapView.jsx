@@ -17,18 +17,20 @@ import ReactDOMServer from 'react-dom/server';
 import { useApi } from '../hooks/useApi';
 import apiService from '../services/api';
 import PropTypes from 'prop-types';
+import useFiltersStore from '../store/useFiltersStore';
 
 function MapView({
   selectedLayer,
   onLayerSelect,
   geoJsonData,
   setGeoJsonData,
-  selectedFilters,
 }) {
   const mapRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hoveredObject, setHoveredObject] = useState(null);
+
+  const { selectedFilters } = useFiltersStore();
 
   // Fetch GeoJSON data from API
   const { execute: getMapAreas } = useApi(apiService.getMapAreas);
@@ -247,7 +249,6 @@ MapView.propTypes = {
   onLayerSelect: PropTypes.func.isRequired,
   geoJsonData: PropTypes.object,
   setGeoJsonData: PropTypes.func.isRequired,
-  selectedFilters: PropTypes.object,
 };
 
 export default MapView;

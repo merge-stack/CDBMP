@@ -4,15 +4,7 @@ import PropTypes from 'prop-types';
 import SimpleSelect from './shared/Fields/SimpleSelect';
 import { FILTERS } from '../constants/filters';
 import { toast } from 'react-toastify';
-
-// Initial state for filters
-const initialFilterState = {
-  area: '',
-  intervention: '',
-  budget: { min: 0, max: 0 },
-  priority: '',
-  participation: '',
-};
+import useFiltersStore from '../store/useFiltersStore';
 
 const BudgetFilterDropdown = ({
   filter,
@@ -152,24 +144,15 @@ function DefaultFilterDropdown({
   );
 }
 
-function FiltersBar({
-  isLoading = false,
-  selectedFilters,
-  setSelectedFilters,
-}) {
+function FiltersBar() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [dropdownRect, setDropdownRect] = useState(null);
 
-  const buttonRefs = useRef({});
+  // Filter store states
+  const { selectedFilters, setSelectedFilters } = useFiltersStore();
+  console.log('selectedFilters: ', selectedFilters);
 
-  // Memoize the current filter values
-  const currentFilters = useMemo(
-    () => ({
-      ...initialFilterState,
-      ...selectedFilters,
-    }),
-    [selectedFilters]
-  );
+  const buttonRefs = useRef({});
 
   const handleFilterClick = useCallback(
     (filterId) => {
@@ -188,17 +171,15 @@ function FiltersBar({
 
   const handleOptionSelect = useCallback(
     (filterId, value) => {
-      if (!isLoading) {
-        // Update the filter state
-        setSelectedFilters((prev) => ({
-          ...prev,
-          [filterId]: value,
-        }));
-        setOpenDropdown(null);
-        setDropdownRect(null);
-      }
+      // Update the filter state
+      setSelectedFilters((prev) => ({
+        ...prev,
+        [filterId]: value,
+      }));
+      setOpenDropdown(null);
+      setDropdownRect(null);
     },
-    [isLoading]
+    [setSelectedFilters]
   );
 
   const handleCloseDropdown = useCallback(() => {
@@ -219,10 +200,8 @@ function FiltersBar({
             transition-colors duration-200 min-w-[165px] md:min-w-[140px] w-fit
             bg-white text-black hover:bg-white/90
             flex items-center justify-between gap-2
-            ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
           `}
             onClick={() => handleFilterClick(filter.id)}
-            disabled={isLoading}
             aria-expanded={openDropdown === filter.id}
             aria-haspopup="true"
           >
@@ -258,7 +237,7 @@ function FiltersBar({
             (filter.type === 'range' ? (
               <BudgetFilterDropdown
                 filter={filter}
-                selectedValue={currentFilters[filter.id]}
+                selectedValue={selectedFilters[filter.id]}
                 onSelect={handleOptionSelect}
                 buttonRect={dropdownRect}
                 onClose={handleCloseDropdown}
@@ -266,7 +245,7 @@ function FiltersBar({
             ) : (
               <DefaultFilterDropdown
                 filter={filter}
-                selectedValue={currentFilters[filter.id]}
+                selectedValue={selectedFilters[filter.id]}
                 onSelect={handleOptionSelect}
                 buttonRect={dropdownRect}
                 onClose={handleCloseDropdown}
@@ -275,10 +254,9 @@ function FiltersBar({
         </div>
       )),
     [
-      currentFilters,
+      selectedFilters,
       openDropdown,
       dropdownRect,
-      isLoading,
       handleFilterClick,
       handleOptionSelect,
       handleCloseDropdown,
@@ -297,9 +275,5 @@ function FiltersBar({
     </div>
   );
 }
-
-FiltersBar.propTypes = {
-  isLoading: PropTypes.bool,
-};
 
 export default FiltersBar;
