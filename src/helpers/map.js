@@ -9,7 +9,7 @@ const DEFAULT_TRANSITION_PROPS = {
   transitionEasing: easeCubic,
 };
 
-export const flyTo = ({ feature, setViewState, options = {} }) => {
+export const flyTo = ({ feature, setMapViewState, options = {} }) => {
   if (!feature || !feature.geometry) {
     toast.error('Invalid feature provided to flyTo');
     return;
@@ -80,14 +80,13 @@ export const flyTo = ({ feature, setViewState, options = {} }) => {
       )
     );
 
-    setViewState((prev) => ({
-      ...prev,
+    setMapViewState({
       longitude: center.geometry.coordinates[0],
       latitude: center.geometry.coordinates[1],
       zoom,
       ...DEFAULT_TRANSITION_PROPS,
       ...options,
-    }));
+    });
   } catch (error) {
     toast.error('Error in flyTo: ' + error.message);
   }

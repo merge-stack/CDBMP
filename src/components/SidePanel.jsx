@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { Plus, X } from 'lucide-react';
+import useMapStore from '../store/useMapStore';
 
 export const LayerCard = ({
   layer,
@@ -20,8 +21,7 @@ export const LayerCard = ({
 
   const imageUrl = useMemo(() => {
     try {
-      return new URL('/images/forest1.jpeg', window.location.origin)
-        .href;
+      return new URL('/images/forest1.jpeg', window.location.origin).href;
     } catch {
       toast.error('Error creating image URL');
       return '';
@@ -220,25 +220,16 @@ const LayerCardSkeleton = () => (
  * SidePanel Component
  * Displays a list of forest layers with their details and allows selection
  */
-function SidePanel({
-  selectedLayer,
-  onLayerSelect,
-  onLayerAdd,
-  geoJsonData,
-  isLoading,
-}) {
+function SidePanel({ onLayerSelect, isLoading }) {
+  // Map store states
+  const { selectedLayer, setSelectedLayer, geoJsonData } = useMapStore();
+
   const handleLayerClick = useCallback(
     (layer) => {
+      setSelectedLayer(layer);
       onLayerSelect(layer);
     },
-    [onLayerSelect]
-  );
-
-  const handleLayerAdd = useCallback(
-    (layer) => {
-      onLayerAdd?.(layer);
-    },
-    [onLayerAdd]
+    [onLayerSelect, setSelectedLayer]
   );
 
   if (isLoading) {
@@ -272,7 +263,7 @@ function SidePanel({
             layer={layer}
             selected={isSelected}
             onClick={() => handleLayerClick(layer)}
-            onAddClick={handleLayerAdd}
+            onAddClick={() => {}}
           />
         );
       })}
@@ -281,32 +272,8 @@ function SidePanel({
 }
 
 SidePanel.propTypes = {
-  selectedLayer: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    code: PropTypes.string.isRequired,
-    municipality: PropTypes.string,
-  }),
   onLayerSelect: PropTypes.func.isRequired,
   onLayerAdd: PropTypes.func,
-  geoJsonData: PropTypes.shape({
-    features: PropTypes.arrayOf(
-      PropTypes.shape({
-        properties: PropTypes.shape({
-          id: PropTypes.number.isRequired,
-          code: PropTypes.string.isRequired,
-          municipality: PropTypes.string,
-        }).isRequired,
-      })
-    ),
-  }),
-  isLoading: PropTypes.bool,
-};
-
-SidePanel.defaultProps = {
-  selectedLayer: null,
-  onLayerAdd: () => {},
-  geoJsonData: { features: [] },
-  isLoading: false,
 };
 
 export default SidePanel;

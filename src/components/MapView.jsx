@@ -18,19 +18,24 @@ import { useApi } from '../hooks/useApi';
 import apiService from '../services/api';
 import PropTypes from 'prop-types';
 import useFiltersStore from '../store/useFiltersStore';
+import useMapStore from '../store/useMapStore';
 
-function MapView({
-  selectedLayer,
-  onLayerSelect,
-  geoJsonData,
-  setGeoJsonData,
-}) {
+function MapView({ onLayerSelect }) {
   const mapRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hoveredObject, setHoveredObject] = useState(null);
 
+  // Store Sates
   const { selectedFilters } = useFiltersStore();
+  const {
+    selectedLayer,
+    setSelectedLayer,
+    geoJsonData,
+    setGeoJsonData,
+    mapViewState,
+    setMapViewState,
+  } = useMapStore();
 
   // Fetch GeoJSON data from API
   const { execute: getMapAreas } = useApi(apiService.getMapAreas);
@@ -77,17 +82,6 @@ function MapView({
     fetchData();
   }, [selectedFilters, getMapAreas, setGeoJsonData]);
 
-  const [viewState, setViewState] = useState({
-    longitude: MAP_CONFIG.center[0],
-    latitude: MAP_CONFIG.center[1],
-    zoom: MAP_CONFIG.defaultZoom,
-    maxZoom: MAP_CONFIG.maxZoom,
-    minZoom: MAP_CONFIG.minZoom,
-    padding: MAP_CONFIG.padding,
-    pitch: 0,
-    bearing: 0,
-  });
-
   const onHover = useCallback((info) => {
     if (mapRef.current && INTERACTION_CONFIG.hover.enabled) {
       mapRef.current.getCanvas().style.cursor = info.object ? 'pointer' : '';
@@ -102,11 +96,12 @@ function MapView({
       const feature = event.object;
 
       // First call onLayerSelect with the feature data
+      setSelectedLayer({ ...feature.properties });
       onLayerSelect({
         ...feature.properties,
       });
     },
-    [onLayerSelect]
+    [onLayerSelect, setSelectedLayer]
   );
 
   // Define deck.gl layers inside the component to access selectedLayer
@@ -159,9 +154,9 @@ function MapView({
   const debouncedViewStateUpdate = useMemo(
     () =>
       debounce((newViewState) => {
-        setViewState((prev) => ({ ...prev, ...newViewState }));
+        setMapViewState(newViewState);
       }, INTERACTION_CONFIG.hover.delayMs),
-    []
+    [setMapViewState]
   );
 
   // Clean up debounce on unmount
@@ -180,15 +175,14 @@ function MapView({
       if (feature) {
         flyTo({
           feature,
-          setViewState,
+          setMapViewState,
           options: {
-            padding: ANIMATION_CONFIG.padding,
             transitionDuration: ANIMATION_CONFIG.duration,
           },
         });
       }
     }
-  }, [selectedLayer, geoJsonData]);
+  }, [selectedLayer, geoJsonData, setMapViewState]);
 
   // Add error boundary for map rendering
   if (error) {
@@ -207,7 +201,7 @@ function MapView({
         </div>
       )}
       <DeckGL
-        initialViewState={viewState}
+        initialViewState={mapViewState}
         controller={true}
         layers={layers}
         onViewStateChange={({ viewState }) =>
@@ -233,7 +227,7 @@ function MapView({
       >
         <Map
           ref={mapRef}
-          {...viewState}
+          {...mapViewState}
           mapStyle={MAP_CONFIG.style}
           mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
         >
@@ -245,10 +239,7 @@ function MapView({
 }
 
 MapView.propTypes = {
-  selectedLayer: PropTypes.object,
   onLayerSelect: PropTypes.func.isRequired,
-  geoJsonData: PropTypes.object,
-  setGeoJsonData: PropTypes.func.isRequired,
 };
 
 export default MapView;

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { TECHNICAL_DETAILS } from '../constants/details';
 import { toast } from 'react-toastify';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import useMapStore from '../store/useMapStore';
 
 const ImageCarousel = ({ images, currentIndex, onImageSelect }) => {
   return (
@@ -103,8 +104,11 @@ TechnicalDetails.propTypes = {
   ).isRequired,
 };
 
-function DetailPanel({ layer, onClose }) {
+function DetailPanel({ onClose }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Store States
+  const { selectedLayer } = useMapStore();
 
   // Memoize the image URLs to prevent unnecessary re-renders
   const images = useMemo(() => {
@@ -137,8 +141,8 @@ function DetailPanel({ layer, onClose }) {
       // Implement sharing functionality
       navigator
         .share({
-          title: layer?.code,
-          text: `Check out this forest area: ${layer?.code}`,
+          title: selectedLayer?.code,
+          text: `Check out this forest area: ${selectedLayer?.code}`,
           url: window.location.href,
         })
         .catch(() => {
@@ -147,10 +151,10 @@ function DetailPanel({ layer, onClose }) {
     } catch {
       toast.error('Share API not supported');
     }
-  }, [layer?.code]);
+  }, [selectedLayer?.code]);
 
-  // Early return if no layer
-  if (!layer) return null;
+  // Early return if no selectedLayer
+  if (!selectedLayer) return null;
 
   return (
     <div className="absolute top-[180px] right-5 w-[500px] max-h-[calc(100vh-200px)] overflow-y-auto bg-white rounded-xl shadow-lg z-[1000]">
@@ -158,7 +162,7 @@ function DetailPanel({ layer, onClose }) {
         <div className="relative group">
           <img
             src={currentImage || 'images/placeholder.jpg'}
-            alt={`${layer.code || layer.title} - Image ${
+            alt={`${selectedLayer.code || selectedLayer.title} - Image ${
               currentImageIndex + 1
             }`}
             className="w-full h-[300px] object-cover"
@@ -203,10 +207,10 @@ function DetailPanel({ layer, onClose }) {
       <div className="p-6">
         <div className="flex flex-col items-start mb-3 relative w-full">
           <h3 className="text-4xl font-extrabold text-gray-900 mb-1 w-full text-left">
-            {layer.code}
+            {selectedLayer.code}
           </h3>
           <p className="text-base text-gray-600 w-full text-left mb-4">
-            {layer.coordinates || '40.4002192 N - 12.302934 O'}
+            {selectedLayer.coordinates || '40.4002192 N - 12.302934 O'}
           </p>
 
           {/* Info Blocks */}
@@ -221,7 +225,7 @@ function DetailPanel({ layer, onClose }) {
                 />
 
                 <p className="text-lg font-bold text-[#40523F]">
-                  {layer.area || '12ha'}
+                  {selectedLayer.area || '12ha'}
                 </p>
               </div>
               <p className="text-xs text-[#818181]">Dimensioni</p>
@@ -236,7 +240,7 @@ function DetailPanel({ layer, onClose }) {
                   className={`w-4 h-4 mr-2`}
                 />
                 <p className="text-lg font-bold text-[#40523F]">
-                  {layer.intervent || 'Manutenzione'}
+                  {selectedLayer.intervent || 'Manutenzione'}
                 </p>
               </div>
               <p className="text-xs text-[#818181]">Intervento</p>
@@ -251,7 +255,7 @@ function DetailPanel({ layer, onClose }) {
                   className={`w-4 h-4 mr-2`}
                 />
                 <p className="text-lg font-bold text-[#40523F]">
-                  {layer.budget_estimated || '€200K'}
+                  {selectedLayer.budget_estimated || '€200K'}
                 </p>
               </div>
               <p className="text-xs text-[#818181]">Budget stimato</p>
@@ -298,16 +302,6 @@ function DetailPanel({ layer, onClose }) {
 }
 
 DetailPanel.propTypes = {
-  layer: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    code: PropTypes.string.isRequired,
-    municipality: PropTypes.string,
-    description: PropTypes.string,
-    coordinates: PropTypes.string,
-    area: PropTypes.string,
-    intervent: PropTypes.string,
-    budget_estimated: PropTypes.string,
-  }),
   onClose: PropTypes.func.isRequired,
 };
 

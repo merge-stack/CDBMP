@@ -13,18 +13,15 @@ import LayersButton from './components/LayersButton';
  * Provides global state and layout using Tailwind CSS
  */
 function App() {
-  const [selectedLayer, setSelectedLayer] = useState(null);
   const [showDetailPanel, setShowDetailPanel] = useState(false);
-  const [geoJsonData, setGeoJsonData] = useState(null);
 
-  const handleLayerSelect = (layer) => {
-    setSelectedLayer(layer);
+  const handleLayerSelect = () => {
     setShowDetailPanel(true);
   };
 
   const handleDetailPanelClose = () => {
     setShowDetailPanel(false);
-    setSelectedLayer(null);
+    // setSelectedLayer(null);
   };
 
   return (
@@ -33,20 +30,9 @@ function App() {
       <FiltersBar />
       <LayersButton />
       <div className="flex flex-1 relative overflow-hidden">
-        <SidePanel
-          onLayerSelect={handleLayerSelect}
-          selectedLayer={selectedLayer}
-          geoJsonData={geoJsonData}
-        />
-        <MapView
-          onLayerSelect={handleLayerSelect}
-          selectedLayer={selectedLayer}
-          geoJsonData={geoJsonData}
-          setGeoJsonData={setGeoJsonData}
-        />
-        {showDetailPanel && (
-          <DetailPanel layer={selectedLayer} onClose={handleDetailPanelClose} />
-        )}
+        <SidePanel />
+        <MapView onLayerSelect={handleLayerSelect} />
+        {showDetailPanel && <DetailPanel onClose={handleDetailPanelClose} />}
       </div>
       <ToastContainer
         position="top-right"
