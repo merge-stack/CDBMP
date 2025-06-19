@@ -11,7 +11,6 @@ export const useApi = (apiMethod) => {
       try {
         setLoading(true);
         setError(null);
-        debugger
         const response = await apiMethod(...args);
         setData(response.data);
         return response.data;
