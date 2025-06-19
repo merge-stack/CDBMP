@@ -4,6 +4,7 @@ import { TECHNICAL_DETAILS } from '../constants/details';
 import { toast } from 'react-toastify';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import useMapStore from '../store/useMapStore';
+import useUIStore from '../store/useUIStore';
 
 const ImageCarousel = ({ images, currentIndex, onImageSelect }) => {
   return (
@@ -104,11 +105,12 @@ TechnicalDetails.propTypes = {
   ).isRequired,
 };
 
-function DetailPanel({ onClose }) {
+function DetailPanel() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Store States
-  const { selectedLayer } = useMapStore();
+  const { selectedLayer, setSelectedLayer } = useMapStore();
+  const { setShowDetailPanel } = useUIStore();
 
   // Memoize the image URLs to prevent unnecessary re-renders
   const images = useMemo(() => {
@@ -153,6 +155,11 @@ function DetailPanel({ onClose }) {
     }
   }, [selectedLayer?.code]);
 
+  const handleClose = () => {
+    setShowDetailPanel(false);
+    setSelectedLayer(null);
+  };
+
   // Early return if no selectedLayer
   if (!selectedLayer) return null;
 
@@ -196,7 +203,7 @@ function DetailPanel({ onClose }) {
           />
         </div>
         <button
-          onClick={onClose}
+          onClick={handleClose}
           aria-label="close panel"
           className="absolute top-3 left-3 bg-[#E3F1E4] text-[#426345] rounded-full w-10 h-10 flex items-center justify-center"
         >
@@ -300,9 +307,5 @@ function DetailPanel({ onClose }) {
     </div>
   );
 }
-
-DetailPanel.propTypes = {
-  onClose: PropTypes.func.isRequired,
-};
 
 export default DetailPanel;

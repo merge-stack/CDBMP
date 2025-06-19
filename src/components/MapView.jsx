@@ -1,7 +1,7 @@
 import { useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import Map, { NavigationControl } from 'react-map-gl/mapbox';
 import { DeckGL } from '@deck.gl/react';
-import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { GeoJsonLayer } from '@deck.gl/layers';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import debounce from 'lodash/debounce';
 import {
@@ -16,11 +16,11 @@ import { LayerCard } from './SidePanel';
 import ReactDOMServer from 'react-dom/server';
 import { useApi } from '../hooks/useApi';
 import apiService from '../services/api';
-import PropTypes from 'prop-types';
 import useFiltersStore from '../store/useFiltersStore';
 import useMapStore from '../store/useMapStore';
+import useUIStore from '../store/useUIStore';
 
-function MapView({ onLayerSelect }) {
+function MapView() {
   const mapRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,6 +36,7 @@ function MapView({ onLayerSelect }) {
     mapViewState,
     setMapViewState,
   } = useMapStore();
+  const { setShowDetailPanel } = useUIStore();
 
   // Fetch GeoJSON data from API
   const { execute: getMapAreas } = useApi(apiService.getMapAreas);
@@ -95,13 +96,12 @@ function MapView({ onLayerSelect }) {
 
       const feature = event.object;
 
-      // First call onLayerSelect with the feature data
+      // First call setSelectedLayer with the feature data
       setSelectedLayer({ ...feature.properties });
-      onLayerSelect({
-        ...feature.properties,
-      });
+      //Open detail panel
+      setShowDetailPanel(true);
     },
-    [onLayerSelect, setSelectedLayer]
+    [setShowDetailPanel, setSelectedLayer]
   );
 
   // Define deck.gl layers inside the component to access selectedLayer
@@ -237,9 +237,5 @@ function MapView({ onLayerSelect }) {
     </div>
   );
 }
-
-MapView.propTypes = {
-  onLayerSelect: PropTypes.func.isRequired,
-};
 
 export default MapView;

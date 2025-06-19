@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { Plus, X } from 'lucide-react';
 import useMapStore from '../store/useMapStore';
+import useUIStore from '../store/useUIStore';
 
 export const LayerCard = ({
   layer,
@@ -220,16 +221,17 @@ const LayerCardSkeleton = () => (
  * SidePanel Component
  * Displays a list of forest layers with their details and allows selection
  */
-function SidePanel({ onLayerSelect, isLoading }) {
-  // Map store states
+function SidePanel({ isLoading }) {
+  // Store states
   const { selectedLayer, setSelectedLayer, geoJsonData } = useMapStore();
+  const { setShowDetailPanel } = useUIStore();
 
   const handleLayerClick = useCallback(
     (layer) => {
       setSelectedLayer(layer);
-      onLayerSelect(layer);
+      setShowDetailPanel(true);
     },
-    [onLayerSelect, setSelectedLayer]
+    [setSelectedLayer, setShowDetailPanel]
   );
 
   if (isLoading) {
@@ -270,10 +272,5 @@ function SidePanel({ onLayerSelect, isLoading }) {
     </div>
   );
 }
-
-SidePanel.propTypes = {
-  onLayerSelect: PropTypes.func.isRequired,
-  onLayerAdd: PropTypes.func,
-};
 
 export default SidePanel;
