@@ -20,9 +20,43 @@ import useFiltersStore from '../store/useFiltersStore';
 import useMapStore from '../store/useMapStore';
 import useUIStore from '../store/useUIStore';
 
+const MapLoader = () => (
+  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-70 z-50">
+    <svg
+      className="animate-spin h-16 w-16 text-green-700 mb-4"
+      viewBox="0 0 50 50"
+    >
+      <circle
+        className="opacity-25"
+        cx="25"
+        cy="25"
+        r="20"
+        stroke="currentColor"
+        strokeWidth="5"
+        fill="none"
+      />
+      <circle
+        className="opacity-75"
+        cx="25"
+        cy="25"
+        r="20"
+        stroke="currentColor"
+        strokeWidth="5"
+        strokeDasharray="31.4 31.4"
+        fill="none"
+      />
+    </svg>
+    <span className="text-lg font-semibold text-green-800">
+      Loading map data...
+    </span>
+    <span className="text-sm text-green-600 mt-2">
+      Please wait while we fetch the latest map data.
+    </span>
+  </div>
+);
+
 function MapView() {
   const mapRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hoveredObject, setHoveredObject] = useState(null);
 
@@ -36,7 +70,7 @@ function MapView() {
     mapViewState,
     setMapViewState,
   } = useMapStore();
-  const { setShowDetailPanel } = useUIStore();
+  const { setShowDetailPanel, isLoading } = useUIStore();
 
   // Fetch GeoJSON data from API
   const { execute: getMapAreas } = useApi(apiService.getMapAreas);
@@ -45,7 +79,6 @@ function MapView() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
         setError(null);
 
         // Convert filters to query parameters
@@ -75,8 +108,6 @@ function MapView() {
         const errorMessage = error.response?.data?.message || error.message;
         toast.error('Error loading map data: ' + errorMessage);
         setError(errorMessage);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -195,11 +226,8 @@ function MapView() {
 
   return (
     <div className="flex-1 h-[calc(100vh-163px)] mt-[163px] relative">
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 z-1000">
-          Loading map data...
-        </div>
-      )}
+      {isLoading && <MapLoader />}
+
       <DeckGL
         initialViewState={mapViewState}
         controller={true}

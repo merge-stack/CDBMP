@@ -195,7 +195,7 @@ LayerCard.propTypes = {
 };
 
 const LayerCardSkeleton = () => (
-  <div className="flex p-5 mb-4 bg-white rounded-2xl shadow-md">
+  <div className="flex p-4 mb-4 bg-white rounded-2xl shadow-md">
     <div className="w-24 h-24 bg-gray-200 rounded-2xl mr-4 animate-pulse" />
     <div className="flex-1 flex flex-col gap-2">
       <div className="flex items-center justify-between">
@@ -221,10 +221,10 @@ const LayerCardSkeleton = () => (
  * SidePanel Component
  * Displays a list of forest layers with their details and allows selection
  */
-function SidePanel({ isLoading }) {
+function SidePanel() {
   // Store states
   const { selectedLayer, setSelectedLayer, geoJsonData } = useMapStore();
-  const { setShowDetailPanel } = useUIStore();
+  const { setShowDetailPanel, isLoading } = useUIStore();
 
   const handleLayerClick = useCallback(
     (layer) => {
@@ -237,8 +237,8 @@ function SidePanel({ isLoading }) {
   if (isLoading) {
     return (
       <div className="w-[450px] h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
-        {[1, 2, 3].map((key) => (
-          <LayerCardSkeleton key={key} />
+        {Array.from({ length: 7 }).map((_, index) => (
+          <LayerCardSkeleton key={index} />
         ))}
       </div>
     );

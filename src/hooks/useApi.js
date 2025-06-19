@@ -1,15 +1,18 @@
 import { useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
+import useUIStore from '../store/useUIStore';
 
 export const useApi = (apiMethod) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Store States
+  const { setIsLoading } = useUIStore();
 
   const execute = useCallback(
     async (...args) => {
       try {
-        setLoading(true);
+        setIsLoading(true);
         setError(null);
         const response = await apiMethod(...args);
         setData(response.data);
@@ -20,15 +23,14 @@ export const useApi = (apiMethod) => {
         toast.error(errorMessage);
         throw err;
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     },
-    [apiMethod]
+    [apiMethod, setIsLoading]
   );
 
   return {
     data,
-    loading,
     error,
     execute,
   };
