@@ -16,15 +16,17 @@ function App() {
   const { showDetailPanel } = useUIStore();
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="h-screen overflow-hidden grid grid-rows-[auto_auto_1fr] grid-cols-1">
       <Navbar />
       <FiltersBar />
-      <LayersButton />
-      <div className="flex flex-1 relative overflow-hidden">
+      <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] h-full max-h-[calc(100vh-163px)]">
         <SidePanel />
-        <MapView />
-        {showDetailPanel && <DetailPanel />}
+        <div className="relative h-[calc(100vh-163px)] w-full">
+          <MapView />
+          {showDetailPanel && <DetailPanel />}
+        </div>
       </div>
+      <LayersButton />
       <ToastContainer
         position="top-right"
         autoClose={5000}

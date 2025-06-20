@@ -14,7 +14,7 @@ function Navbar({ onLogoClick, onSignInClick }) {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-primary z-50">
+    <nav className="sticky top-0 bg-primary z-50">
       <div className="flex justify-between items-center min-h-[95px] px-6 md:px-12">
         {/* Logo */}
         <div

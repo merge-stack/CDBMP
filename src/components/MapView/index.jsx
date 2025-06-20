@@ -162,7 +162,7 @@ const MapView = () => {
   }
 
   return (
-    <div className="flex-1 h-[calc(100vh-163px)] mt-[163px] relative">
+    <div className="flex-1 h-full relative">
       {isLoading && <MapLoader />}
 
       <DeckGL

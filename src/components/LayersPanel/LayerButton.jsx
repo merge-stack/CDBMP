@@ -23,7 +23,7 @@ const LayerButton = () => {
   };
 
   return (
-    <>
+    <div className="hidden md:block">
       <button
         ref={buttonRef}
         onClick={handleButtonClick}
@@ -42,7 +42,7 @@ const LayerButton = () => {
         onClose={handleClosePanel}
         position={buttonPosition}
       />
-    </>
+    </div>
   );
 };
 
