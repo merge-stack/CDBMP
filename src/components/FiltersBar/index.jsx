@@ -4,6 +4,7 @@ import DefaultFilter from './DefaultFilter';
 
 import { FILTERS } from '../../constants/filters';
 import useFiltersStore from '../../store/useFiltersStore';
+import useUIStore from '../../store/useUIStore';
 
 const FiltersBar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -11,6 +12,9 @@ const FiltersBar = () => {
 
   // Filter store states
   const { selectedFilters, setSelectedFilters } = useFiltersStore();
+
+  const { selectedMobileMenu } = useUIStore();
+  const isFilterBarOpen = selectedMobileMenu?.id === 'filter';
 
   const buttonRefs = useRef({});
 
@@ -123,18 +127,20 @@ const FiltersBar = () => {
   );
 
   return (
-    <div className="static">
-      <div className="bg-secondary min-h-[68px] px-6 md:px-12 py-4 border-b border-primary/10">
-        <div
-          className="flex flex-row flex-wrap gap-3 overflow-x-auto"
-          role="toolbar"
-          aria-label="Filter options"
-        >
-          {filterButtons.map((btn, i) => (
-            <div key={i} className="w-auto min-w-0">
-              {btn}
-            </div>
-          ))}
+    <div className={`md:block ${isFilterBarOpen ? '' : 'hidden'}`}>
+      <div className="static">
+        <div className="bg-secondary min-h-[68px] px-6 md:px-12 py-4 border-b border-primary/10">
+          <div
+            className="flex flex-row flex-wrap gap-3 overflow-x-auto"
+            role="toolbar"
+            aria-label="Filter options"
+          >
+            {filterButtons.map((btn, i) => (
+              <div key={i} className="w-auto min-w-0">
+                {btn}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
