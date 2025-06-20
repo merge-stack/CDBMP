@@ -44,6 +44,29 @@ export const FILTERS = [
     ],
   },
   {
+    id: 'priority',
+    label: 'Priorità',
+    options: [
+      {
+        label: 'Urgente',
+        value: 'urgente',
+      },
+      {
+        label: 'Media',
+        value: 'media',
+      },
+      {
+        label: 'Bassa',
+        value: 'bassa',
+      },
+    ],
+  },
+  {
+    id: 'participation',
+    label: 'Modalità di partecipazione',
+    options: [],
+  },
+  {
     id: 'budget',
     label: 'Budget stimato',
     type: 'range',
@@ -73,28 +96,5 @@ export const FILTERS = [
         value: 300000,
       },
     ],
-  },
-  {
-    id: 'priority',
-    label: 'Priorità',
-    options: [
-      {
-        label: 'Urgente',
-        value: 'urgente',
-      },
-      {
-        label: 'Media',
-        value: 'media',
-      },
-      {
-        label: 'Bassa',
-        value: 'bassa',
-      },
-    ],
-  },
-  {
-    id: 'participation',
-    label: 'Modalità di partecipazione',
-    options: [],
   },
 ];
