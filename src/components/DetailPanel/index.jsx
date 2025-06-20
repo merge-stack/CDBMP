@@ -1,111 +1,16 @@
 import { useCallback, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { TECHNICAL_DETAILS } from '../constants/details';
 import { toast } from 'react-toastify';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import useMapStore from '../store/useMapStore';
-import useUIStore from '../store/useUIStore';
 
-const ImageCarousel = ({ images, currentIndex, onImageSelect }) => {
-  return (
-    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-      <div className="bg-[#D9D9D9] bg-opacity-50 backdrop-blur-sm rounded-2xl p-2">
-        <div className="flex gap-2">
-          {images.map((image, index) => (
-            <button
-              key={index}
-              onClick={() => onImageSelect(index)}
-              className={`relative overflow-hidden rounded-lg transition-all duration-200 ${
-                index === currentIndex
-                  ? 'ring-2 ring-white ring-offset-2 ring-offset-transparent scale-105'
-                  : 'hover:scale-105'
-              }`}
-            >
-              <img
-                src={image || 'images/placeholder.jpg'}
-                alt={`Thumbnail ${index + 1}`}
-                className="w-12 aspect-square object-cover"
-                onError={(e) => {
-                  e.target.src = 'images/placeholder.jpg';
-                }}
-              />
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
+import useMapStore from '../../store/useMapStore';
+import useUIStore from '../../store/useUIStore';
 
-ImageCarousel.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.string).isRequired,
-  currentIndex: PropTypes.number.isRequired,
-  onImageSelect: PropTypes.func.isRequired,
-};
+import ImageCarousel from './ImageCarousel';
+import TechnicalDetails from './TechnicalDetails';
 
-const TechnicalDetails = ({ details }) => {
-  return (
-    <div className="bg-[#E3F1E4] rounded-lg p-4 mb-6">
-      {details.map((detail, index) => (
-        <div
-          key={detail.id}
-          className={`flex items-start py-3 ${
-            index < details.length - 1 ? 'border-b border-gray-200' : ''
-          }`}
-        >
-          <div className="p-2 rounded-md mr-3 flex-shrink-0">
-            {detail.id === 'slope' && (
-              <img
-                src="/svg/slopeIcon.svg"
-                alt="Pendenza"
-                className="w-5 h-5"
-              />
-            )}
-            {detail.id === 'transport' && (
-              <img
-                src="/svg/transportIcon.svg"
-                alt="Trasporto"
-                className="w-5 h-5"
-              />
-            )}
-          </div>
-          <div className="flex-1 flex justify-between items-start">
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-gray-900 mb-0.5">
-                {detail.title}
-              </p>
-              {detail.subTitle && (
-                <p className="text-xs text-gray-600">{detail.subTitle}</p>
-              )}
-            </div>
-            <div className="text-right ml-4">
-              <p className="text-sm font-semibold text-gray-900 whitespace-pre-line">
-                {detail.formatter(detail.value)}
-              </p>
-            </div>
-          </div>
-        </div>
-      ))}
-      <button className="text-sm text-[#4F7E53] font-semibold underline mt-3 hover:text-[#3d6340] transition-colors">
-        Carica altre
-      </button>
-    </div>
-  );
-};
+import { TECHNICAL_DETAILS } from '../../constants/details';
 
-TechnicalDetails.propTypes = {
-  details: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      value: PropTypes.any.isRequired,
-      formatter: PropTypes.func.isRequired,
-      subTitle: PropTypes.string,
-    })
-  ).isRequired,
-};
-
-function DetailPanel() {
+const DetailPanel = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Store States
@@ -306,6 +211,6 @@ function DetailPanel() {
       </div>
     </div>
   );
-}
+};
 
 export default DetailPanel;
