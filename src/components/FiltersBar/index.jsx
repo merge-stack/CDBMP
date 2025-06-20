@@ -56,7 +56,7 @@ const FiltersBar = () => {
             className={`
               filter-button
               px-4 py-2 text-sm font-medium whitespace-nowrap rounded-md
-              transition-colors duration-200 min-w-[165px] md:min-w-[140px] w-fit
+              transition-colors duration-200 w-full md:w-auto md:min-w-0
               bg-white text-black hover:bg-white/90
               flex items-center justify-between gap-2
             `}
@@ -124,12 +124,18 @@ const FiltersBar = () => {
 
   return (
     <div className="fixed top-[95px] left-0 right-0 z-40">
-      <div
-        className="bg-secondary min-h-[68px] px-6 md:px-12 py-4 flex flex-wrap gap-3 overflow-x-auto border-b border-primary/10"
-        role="toolbar"
-        aria-label="Filter options"
-      >
-        {filterButtons}
+      <div className="bg-secondary min-h-[68px] px-6 md:px-12 py-4 border-b border-primary/10">
+        <div
+          className="grid grid-cols-2 grid-rows-3 gap-3 md:flex md:flex-row md:flex-wrap md:gap-3 overflow-x-auto"
+          role="toolbar"
+          aria-label="Filter options"
+        >
+          {filterButtons.map((btn, i) => (
+            <div key={i} className="w-full md:w-auto md:min-w-0">
+              {btn}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
