@@ -2,10 +2,8 @@ import { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { Plus, X } from 'lucide-react';
-import useMapStore from '../store/useMapStore';
-import useUIStore from '../store/useUIStore';
 
-export const LayerCard = ({
+const LayerCard = ({
   layer,
   selected,
   onClick,
@@ -194,83 +192,4 @@ LayerCard.propTypes = {
   isMapTooltip: PropTypes.bool.isRequired,
 };
 
-const LayerCardSkeleton = () => (
-  <div className="flex p-4 mb-4 bg-white rounded-2xl shadow-md">
-    <div className="w-24 h-24 bg-gray-200 rounded-2xl mr-4 animate-pulse" />
-    <div className="flex-1 flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <div className="h-6 bg-gray-200 rounded w-3/5 animate-pulse" />
-        <div className="h-6 bg-gray-200 rounded-md w-1/3 animate-pulse" />
-      </div>
-      <div className="flex justify-between items-end mt-2">
-        <div className="flex-1 flex flex-col gap-1.5">
-          <div className="flex justify-between">
-            <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse" />
-            <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
-          </div>
-          <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
-          <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
-        </div>
-        <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse ml-4" />
-      </div>
-    </div>
-  </div>
-);
-
-/**
- * SidePanel Component
- * Displays a list of forest layers with their details and allows selection
- */
-function SidePanel() {
-  // Store states
-  const { selectedLayer, setSelectedLayer, geoJsonData } = useMapStore();
-  const { setShowDetailPanel, isLoading } = useUIStore();
-
-  const handleLayerClick = useCallback(
-    (layer) => {
-      setSelectedLayer(layer);
-      setShowDetailPanel(true);
-    },
-    [setSelectedLayer, setShowDetailPanel]
-  );
-
-  if (isLoading) {
-    return (
-      <div className="w-[450px] h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
-        {Array.from({ length: 7 }).map((_, index) => (
-          <LayerCardSkeleton key={index} />
-        ))}
-      </div>
-    );
-  }
-
-  if (!geoJsonData?.features?.length) {
-    return (
-      <div className="w-[450px] h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
-        <div className="h-full flex items-center justify-center text-gray-500">
-          No layers available
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-[450px] h-[calc(100vh-163px)] overflow-y-auto bg-gray-50 p-4 border-r border-primary/10 mt-[163px]">
-      {geoJsonData.features.map((feature) => {
-        const layer = feature.properties;
-        const isSelected = selectedLayer?.id === layer.id;
-        return (
-          <LayerCard
-            key={layer.id}
-            layer={layer}
-            selected={isSelected}
-            onClick={() => handleLayerClick(layer)}
-            onAddClick={() => {}}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-export default SidePanel;
+export default LayerCard;

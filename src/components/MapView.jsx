@@ -12,7 +12,7 @@ import {
 } from '../constants/map';
 import { flyTo } from '../helpers/map';
 import { toast } from 'react-toastify';
-import { LayerCard } from './SidePanel';
+import LayerCard from './SidePanel/LayerCard';
 import ReactDOMServer from 'react-dom/server';
 import { useApi } from '../hooks/useApi';
 import apiService from '../services/api';
