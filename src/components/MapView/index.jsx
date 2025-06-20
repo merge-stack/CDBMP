@@ -1,61 +1,32 @@
 import { useCallback, useRef, useEffect, useState, useMemo } from 'react';
-import Map, { NavigationControl } from 'react-map-gl/mapbox';
-import { DeckGL } from '@deck.gl/react';
-import { GeoJsonLayer } from '@deck.gl/layers';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import debounce from 'lodash/debounce';
+import { toast } from 'react-toastify';
+import ReactDOMServer from 'react-dom/server';
+
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { DeckGL } from '@deck.gl/react';
+import Map, { NavigationControl } from 'react-map-gl/mapbox';
+
+import MapLoader from './MapLoader';
+import LayerCard from '../SidePanel/LayerCard';
+
+import { useApi } from '../../hooks/useApi';
+import apiService from '../../services/api';
+
+import useUIStore from '../../store/useUIStore';
+import useMapStore from '../../store/useMapStore';
+import useFiltersStore from '../../store/useFiltersStore';
+
 import {
   MAP_CONFIG,
-  LAYER_CONFIG,
   ANIMATION_CONFIG,
   INTERACTION_CONFIG,
-} from '../constants/map';
-import { flyTo } from '../helpers/map';
-import { toast } from 'react-toastify';
-import LayerCard from './SidePanel/LayerCard';
-import ReactDOMServer from 'react-dom/server';
-import { useApi } from '../hooks/useApi';
-import apiService from '../services/api';
-import useFiltersStore from '../store/useFiltersStore';
-import useMapStore from '../store/useMapStore';
-import useUIStore from '../store/useUIStore';
+} from '../../constants/map';
 
-const MapLoader = () => (
-  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-70 z-50">
-    <svg
-      className="animate-spin h-16 w-16 text-green-700 mb-4"
-      viewBox="0 0 50 50"
-    >
-      <circle
-        className="opacity-25"
-        cx="25"
-        cy="25"
-        r="20"
-        stroke="currentColor"
-        strokeWidth="5"
-        fill="none"
-      />
-      <circle
-        className="opacity-75"
-        cx="25"
-        cy="25"
-        r="20"
-        stroke="currentColor"
-        strokeWidth="5"
-        strokeDasharray="31.4 31.4"
-        fill="none"
-      />
-    </svg>
-    <span className="text-lg font-semibold text-green-800">
-      Loading map data...
-    </span>
-    <span className="text-sm text-green-600 mt-2">
-      Please wait while we fetch the latest map data.
-    </span>
-  </div>
-);
+import { flyTo } from '../../helpers/map';
+import { getDeckLayers } from '../../helpers/map';
 
-function MapView() {
+const MapView = () => {
   const mapRef = useRef(null);
   const [error, setError] = useState(null);
   const [hoveredObject, setHoveredObject] = useState(null);
@@ -135,50 +106,16 @@ function MapView() {
     [setShowDetailPanel, setSelectedLayer]
   );
 
-  // Define deck.gl layers inside the component to access selectedLayer
+  // Use getDeckLayers for DeckGL layers
   const layers = useMemo(
-    () => [
-      // Layer for the fill (with dynamic highlight)
-      new GeoJsonLayer({
-        id: LAYER_CONFIG.areas.id + '-fill',
-        data: geoJsonData,
-        filled: true,
-        stroked: false, // This layer only handles the fill
-        getFillColor: (d) => {
-          if (
-            d.properties.id === selectedLayer?.id ||
-            d.properties.id === hoveredObject?.properties?.id
-          ) {
-            return [0, 200, 0, 150]; // Highlight fill color for selected or hovered
-          }
-          return [0, 0, 0, 0]; // Default transparent fill
-        },
-        pickable: LAYER_CONFIG.areas.pickable, // Still pickable for click/hover events
-        autoHighlight: false, // Disable autoHighlight for this layer
-        updateTriggers: {
-          getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
-        },
-        parameters: {
-          depthTest: false,
-        },
-        onClick: INTERACTION_CONFIG.click.enabled ? onClick : undefined,
-        onHover: INTERACTION_CONFIG.hover.enabled ? onHover : undefined,
+    () =>
+      getDeckLayers({
+        geoJsonData,
+        selectedLayer,
+        hoveredObject,
+        onClick,
+        onHover,
       }),
-      // Layer for the border (always red)
-      new GeoJsonLayer({
-        id: LAYER_CONFIG.areas.id + '-border',
-        data: geoJsonData,
-        filled: false, // This layer only handles the border
-        stroked: true,
-        getLineColor: [255, 0, 0, 255], // Always red border
-        getLineWidth: 10,
-        pickable: false, // Border layer should not be pickable for hover/click
-        autoHighlight: false, // Disable autoHighlight for this layer
-        parameters: {
-          depthTest: false,
-        },
-      }),
-    ],
     [geoJsonData, selectedLayer, hoveredObject, onClick, onHover]
   );
 
@@ -264,6 +201,6 @@ function MapView() {
       </DeckGL>
     </div>
   );
-}
+};
 
 export default MapView;
