@@ -1,6 +1,6 @@
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Navbar from './components/Navbar';
+import Navbar from './components/NavBar';
 import FiltersBar from './components/FiltersBar';
 import MapView from './components/MapView';
 import SidePanel from './components/SidePanel';
