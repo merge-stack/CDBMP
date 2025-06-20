@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
-import LayersPanel from './LayersPanel';
+import Panel from './Panel';
 import { X } from 'lucide-react';
 
-const LayersButton = () => {
+const LayerButton = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
   const buttonRef = useRef(null);
@@ -37,7 +37,7 @@ const LayersButton = () => {
         )}
       </button>
 
-      <LayersPanel
+      <Panel
         isOpen={isPanelOpen}
         onClose={handleClosePanel}
         position={buttonPosition}
@@ -46,4 +46,4 @@ const LayersButton = () => {
   );
 };
 
-export default LayersButton;
+export default LayerButton;

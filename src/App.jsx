@@ -5,7 +5,7 @@ import FiltersBar from './components/FiltersBar';
 import MapView from './components/MapView';
 import SidePanel from './components/SidePanel';
 import DetailPanel from './components/DetailPanel';
-import LayersButton from './components/LayersButton';
+import LayersButton from './components/LayersPanel/LayerButton';
 import useUIStore from './store/useUIStore';
 
 /**

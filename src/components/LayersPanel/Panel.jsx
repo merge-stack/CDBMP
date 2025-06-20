@@ -1,46 +1,6 @@
 import PropTypes from 'prop-types';
-import useMapStore from '../store/useMapStore';
-
-const LayerCard = ({ layer, isActive, onToggle }) => {
-  return (
-    <div
-      className="flex flex-col items-center cursor-pointer transition-all duration-200 p-3"
-      onClick={() => onToggle(layer)}
-    >
-      {/* Icon Container */}
-      <div
-        className={`w-16 h-16 rounded-xl flex items-center justify-center mb-2 transition-all duration-200 ${
-          isActive ? 'bg-[#426345] ring-2 ring-[#426345] ring-offset-2' : ''
-        }`}
-      >
-        <img
-          src={layer.icon || 'images/placeholder.jpg'}
-          alt={layer.name}
-          className={`w-16 h-16`}
-        />
-      </div>
-
-      {/* Label */}
-      <span
-        className={`text-sm font-medium text-center leading-tight ${
-          isActive ? 'text-[#426345] font-semibold' : 'text-gray-700'
-        }`}
-      >
-        {layer.name}
-      </span>
-    </div>
-  );
-};
-
-LayerCard.propTypes = {
-  layer: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    icon: PropTypes.string.isRequired,
-  }).isRequired,
-  isActive: PropTypes.bool.isRequired,
-  onToggle: PropTypes.func.isRequired,
-};
+import useMapStore from '../../store/useMapStore';
+import LayerCard from './LayerCard';
 
 const layers = [
   {
@@ -65,7 +25,7 @@ const layers = [
   },
 ];
 
-const LayersPanel = ({ isOpen, position }) => {
+const Panel = ({ isOpen, position }) => {
   const { selectedMapLayer, setSelectedMapLayer } = useMapStore();
 
   const handleLayerToggle = (layer) => {
@@ -102,7 +62,7 @@ const LayersPanel = ({ isOpen, position }) => {
   );
 };
 
-LayersPanel.propTypes = {
+Panel.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   position: PropTypes.shape({
     x: PropTypes.number.isRequired,
@@ -110,4 +70,4 @@ LayersPanel.propTypes = {
   }).isRequired,
 };
 
-export default LayersPanel;
+export default Panel;
