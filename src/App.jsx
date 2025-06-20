@@ -7,6 +7,7 @@ import SidePanel from './components/SidePanel';
 import DetailPanel from './components/DetailPanel';
 import LayersButton from './components/LayersPanel/LayerButton';
 import useUIStore from './store/useUIStore';
+import MobilePanel from './components/MobileView/Panel';
 
 /**
  * Main App Component
@@ -19,7 +20,7 @@ function App() {
     <div className="h-screen overflow-hidden grid grid-rows-[auto_auto_1fr] grid-cols-1">
       <Navbar />
       <FiltersBar />
-      <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] h-full max-h-[calc(100vh-163px)]">
+      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] h-full max-h-[calc(100vh-163px)]">
         <SidePanel />
         <div className="relative h-[calc(100vh-163px)] w-full">
           <MapView />
@@ -27,6 +28,8 @@ function App() {
         </div>
       </div>
       <LayersButton />
+
+      <MobilePanel />
       <ToastContainer
         position="top-right"
         autoClose={5000}
