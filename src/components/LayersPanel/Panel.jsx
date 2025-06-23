@@ -40,14 +40,13 @@ const Panel = ({ isOpen, position }) => {
     <>
       {/* Panel */}
       <div
-        className="absolute z-50 bg-white rounded-2xl shadow-xl border border-gray-100 p-4"
+        className="static md:absolute z-50 bg-white rounded-2xl shadow-xl border border-gray-100 p-4"
         style={{
           left: position.x + 16,
           top: position.y,
         }}
       >
-        {/* Layers Row */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 justify-between">
           {layers.map((layer) => (
             <LayerCard
               key={layer.id}

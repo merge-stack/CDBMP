@@ -196,7 +196,7 @@ const MapView = () => {
           mapStyle={MAP_CONFIG.style}
           mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
         >
-          <NavigationControl position="top-right" />
+          {/* <NavigationControl position="top-right" /> */}
         </Map>
       </DeckGL>
     </div>

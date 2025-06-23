@@ -11,6 +11,7 @@ export const useUIStore = create(
   immer((set) => ({
     showDetailPanel: false,
     isLoading: false,
+    isFiltersBarVisible: true,
     selectedMobileMenu: initialSelectedMobileMenu,
     setShowDetailPanel: (show) =>
       set((state) => {
@@ -24,6 +25,14 @@ export const useUIStore = create(
       set((state) => {
         state.isLoading = loading;
       }),
+    setFiltersBarVisible: (visible) =>
+      set((state) => {
+        state.isFiltersBarVisible = visible;
+      }),
+    toggleFiltersBar: () =>
+      set((state) => {
+        state.isFiltersBarVisible = !state.isFiltersBarVisible;
+      }),
     setSelectedMobileMenu: (menu) =>
       set((state) => {
         state.selectedMobileMenu = menu;
@@ -32,6 +41,7 @@ export const useUIStore = create(
       set(() => ({
         showDetailPanel: false,
         isLoading: false,
+        isFiltersBarVisible: true,
         selectedMobileMenu: initialSelectedMobileMenu,
       })),
   }))

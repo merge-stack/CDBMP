@@ -14,21 +14,24 @@ import MobilePanel from './components/MobileView/Panel';
  * Provides global state and layout using Tailwind CSS
  */
 function App() {
-  const { showDetailPanel } = useUIStore();
+  const { showDetailPanel, selectedMobileMenu } = useUIStore();
+
+  const height = selectedMobileMenu === 'filter' ? 163 : 95;
 
   return (
     <div className="h-screen overflow-hidden grid grid-rows-[auto_auto_1fr] grid-cols-1">
       <Navbar />
       <FiltersBar />
-      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] h-full max-h-[calc(100vh-163px)]">
+      <LayersButton />
+      <div
+        className={`grid grid-cols-1 md:grid-cols-[auto_1fr] h-full max-h-[calc(100vh-${height}px)]`}
+      >
         <SidePanel />
-        <div className="relative h-[calc(100vh-163px)] w-full">
+        <div className={`relative h-[calc(100vh-${height}px)] w-full`}>
           <MapView />
           {showDetailPanel && <DetailPanel />}
         </div>
       </div>
-      <LayersButton />
-
       <MobilePanel />
       <ToastContainer
         position="top-right"
