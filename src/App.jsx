@@ -7,7 +7,6 @@ import MapView from './components/MapView';
 import SidePanel from './components/SidePanel';
 import DetailPanel from './components/DetailPanel';
 import LayersButton from './components/LayersPanel/LayerButton';
-import useUIStore from './store/useUIStore';
 import MobilePanel from './components/MobileView/Panel';
 
 /**
@@ -15,8 +14,6 @@ import MobilePanel from './components/MobileView/Panel';
  * Provides global state and layout using Tailwind CSS
  */
 function App() {
-  const { showDetailPanel } = useUIStore();
-
   return (
     <div className="h-screen overflow-hidden grid grid-rows-[auto_auto_1fr] grid-cols-1">
       <Navbar />
@@ -29,7 +26,7 @@ function App() {
         <div className={`relative h-[calc(100vh-95px)] w-full`}>
           <MapView />
         </div>
-        {showDetailPanel && <DetailPanel />}
+        <DetailPanel />
       </div>
       <MobilePanel />
       <ToastContainer

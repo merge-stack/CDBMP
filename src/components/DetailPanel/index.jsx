@@ -115,7 +115,7 @@ const DetailPanel = () => {
 
   // Store States
   const { selectedLayer, setSelectedLayer } = useMapStore();
-  const { setShowDetailPanel } = useUIStore();
+  const { showDetailPanel, setShowDetailPanel } = useUIStore();
 
   // Memoize the image URLs to prevent unnecessary re-renders
   const images = useMemo(() => {
@@ -166,7 +166,7 @@ const DetailPanel = () => {
   };
 
   // Early return if no selectedLayer
-  if (!selectedLayer) return null;
+  if (!selectedLayer || !showDetailPanel) return null;
 
   return (
     <>
