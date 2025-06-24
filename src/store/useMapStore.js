@@ -24,23 +24,15 @@ const useMapStore = create((set) => ({
   mapViewState: initialMapViewState,
   selectedMapLayer: initialSelectedMapLayerState,
 
-  setGeoJsonData: (data) => set((state) => ({ ...state, geoJsonData: data })),
-
-  setSelectedLayer: (layer) =>
-    set((state) => ({ ...state, selectedLayer: layer })),
-
+  setGeoJsonData: (data) => set(() => ({ geoJsonData: data })),
+  setSelectedLayer: (layer) => set(() => ({ selectedLayer: layer })),
   setMapViewState: (viewState) =>
     set((state) => ({
-      ...state,
       mapViewState: { ...state.mapViewState, ...viewState },
     })),
-
   setSelectedMapLayer: (mapLayer) =>
-    set((state) => ({ ...state, selectedMapLayer: mapLayer })),
-
-  resetMapViewState: () =>
-    set((state) => ({ ...state, mapViewState: initialMapViewState })),
-
+    set(() => ({ selectedMapLayer: mapLayer })),
+  resetMapViewState: () => set(() => ({ mapViewState: initialMapViewState })),
   resetMap: () =>
     set({
       geoJsonData: null,

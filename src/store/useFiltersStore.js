@@ -12,17 +12,15 @@ const initialFiltersState = {
 export const useFiltersStore = create(
   immer((set) => ({
     selectedFilters: initialFiltersState,
+
     setSelectedFilters: (filters) =>
-      set((state) => {
-        state.selectedFilters = {
-          ...state.selectedFilters,
-          ...filters,
-        };
-      }),
+      set((state) => ({
+        selectedFilters: { ...state.selectedFilters, ...filters },
+      })),
     resetFilters: () =>
-      set((state) => {
-        state.selectedFilters = initialFiltersState;
-      }),
+      set(() => ({
+        selectedFilters: initialFiltersState,
+      })),
   }))
 );
 

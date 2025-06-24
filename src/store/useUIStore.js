@@ -13,30 +13,31 @@ export const useUIStore = create(
     isLoading: false,
     isFiltersBarVisible: true,
     selectedMobileMenu: initialSelectedMobileMenu,
+
     setShowDetailPanel: (show) =>
-      set((state) => {
-        state.showDetailPanel = show;
-      }),
+      set(() => ({
+        showDetailPanel: show,
+      })),
     toggleDetailPanel: () =>
-      set((state) => {
-        state.showDetailPanel = !state.showDetailPanel;
-      }),
+      set((state) => ({
+        showDetailPanel: !state.showDetailPanel,
+      })),
     setIsLoading: (loading) =>
-      set((state) => {
-        state.isLoading = loading;
-      }),
+      set(() => ({
+        isLoading: loading,
+      })),
     setFiltersBarVisible: (visible) =>
-      set((state) => {
-        state.isFiltersBarVisible = visible;
-      }),
+      set(() => ({
+        isFiltersBarVisible: visible,
+      })),
     toggleFiltersBar: () =>
-      set((state) => {
-        state.isFiltersBarVisible = !state.isFiltersBarVisible;
-      }),
+      set((state) => ({
+        isFiltersBarVisible: !state.isFiltersBarVisible,
+      })),
     setSelectedMobileMenu: (menu) =>
-      set((state) => {
-        state.selectedMobileMenu = menu;
-      }),
+      set(() => ({
+        selectedMobileMenu: menu,
+      })),
     resetUI: () =>
       set(() => ({
         showDetailPanel: false,
@@ -48,4 +49,3 @@ export const useUIStore = create(
 );
 
 export default useUIStore;
- 
