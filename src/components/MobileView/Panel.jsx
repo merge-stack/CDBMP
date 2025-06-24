@@ -1,6 +1,5 @@
 import useUIStore from '../../store/useUIStore';
-import useMapStore from '../../store/useMapStore';
-import LayerCard from '../SidePanel/LayerCard';
+import LayerCardList from './LayerCardList';
 
 const menus = [
   {
@@ -26,40 +25,12 @@ const menus = [
 ];
 
 const MobilePanel = () => {
-  const { selectedMobileMenu, setSelectedMobileMenu, setShowDetailPanel } = useUIStore();
-  const { geoJsonData, selectedLayer, setSelectedLayer } = useMapStore();
-
-  const handleLayerClick = (layer) => {
-    setSelectedLayer(layer);
-    setShowDetailPanel(true);
-  };
+  const { selectedMobileMenu, setSelectedMobileMenu } = useUIStore();
 
   return (
     <>
       {/* Mobile Layer Cards */}
-      {selectedMobileMenu?.id === 'map' && (
-        <div className="fixed bottom-[88px] left-0 right-0 z-50 md:hidden">
-          <div className="overflow-x-auto hide-scrollbar">
-            <div className="flex gap-3">
-              {geoJsonData?.features?.map((feature) => {
-                const layer = feature.properties;
-                const isSelected = selectedLayer?.id === layer.id;
-                return (
-                  <div key={layer.id} >
-                    <LayerCard
-                      layer={layer}
-                      selected={isSelected}
-                      onClick={() => handleLayerClick(layer)}
-                      onAddClick={() => {}}
-                      isMapTooltip={true}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
+      {selectedMobileMenu?.id === 'map' && <LayerCardList />}
 
       {/* Mobile Navigation Menu */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[344px] h-[64px] bg-[#426345] rounded-2xl flex items-center justify-between px-8 py-4 md:hidden shadow-lg">
