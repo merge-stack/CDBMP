@@ -51,7 +51,7 @@ const HeaderRow = ({
 
 const InfoCards = ({ area, intervent, budget }) => (
   <div className="flex gap-2 mb-4 mt-2">
-    <div className="w-[109px] h-[52px] flex flex-col items-center bg-[#E3F1E4] rounded-md py-2">
+    <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
       <div className="flex items-center">
         <img
           src="/public/svg/areaIcon.svg"
@@ -64,7 +64,7 @@ const InfoCards = ({ area, intervent, budget }) => (
       </div>
       <span className="text-[10px] text-[#818181]">Dimensioni</span>
     </div>
-    <div className="w-[136px] h-[52px] flex flex-col items-center bg-[#E3F1E4] rounded-md py-2">
+    <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
       <div className="flex items-center">
         <img
           src="/public/svg/treeIcon.svg"
@@ -77,7 +77,7 @@ const InfoCards = ({ area, intervent, budget }) => (
       </div>
       <span className="text-[10px] text-[#818181]">Intervento</span>
     </div>
-    <div className="w-[109px] h-[52px] flex flex-col items-center bg-[#E3F1E4] rounded-md py-2">
+    <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
       <div className="flex items-center">
         <img
           src="/public/svg/budgetIcon.svg"

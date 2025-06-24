@@ -23,10 +23,10 @@ function App() {
       <FiltersBar />
       <LayersButton />
       <div
-        className={`grid grid-cols-1 md:grid-cols-[auto_1fr] h-full max-h-[calc(100vh-163px)]`}
+        className={`grid grid-cols-1 md:grid-cols-[auto_1fr] h-full max-h-[calc(100vh-95px)]`}
       >
         <SidePanel />
-        <div className={`relative h-[calc(100vh-163px)] w-full`}>
+        <div className={`relative h-[calc(100vh-95px)] w-full`}>
           <MapView />
         </div>
         {showDetailPanel && <DetailPanel />}

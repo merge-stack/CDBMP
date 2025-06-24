@@ -128,7 +128,7 @@ const FiltersBar = () => {
 
   return (
     <div className={`md:block ${isFilterBarOpen ? '' : 'hidden'}`}>
-      <div className="static">
+      <div className="fixed left-0 top-[95px] z-10 md:static">
         <div className="bg-secondary min-h-[68px] px-6 md:px-12 py-4 border-b border-primary/10">
           <div
             className="flex flex-row flex-wrap gap-3 overflow-x-auto"

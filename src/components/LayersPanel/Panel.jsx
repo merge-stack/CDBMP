@@ -25,7 +25,7 @@ const layers = [
   },
 ];
 
-const Panel = ({ isOpen, position }) => {
+const Panel = ({ isOpen }) => {
   const { selectedMapLayer, setSelectedMapLayer } = useMapStore();
 
   const handleLayerToggle = (layer) => {
@@ -39,13 +39,7 @@ const Panel = ({ isOpen, position }) => {
   return (
     <>
       {/* Panel */}
-      <div
-        className="static md:absolute z-50 bg-white md:rounded-2xl shadow-xl border border-gray-100 p-4"
-        style={{
-          left: position.x + 16,
-          top: position.y,
-        }}
-      >
+      <div className="fixed left-0 top-[95px] w-full md:left-[540px] md:top-[200px] z-10 md:w-auto bg-white md:rounded-2xl shadow-xl border border-gray-100 p-4">
         <div className="flex gap-3 justify-between">
           {layers.map((layer) => (
             <LayerCard
