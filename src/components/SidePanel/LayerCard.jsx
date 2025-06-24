@@ -1,15 +1,13 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { Plus, X } from 'lucide-react';
+import React from 'react';
+import StatusTag from './StatusTag';
 
-const LayerCard = ({
-  layer,
-  selected,
-  onClick,
-  onAddClick,
-  isMapTooltip = false,
-}) => {
+const LayerCard = ({ layer, selected, onClick, onAddClick, isMapTooltip }) => {
+  const [imgError, setImgError] = useState(false);
+
   const handleAddClick = useCallback(
     (e) => {
       e.stopPropagation();
@@ -19,51 +17,19 @@ const LayerCard = ({
   );
 
   const imageUrl = useMemo(() => {
+    if (imgError) return '/images/placeholder.jpg';
     try {
       return new URL('/images/forest1.jpeg', window.location.origin).href;
     } catch {
       toast.error('Error creating image URL');
-      return '';
+      return '/images/placeholder.jpg';
     }
-  }, []);
+  }, [imgError]);
 
-  const renderStatusTag = useCallback((status, selected) => {
-    const statusConfig = {
-      Recuperata: {
-        bgColor: selected ? 'bg-[#BFFFB3]' : 'bg-[rgba(191,255,179,0.5)]',
-        textColor: 'text-[#484747]',
-        borderColor: 'border-[#92C68A]',
-      },
-      'In corso': {
-        bgColor: selected ? 'bg-[#F6FFB3]' : 'bg-[rgba(246,255,179,0.5)]',
-        textColor: 'text-[#484747]',
-        borderColor: 'border-[#C0C68A]',
-      },
-      'Da recuperare': {
-        bgColor: selected ? 'bg-[#FFB3B3]' : 'bg-[rgba(255,179,179,0.5)]',
-        textColor: 'text-[#484747]',
-        borderColor: 'border-[#C68A8A]',
-      },
-    };
-
-    const { bgColor, textColor, borderColor } = statusConfig[status] || {
-      bgColor: selected ? 'bg-gray-300' : 'bg-gray-200',
-      textColor: 'text-gray-800',
-      borderColor: 'border-gray-200',
-    };
-
-    return (
-      <span
-        className={`px-2 py-1 rounded-md text-xs font-normal border-2 ${bgColor} ${textColor} ${borderColor}`}
-      >
-        {status}
-      </span>
-    );
-  }, []);
-
-  return (
+  // Desktop layout (unchanged)
+  const desktopCard = (
     <div
-      className={`flex p-5 mb-4 cursor-pointer rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 ${
+      className={`hidden md:flex p-5 mb-4 cursor-pointer rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 w-full ${
         selected
           ? 'bg-[#719374] text-white'
           : isMapTooltip
@@ -78,9 +44,7 @@ const LayerCard = ({
             src={imageUrl}
             alt={layer.code}
             className="w-24 h-24 object-cover rounded-2xl"
-            onError={(e) => {
-              e.target.src = '/images/placeholder.jpg';
-            }}
+            onError={() => setImgError(true)}
           />
         ) : (
           <div className="w-24 h-24 bg-gray-200 rounded-2xl flex items-center justify-center">
@@ -97,7 +61,10 @@ const LayerCard = ({
           >
             {layer.code}
           </h3>
-          {renderStatusTag(layer.status || 'Da recuperare', selected)}
+          <StatusTag
+            status={layer.status || 'Da recuperare'}
+            selected={selected}
+          />
         </div>
         <div className="flex justify-between items-end mt-2">
           <div className="flex-1 flex flex-col gap-1.5">
@@ -154,6 +121,7 @@ const LayerCard = ({
           </div>
           {!isMapTooltip && (
             <button
+              type="button"
               className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ml-4 ${
                 selected
                   ? 'bg-[#DEE8DC] text-[#426345] hover:bg-gray-50'
@@ -163,6 +131,7 @@ const LayerCard = ({
               aria-label={
                 selected ? 'remove from selection' : 'add to selection'
               }
+              aria-pressed={selected}
             >
               {selected ? (
                 <X className="text-2xl" />
@@ -174,6 +143,65 @@ const LayerCard = ({
         </div>
       </div>
     </div>
+  );
+
+  // Mobile layout (compact horizontal card)
+  const mobileCard = (
+    <div
+      className="md:hidden flex flex-row items-center p-4 rounded-2xl shadow-md mb-4 bg-white w-[260px] min-w-[260px] max-w-[90vw] mx-2"
+      onClick={onClick}
+    >
+      <img
+        src={imageUrl}
+        alt={layer.code}
+        className="w-20 h-32 object-cover rounded-xl mr-3 flex-shrink-0"
+        onError={() => setImgError(true)}
+      />
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex flex-col mb-1">
+          <StatusTag
+            status={layer.status || 'Da recuperare'}
+            selected={selected}
+          />
+          <h3 className="text-base font-semibold text-[#484747] truncate mt-1">
+            {layer.code}
+          </h3>
+        </div>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center text-sm text-[#818181]">
+            <img
+              src="/public/svg/areaIcon.svg"
+              alt="Area"
+              className="w-4 h-4 mr-2"
+            />
+            {layer.area || '12ha'}
+          </div>
+          <div className="flex items-center text-sm text-[#818181]">
+            <img
+              src="/public/svg/treeIcon.svg"
+              alt="Tree"
+              className="w-4 h-4 mr-2"
+            />
+            {layer.status || 'Manutenzione'}
+          </div>
+          <div className="flex items-center text-sm text-[#818181]">
+            <img
+              src="/public/svg/budgetIcon.svg"
+              alt="Budget"
+              className="w-4 h-4 mr-2"
+            />
+            {layer.budget || '200-250K euro'}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {desktopCard}
+      {mobileCard}
+    </>
   );
 };
 
@@ -189,7 +217,11 @@ LayerCard.propTypes = {
   selected: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
   onAddClick: PropTypes.func.isRequired,
-  isMapTooltip: PropTypes.bool.isRequired,
+  isMapTooltip: PropTypes.bool,
 };
 
-export default LayerCard;
+LayerCard.defaultProps = {
+  isMapTooltip: false,
+};
+
+export default React.memo(LayerCard);

@@ -1,5 +1,6 @@
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './styles/utils.css';
 import Navbar from './components/NavBar';
 import FiltersBar from './components/FiltersBar';
 import MapView from './components/MapView';
@@ -14,9 +15,7 @@ import MobilePanel from './components/MobileView/Panel';
  * Provides global state and layout using Tailwind CSS
  */
 function App() {
-  const { showDetailPanel, selectedMobileMenu } = useUIStore();
-
-  const height = selectedMobileMenu === 'filter' ? 163 : 95;
+  const { showDetailPanel } = useUIStore();
 
   return (
     <div className="h-screen overflow-hidden grid grid-rows-[auto_auto_1fr] grid-cols-1">
@@ -24,10 +23,10 @@ function App() {
       <FiltersBar />
       <LayersButton />
       <div
-        className={`grid grid-cols-1 md:grid-cols-[auto_1fr] h-full max-h-[calc(100vh-${height}px)]`}
+        className={`grid grid-cols-1 md:grid-cols-[auto_1fr] h-full max-h-[calc(100vh-163px)]`}
       >
         <SidePanel />
-        <div className={`relative h-[calc(100vh-${height}px)] w-full`}>
+        <div className={`relative h-[calc(100vh-163px)] w-full`}>
           <MapView />
           {showDetailPanel && <DetailPanel />}
         </div>

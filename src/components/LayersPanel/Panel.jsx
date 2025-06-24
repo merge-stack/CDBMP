@@ -40,7 +40,7 @@ const Panel = ({ isOpen, position }) => {
     <>
       {/* Panel */}
       <div
-        className="static md:absolute z-50 bg-white rounded-2xl shadow-xl border border-gray-100 p-4"
+        className="static md:absolute z-50 bg-white md:rounded-2xl shadow-xl border border-gray-100 p-4"
         style={{
           left: position.x + 16,
           top: position.y,
