@@ -1,4 +1,5 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+import { List, AutoSizer } from 'react-virtualized';
 import useMapStore from '../../store/useMapStore';
 import useUIStore from '../../store/useUIStore';
 import LayerCard from './LayerCard';
@@ -8,17 +9,52 @@ import LayerCardSkeleton from './LayerCardSkeleton';
  * SidePanel Component
  * Displays a list of forest layers with their details and allows selection
  */
+
+const CARD_HEIGHT = 150; // px, adjust to match LayerCard's desktop height (including margin)
+
 const SidePanel = () => {
   // Store states
   const { selectedLayer, setSelectedLayer, geoJsonData } = useMapStore();
   const { setShowDetailPanel, isLoading } = useUIStore();
 
+  // Memoize layers for performance
+  const layers = useMemo(
+    () => geoJsonData?.features?.map((f) => f.properties) || [],
+    [geoJsonData]
+  );
+
+  // Find the index of the selected layer
+  const selectedIndex = useMemo(
+    () => layers.findIndex((l) => l.id === selectedLayer?.id),
+    [layers, selectedLayer]
+  );
+
+  // Click handler
   const handleLayerClick = useCallback(
     (layer) => {
       setSelectedLayer(layer);
       setShowDetailPanel(true);
     },
     [setSelectedLayer, setShowDetailPanel]
+  );
+
+  // Memoized row renderer
+  const rowRenderer = useCallback(
+    ({ index, key, style }) => {
+      const layer = layers[index];
+      const isSelected = selectedLayer?.id === layer.id;
+      return (
+        <div key={key} style={style}>
+          <LayerCard
+            layer={layer}
+            selected={isSelected}
+            onClick={() => handleLayerClick(layer)}
+            onAddClick={() => {}}
+          />
+        </div>
+      );
+    },
+    [layers, selectedLayer, handleLayerClick]
   );
 
   if (isLoading) {
@@ -31,7 +67,7 @@ const SidePanel = () => {
     );
   }
 
-  if (!geoJsonData?.features?.length) {
+  if (!layers.length) {
     return (
       <div className="hidden md:block w-[450px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
         <div className="h-full flex items-center justify-center text-gray-500">
@@ -43,22 +79,22 @@ const SidePanel = () => {
 
   return (
     <div className="hidden md:block w-[450px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
-      {geoJsonData.features.map((feature) => {
-        const layer = feature.properties;
-        const isSelected = selectedLayer?.id === layer.id;
-        return (
-          <LayerCard
-            key={layer.id}
-            layer={layer}
-            selected={isSelected}
-            onClick={() => handleLayerClick(layer)}
-            onAddClick={() => {}}
+      <AutoSizer>
+        {({ height, width }) => (
+          <List
+            width={width}
+            height={height}
+            rowCount={layers.length}
+            rowHeight={CARD_HEIGHT}
+            rowRenderer={rowRenderer}
+            overscanRowCount={5}
+            style={{ outline: 'none' }}
+            scrollToIndex={selectedIndex >= 0 ? selectedIndex : undefined}
           />
-        );
-      })}
+        )}
+      </AutoSizer>
     </div>
   );
 };
 
 export default SidePanel;
- 
