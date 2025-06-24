@@ -28,8 +28,8 @@ function App() {
         <SidePanel />
         <div className={`relative h-[calc(100vh-163px)] w-full`}>
           <MapView />
-          {showDetailPanel && <DetailPanel />}
         </div>
+        {showDetailPanel && <DetailPanel />}
       </div>
       <MobilePanel />
       <ToastContainer
