@@ -144,9 +144,6 @@ const MapView = () => {
         flyTo({
           feature,
           setMapViewState,
-          options: {
-            transitionDuration: ANIMATION_CONFIG.duration,
-          },
         });
       }
     }
