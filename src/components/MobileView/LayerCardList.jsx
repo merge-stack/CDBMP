@@ -40,7 +40,6 @@ const LayerCardList = () => {
             layer={layer}
             selected={isSelected}
             onClick={() => handleLayerClick(layer)}
-            onAddClick={() => {}}
             isMapTooltip={true}
           />
         </div>

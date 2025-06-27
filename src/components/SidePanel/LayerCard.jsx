@@ -1,20 +1,18 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { Plus, X } from 'lucide-react';
 import React from 'react';
 import StatusTag from './StatusTag';
 
-const LayerCard = ({ layer, selected, onClick, onAddClick, isMapTooltip }) => {
+const LayerCard = ({
+  layer,
+  selected,
+  onClick,
+  onRemoveClick,
+  isMapTooltip,
+}) => {
   const [imgError, setImgError] = useState(false);
-
-  const handleAddClick = useCallback(
-    (e) => {
-      e.stopPropagation();
-      onAddClick(layer);
-    },
-    [layer, onAddClick]
-  );
 
   const imageUrl = useMemo(() => {
     if (imgError) return '/images/placeholder.jpg';
@@ -36,7 +34,6 @@ const LayerCard = ({ layer, selected, onClick, onAddClick, isMapTooltip }) => {
           ? 'bg-white'
           : 'bg-[#DEE8DC]'
       }`}
-      onClick={onClick}
     >
       <div className="flex items-center justify-center mr-4 flex-shrink-0">
         {imageUrl ? (
@@ -127,7 +124,7 @@ const LayerCard = ({ layer, selected, onClick, onAddClick, isMapTooltip }) => {
                   ? 'bg-[#DEE8DC] text-[#426345] hover:bg-gray-50'
                   : 'bg-[#426345] text-white hover:bg-[#5C7A5E]'
               }`}
-              onClick={handleAddClick}
+              onClick={selected ? onRemoveClick : onClick}
               aria-label={
                 selected ? 'remove from selection' : 'add to selection'
               }
@@ -216,7 +213,6 @@ LayerCard.propTypes = {
   }).isRequired,
   selected: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
-  onAddClick: PropTypes.func.isRequired,
   isMapTooltip: PropTypes.bool,
 };
 

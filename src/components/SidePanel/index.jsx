@@ -38,6 +38,12 @@ const SidePanel = () => {
     [setSelectedLayer, setShowDetailPanel]
   );
 
+  // Click handler
+  const handleRemoveClick = useCallback(() => {
+    setShowDetailPanel(false);
+    setSelectedLayer(null);
+  }, [setSelectedLayer, setShowDetailPanel]);
+
   // Memoized row renderer
   const rowRenderer = useCallback(
     ({ index, key, style }) => {
@@ -49,12 +55,12 @@ const SidePanel = () => {
             layer={layer}
             selected={isSelected}
             onClick={() => handleLayerClick(layer)}
-            onAddClick={() => {}}
+            onRemoveClick={handleRemoveClick}
           />
         </div>
       );
     },
-    [layers, selectedLayer, handleLayerClick]
+    [layers, selectedLayer, handleLayerClick, handleRemoveClick]
   );
 
   if (isLoading) {
