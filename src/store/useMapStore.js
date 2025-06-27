@@ -13,7 +13,7 @@ const initialMapViewState = {
 };
 
 const initialSelectedMapLayerState = {
-  id: 'attractions',
+  id: 'attrazioni',
   name: 'Attrazioni',
   icon: '/svg/attrazioni.svg',
 };

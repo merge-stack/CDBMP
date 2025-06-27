@@ -5,7 +5,12 @@ import { FlyToInterpolator } from '@deck.gl/core';
 import { easeCubic } from 'd3-ease';
 import { toast } from 'react-toastify';
 
-import { GeoJsonLayer } from '@deck.gl/layers';
+import {
+  GeoJsonLayer,
+  IconLayer,
+  ScatterplotLayer,
+  TextLayer,
+} from '@deck.gl/layers';
 import { LAYER_CONFIG, INTERACTION_CONFIG } from '../constants/map';
 
 const DEFAULT_TRANSITION_PROPS = {
@@ -55,15 +60,52 @@ export const flyTo = ({ feature, setMapViewState, options = {} }) => {
 export const getDeckLayers = ({
   geoJsonData,
   selectedLayer,
+  selectedMapLayer,
   hoveredObject,
   onClick,
   onHover,
 }) => {
-  return [
-    // Layer for the fill (with dynamic highlight)
+  if (
+    !geoJsonData ||
+    !geoJsonData.features ||
+    geoJsonData.features.length === 0
+  )
+    return [];
+
+  const layers = [];
+  if (!selectedMapLayer) return;
+
+  const isFonti = selectedMapLayer.id === 'fonti';
+  const isAttrazioni = selectedMapLayer.id === 'attrazioni';
+  const isIncendio = selectedMapLayer.id === 'incendio_2018';
+
+  layers.push(
+    // IconLayer for custom icons
+    new IconLayer({
+      id: 'fonti-icons',
+      data: isFonti ? geoJsonData.features : [],
+      visible: isFonti,
+      pickable: true,
+      getIcon: (d) => ({
+        url: d.properties.icon,
+        width: 64,
+        height: 64,
+        anchorY: 64,
+      }),
+      getPosition: (d) => [
+        d.geometry.coordinates[0],
+        d.geometry.coordinates[1],
+      ],
+      getSize: (d) => (d.properties['icon-scale'] || 1) * 32,
+      sizeUnits: 'pixels',
+    })
+  );
+
+  layers.push(
     new GeoJsonLayer({
-      id: LAYER_CONFIG.areas.id + '-fill',
+      id: `${LAYER_CONFIG.areas.id}-fill`,
       data: geoJsonData,
+      visible: isAttrazioni || isIncendio,
       filled: true,
       stroked: false, // This layer only handles the fill
       getFillColor: (d) => {
@@ -85,11 +127,14 @@ export const getDeckLayers = ({
       },
       onClick: INTERACTION_CONFIG.click.enabled ? onClick : undefined,
       onHover: INTERACTION_CONFIG.hover.enabled ? onHover : undefined,
-    }),
-    // Layer for the border (always red)
+    })
+  );
+
+  layers.push(
     new GeoJsonLayer({
-      id: LAYER_CONFIG.areas.id + '-border',
+      id: `${LAYER_CONFIG.areas.id}-border`,
       data: geoJsonData,
+      visible: isAttrazioni || isIncendio,
       filled: false, // This layer only handles the border
       stroked: true,
       getLineColor: [255, 0, 0, 255], // Always red border
@@ -99,6 +144,8 @@ export const getDeckLayers = ({
       parameters: {
         depthTest: false,
       },
-    }),
-  ];
+    })
+  );
+
+  return layers;
 };

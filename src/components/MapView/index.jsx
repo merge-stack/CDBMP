@@ -40,6 +40,7 @@ const MapView = () => {
     setGeoJsonData,
     mapViewState,
     setMapViewState,
+    selectedMapLayer,
   } = useMapStore();
   const { setShowDetailPanel, isLoading } = useUIStore();
 
@@ -112,11 +113,19 @@ const MapView = () => {
       getDeckLayers({
         geoJsonData,
         selectedLayer,
+        selectedMapLayer,
         hoveredObject,
         onClick,
         onHover,
       }),
-    [geoJsonData, selectedLayer, hoveredObject, onClick, onHover]
+    [
+      geoJsonData,
+      selectedLayer,
+      selectedMapLayer,
+      hoveredObject,
+      onClick,
+      onHover,
+    ]
   );
 
   const debouncedViewStateUpdate = useMemo(
@@ -149,6 +158,10 @@ const MapView = () => {
     }
   }, [selectedLayer, geoJsonData, setMapViewState]);
 
+  useEffect(() => {
+    setHoveredObject(null);
+  }, [selectedMapLayer.id]);
+
   // Add error boundary for map rendering
   if (error) {
     return (
@@ -174,14 +187,64 @@ const MapView = () => {
             ? ({ object }) => {
                 if (!object) return null;
 
-                const layer = object.properties;
-                const htmlString = ReactDOMServer.renderToStaticMarkup(
-                  <LayerCard layer={layer} isMapTooltip={true} />
-                );
-
+                if (
+                  selectedMapLayer.id === 'fonti' &&
+                  object.properties?.name
+                ) {
+                  // Fonti tooltip
+                  return {
+                    html: `
+                      <div 
+                        role="tooltip" 
+                        aria-live="polite"
+                        style="
+                          min-width:300px;
+                          max-width:400px;
+                          padding:16px 20px;
+                          background:white;
+                          border-radius:12px;
+                          box-shadow:0 2px 8px rgba(0,0,0,0.15);
+                          border: 1px solid #e5e7eb;
+                          font-family: Arial, sans-serif;
+                          word-break: break-word;
+                        "
+                      >
+                        <div style="
+                          font-weight:bold;
+                          font-size:1.1em;
+                          margin-bottom:8px;
+                          color:#000;
+                          line-height:1.3;
+                          word-break: break-word;
+                        ">
+                          ${object.properties.name}
+                        </div>
+                        <div style="
+                          color:#222;
+                          white-space:pre-line;
+                          font-size:1em;
+                          line-height:1.5;
+                          margin-bottom:2px;
+                          word-break: break-word;
+                        ">
+                          ${object.properties.description || ''}
+                        </div>
+                      </div>
+                    `,
+                    style: {
+                      background: 'none',
+                      pointerEvents: 'auto',
+                    },
+                  };
+                }
+                // For other layers, use LayerCard
                 return {
-                  html: htmlString,
-                  style: { background: 'none' },
+                  html: ReactDOMServer.renderToStaticMarkup(
+                    <LayerCard layer={object.properties} isMapTooltip={true} />
+                  ),
+                  style: {
+                    background: 'none',
+                  },
                 };
               }
             : undefined
