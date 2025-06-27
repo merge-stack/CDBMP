@@ -1,20 +1,21 @@
 import PropTypes from 'prop-types';
 import useMapStore from '../../store/useMapStore';
 import LayerCard from './LayerCard';
+import useFiltersStore from '../../store/useFiltersStore';
 
 const layers = [
   {
-    id: 'attractions',
+    id: 'attrazioni',
     name: 'Attrazioni',
     icon: '/svg/attrazioni.svg',
   },
   {
-    id: 'fire2018',
+    id: 'incendio_2018',
     name: 'Incendio 2018',
     icon: '/svg/incendio.svg',
   },
   {
-    id: 'fountains',
+    id: 'fonti',
     name: 'Fonti',
     icon: '/svg/fonti.svg',
   },
@@ -22,10 +23,13 @@ const layers = [
 
 const Panel = ({ isOpen }) => {
   const { selectedMapLayer, setSelectedMapLayer } = useMapStore();
+  const { setSelectedFilters } = useFiltersStore();
 
   const handleLayerToggle = (layer) => {
     const newActiveMapLayer =
       layer.id === selectedMapLayer.id ? selectedMapLayer : layer;
+
+    setSelectedFilters({ type: layer.id });
     setSelectedMapLayer(newActiveMapLayer);
   };
 
