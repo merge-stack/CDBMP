@@ -14,11 +14,6 @@ const layers = [
     icon: '/svg/incendio.svg',
   },
   {
-    id: 'paths',
-    name: 'Sentieri',
-    icon: '/svg/sentieri.svg',
-  },
-  {
     id: 'fountains',
     name: 'Fonti',
     icon: '/svg/fonti.svg',

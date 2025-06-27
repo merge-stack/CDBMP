@@ -62,11 +62,6 @@ export const FILTERS = [
     ],
   },
   {
-    id: 'participation',
-    label: 'Modalità di partecipazione',
-    options: [],
-  },
-  {
     id: 'budget',
     label: 'Budget stimato',
     type: 'range',
