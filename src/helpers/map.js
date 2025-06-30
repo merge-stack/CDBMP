@@ -81,6 +81,62 @@ export const getDeckLayers = ({
   const incendioData = geoJsonData[MAP_LAYER_TYPES.INCENDIO] || DEFAULT_GEOJSON;
   const sentieriData = geoJsonData[MAP_LAYER_TYPES.SENTIERI] || DEFAULT_GEOJSON;
 
+  if (sentieriData.features.length > 0) {
+    layers.push(
+      new GeoJsonLayer({
+        id: 'sentieri-line',
+        data: sentieriData,
+        visible: isSentieri, // Only visible when toggled on
+        filled: false,
+        stroked: true,
+        getLineColor: [30, 30, 30, 200],
+        getLineWidth: 20,
+        pickable: true,
+      })
+    );
+  }
+
+  // Incendio layer (GeoJsonLayer with different styling) - visibility controlled by displayLayers
+  if (incendioData.features.length > 0) {
+    layers.push(
+      new GeoJsonLayer({
+        id: 'incendio-fill',
+        data: incendioData,
+        visible: isIncendio, // Only visible when toggled on
+        filled: true,
+        stroked: false,
+        getFillColor: () => {
+          return [255, 140, 0, 100]; // Incendio fill color (orange)
+        },
+        pickable: LAYER_CONFIG.areas.pickable,
+        autoHighlight: false,
+        updateTriggers: {
+          getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
+        },
+        parameters: {
+          depthTest: false,
+        },
+      })
+    );
+
+    layers.push(
+      new GeoJsonLayer({
+        id: 'incendio-border',
+        data: incendioData,
+        visible: isIncendio, // Only visible when toggled on
+        filled: false,
+        stroked: true,
+        getLineColor: [255, 140, 0, 255], // Incendio border color (orange)
+        getLineWidth: 10,
+        pickable: false,
+        autoHighlight: false,
+        parameters: {
+          depthTest: false,
+        },
+      })
+    );
+  }
+
   // Attrazioni layer (GeoJsonLayer with fill and border) - always visible
   if (attrazioniData.features.length > 0) {
     layers.push(
@@ -150,62 +206,6 @@ export const getDeckLayers = ({
         ],
         getSize: (d) => (d.properties['icon-scale'] || 1) * 32,
         sizeUnits: 'pixels',
-      })
-    );
-  }
-
-  // Incendio layer (GeoJsonLayer with different styling) - visibility controlled by displayLayers
-  if (incendioData.features.length > 0) {
-    layers.push(
-      new GeoJsonLayer({
-        id: 'incendio-fill',
-        data: incendioData,
-        visible: isIncendio, // Only visible when toggled on
-        filled: true,
-        stroked: false,
-        getFillColor: () => {
-          return [255, 140, 0, 100]; // Incendio fill color (orange)
-        },
-        pickable: LAYER_CONFIG.areas.pickable,
-        autoHighlight: false,
-        updateTriggers: {
-          getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
-        },
-        parameters: {
-          depthTest: false,
-        },
-      })
-    );
-
-    layers.push(
-      new GeoJsonLayer({
-        id: 'incendio-border',
-        data: incendioData,
-        visible: isIncendio, // Only visible when toggled on
-        filled: false,
-        stroked: true,
-        getLineColor: [255, 140, 0, 255], // Incendio border color (orange)
-        getLineWidth: 10,
-        pickable: false,
-        autoHighlight: false,
-        parameters: {
-          depthTest: false,
-        },
-      })
-    );
-  }
-
-  if (sentieriData.features.length > 0) {
-    layers.push(
-      new GeoJsonLayer({
-        id: 'sentieri-line',
-        data: sentieriData,
-        visible: isSentieri, // Only visible when toggled on
-        filled: false,
-        stroked: true,
-        getLineColor: [30, 30, 30, 200],
-        getLineWidth: 20,
-        pickable: true,
       })
     );
   }
