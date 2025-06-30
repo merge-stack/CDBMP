@@ -1,91 +1,47 @@
-'use client';
-
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
-import { useState } from 'react';
-import theme from './styles/theme';
-import Navbar from './components/Navbar';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './styles/utils.css';
+import Navbar from './components/NavBar';
 import FiltersBar from './components/FiltersBar';
 import MapView from './components/MapView';
 import SidePanel from './components/SidePanel';
 import DetailPanel from './components/DetailPanel';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import LayersButton from './components/LayersPanel/LayerButton';
+import MobilePanel from './components/MobileView/Panel';
 
 /**
  * Main App Component
- * Provides theme context and manages global state
+ * Provides global state and layout using Tailwind CSS
  */
 function App() {
-  const [selectedLayer, setSelectedLayer] = useState(null);
-  const [showDetailPanel, setShowDetailPanel] = useState(false);
-  const [geoJsonData, setGeoJsonData] = useState(null);
-
-  const handleLayerSelect = (layer) => {
-    setSelectedLayer(layer);
-    setShowDetailPanel(true);
-  };
-
-  const handleDetailPanelClose = () => {
-    setShowDetailPanel(false);
-    setSelectedLayer(null);
-  };
-
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100vh',
-          overflow: 'hidden',
-        }}
+    <div className="h-screen overflow-hidden grid grid-rows-[auto_auto_1fr] grid-cols-1">
+      <Navbar />
+      <FiltersBar />
+      <LayersButton />
+      <div
+        className={`grid grid-cols-1 md:grid-cols-[auto_1fr] h-full max-h-[calc(100vh-95px)]`}
       >
-        <Navbar />
-        <FiltersBar />
-        <Box
-          sx={{
-            display: 'flex',
-            flex: 1,
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <SidePanel
-            onLayerSelect={handleLayerSelect}
-            selectedLayer={selectedLayer}
-            geoJsonData={geoJsonData}
-          />
-          <MapView
-            onLayerSelect={handleLayerSelect}
-            selectedLayer={selectedLayer}
-            geoJsonData={geoJsonData}
-            setGeoJsonData={setGeoJsonData}
-          />
-          {showDetailPanel && (
-            <DetailPanel
-              layer={selectedLayer}
-              onClose={handleDetailPanelClose}
-            />
-          )}
-        </Box>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </Box>
-    </ThemeProvider>
+        <SidePanel />
+        <div className={`relative h-[calc(100vh-95px)] w-full`}>
+          <MapView />
+        </div>
+        <DetailPanel />
+      </div>
+      <MobilePanel />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    </div>
   );
 }
 
