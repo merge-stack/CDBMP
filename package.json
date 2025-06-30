@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp src/assets/sisteco.geojson dist/assets",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
