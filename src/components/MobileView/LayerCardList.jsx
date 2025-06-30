@@ -12,8 +12,8 @@ const LayerCardList = () => {
   const { setShowDetailPanel } = useUIStore();
 
   const layers = useMemo(
-    () => geoJsonData?.features?.map((f) => f.properties) || [],
-    [geoJsonData]
+    () => geoJsonData?.attrazioni?.features?.map((f) => f.properties) || [],
+    [geoJsonData?.attrazioni]
   );
 
   const handleLayerClick = useCallback(

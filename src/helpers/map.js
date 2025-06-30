@@ -5,12 +5,7 @@ import { FlyToInterpolator } from '@deck.gl/core';
 import { easeCubic } from 'd3-ease';
 import { toast } from 'react-toastify';
 
-import {
-  GeoJsonLayer,
-  IconLayer,
-  ScatterplotLayer,
-  TextLayer,
-} from '@deck.gl/layers';
+import { GeoJsonLayer, IconLayer } from '@deck.gl/layers';
 import { LAYER_CONFIG, INTERACTION_CONFIG } from '../constants/map';
 
 const DEFAULT_TRANSITION_PROPS = {
@@ -18,6 +13,8 @@ const DEFAULT_TRANSITION_PROPS = {
   transitionInterpolator: new FlyToInterpolator(),
   transitionEasing: easeCubic,
 };
+
+const DEFAULT_GEOJSON = { type: 'FeatureCollection', features: [] };
 
 export const flyTo = ({ feature, setMapViewState, options = {} }) => {
   if (!feature || !feature.geometry) {
@@ -60,92 +57,136 @@ export const flyTo = ({ feature, setMapViewState, options = {} }) => {
 export const getDeckLayers = ({
   geoJsonData,
   selectedLayer,
-  selectedMapLayer,
+  displayLayers,
   hoveredObject,
   onClick,
   onHover,
 }) => {
-  if (
-    !geoJsonData ||
-    !geoJsonData.features ||
-    geoJsonData.features.length === 0
-  )
-    return [];
+  if (!geoJsonData) return [];
 
   const layers = [];
-  if (!selectedMapLayer) return;
 
-  const isFonti = selectedMapLayer.id === 'fonti';
-  const isAttrazioni = selectedMapLayer.id === 'attrazioni';
-  const isIncendio = selectedMapLayer.id === 'incendio_2018';
+  const isFonti = displayLayers.has('fonti');
+  const isIncendio = displayLayers.has('incendio_2018');
 
-  layers.push(
-    // IconLayer for custom icons
-    new IconLayer({
-      id: 'fonti-icons',
-      data: isFonti ? geoJsonData.features : [],
-      visible: isFonti,
-      pickable: true,
-      getIcon: (d) => ({
-        url: d.properties.icon,
-        width: 64,
-        height: 64,
-        anchorY: 64,
-      }),
-      getPosition: (d) => [
-        d.geometry.coordinates[0],
-        d.geometry.coordinates[1],
-      ],
-      getSize: (d) => (d.properties['icon-scale'] || 1) * 32,
-      sizeUnits: 'pixels',
-    })
-  );
+  // Get data for each layer type directly from geoJsonData
+  const attrazioniData = geoJsonData.attrazioni || DEFAULT_GEOJSON;
+  const fontiData = geoJsonData.fonti || DEFAULT_GEOJSON;
+  const incendioData = geoJsonData.incendio_2018 || DEFAULT_GEOJSON;
 
-  layers.push(
-    new GeoJsonLayer({
-      id: `${LAYER_CONFIG.areas.id}-fill`,
-      data: geoJsonData,
-      visible: isAttrazioni || isIncendio,
-      filled: true,
-      stroked: false, // This layer only handles the fill
-      getFillColor: (d) => {
-        if (
-          d.properties.id === selectedLayer?.id ||
-          d.properties.id === hoveredObject?.properties?.id
-        ) {
-          return [0, 200, 0, 150]; // Highlight fill color for selected or hovered
-        }
-        return [0, 0, 0, 0]; // Default transparent fill
-      },
-      pickable: LAYER_CONFIG.areas.pickable, // Still pickable for click/hover events
-      autoHighlight: false, // Disable autoHighlight for this layer
-      updateTriggers: {
-        getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
-      },
-      parameters: {
-        depthTest: false,
-      },
-      onClick: INTERACTION_CONFIG.click.enabled ? onClick : undefined,
-      onHover: INTERACTION_CONFIG.hover.enabled ? onHover : undefined,
-    })
-  );
+  // Attrazioni layer (GeoJsonLayer with fill and border) - always visible
+  if (attrazioniData.features.length > 0) {
+    layers.push(
+      new GeoJsonLayer({
+        id: 'attrazioni-fill',
+        data: attrazioniData,
+        visible: true,
+        filled: true,
+        stroked: false, // This layer only handles the fill
+        getFillColor: (d) => {
+          if (
+            d.properties.id === selectedLayer?.id ||
+            d.properties.id === hoveredObject?.properties?.id
+          ) {
+            return [0, 200, 0, 150]; // Highlight fill color for selected or hovered
+          }
+          return [0, 0, 0, 0]; // Default transparent fill
+        },
+        pickable: LAYER_CONFIG.areas.pickable, // Still pickable for click/hover events
+        autoHighlight: false, // Disable autoHighlight for this layer
+        updateTriggers: {
+          getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
+        },
+        parameters: {
+          depthTest: false,
+        },
+        onClick: INTERACTION_CONFIG.click.enabled ? onClick : undefined,
+        onHover: INTERACTION_CONFIG.hover.enabled ? onHover : undefined,
+      })
+    );
 
-  layers.push(
-    new GeoJsonLayer({
-      id: `${LAYER_CONFIG.areas.id}-border`,
-      data: geoJsonData,
-      visible: isAttrazioni || isIncendio,
-      filled: false, // This layer only handles the border
-      stroked: true,
-      getLineColor: [255, 0, 0, 255], // Always red border
-      getLineWidth: 10,
-      pickable: false, // Border layer should not be pickable for hover/click
-      autoHighlight: false, // Disable autoHighlight for this layer
-      parameters: {
-        depthTest: false,
-      },
-    })
-  );
+    layers.push(
+      new GeoJsonLayer({
+        id: 'attrazioni-border',
+        data: attrazioniData,
+        visible: true,
+        filled: false, // This layer only handles the border
+        stroked: true,
+        getLineColor: [255, 0, 0, 255], // Always red border
+        getLineWidth: 10,
+        pickable: false, // Border layer should not be pickable for hover/click
+        autoHighlight: false, // Disable autoHighlight for this layer
+        parameters: {
+          depthTest: false,
+        },
+      })
+    );
+  }
+
+  // Fonti layer (IconLayer) - visibility controlled by displayLayers
+  if (fontiData.features.length > 0) {
+    layers.push(
+      new IconLayer({
+        id: 'fonti-icons',
+        data: fontiData.features,
+        visible: isFonti, // Only visible when toggled on
+        pickable: true,
+        getIcon: (d) => ({
+          url: d.properties.icon,
+          width: 64,
+          height: 64,
+          anchorY: 64,
+        }),
+        getPosition: (d) => [
+          d.geometry.coordinates[0],
+          d.geometry.coordinates[1],
+        ],
+        getSize: (d) => (d.properties['icon-scale'] || 1) * 32,
+        sizeUnits: 'pixels',
+      })
+    );
+  }
+
+  // Incendio layer (GeoJsonLayer with different styling) - visibility controlled by displayLayers
+  if (incendioData.features.length > 0) {
+    layers.push(
+      new GeoJsonLayer({
+        id: 'incendio-fill',
+        data: incendioData,
+        visible: isIncendio, // Only visible when toggled on
+        filled: true,
+        stroked: false,
+        getFillColor: () => {
+          return [255, 140, 0, 100]; // Incendio fill color (orange)
+        },
+        pickable: LAYER_CONFIG.areas.pickable,
+        autoHighlight: false,
+        updateTriggers: {
+          getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
+        },
+        parameters: {
+          depthTest: false,
+        },
+      })
+    );
+
+    layers.push(
+      new GeoJsonLayer({
+        id: 'incendio-border',
+        data: incendioData,
+        visible: isIncendio, // Only visible when toggled on
+        filled: false,
+        stroked: true,
+        getLineColor: [255, 140, 0, 255], // Incendio border color (orange)
+        getLineWidth: 10,
+        pickable: false,
+        autoHighlight: false,
+        parameters: {
+          depthTest: false,
+        },
+      })
+    );
+  }
 
   return layers;
 };

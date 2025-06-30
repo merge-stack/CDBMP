@@ -79,3 +79,26 @@ export const INTERACTION_CONFIG = {
   },
 };
 
+export const MAP_LAYER_TYPES = {
+  ATTRazioni: 'attrazioni',
+  FONTI: 'fonti',
+  INCENDIO: 'incendio_2018',
+};
+
+export const MAP_LAYERS = [
+  {
+    id: MAP_LAYER_TYPES.INCENDIO,
+    name: 'Incendio 2018',
+    icon: '/svg/incendio.svg',
+  },
+  {
+    id: 'paths',
+    name: 'Sentieri',
+    icon: '/svg/sentieri.svg',
+  },
+  {
+    id: MAP_LAYER_TYPES.FONTI,
+    name: 'Fonti',
+    icon: '/svg/fonti.svg',
+  },
+];

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 const LayerCard = ({ layer, isActive, onToggle }) => {
   return (
     <div
-      className="flex flex-col items-center cursor-pointer transition-all duration-200 p-1"
+      className="flex flex-col items-center transition-all duration-200 p-1 cursor-pointer"
       onClick={() => onToggle(layer)}
     >
       {/* Icon Container */}
@@ -22,7 +22,7 @@ const LayerCard = ({ layer, isActive, onToggle }) => {
       {/* Label */}
       <span
         className={`text-[12px] font-medium text-center leading-tight ${
-          isActive ? 'text-[#426345] font-semibold' : '#4A4A4A'
+          isActive ? 'text-[#426345] font-semibold' : 'text-[#4A4A4A]'
         }`}
       >
         {layer.name}

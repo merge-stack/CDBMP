@@ -17,10 +17,10 @@ const SidePanel = () => {
   const { selectedLayer, setSelectedLayer, geoJsonData } = useMapStore();
   const { setShowDetailPanel, isLoading } = useUIStore();
 
-  // Memoize layers for performance
+  // Memoize layers for performance - only show Attrazioni data in cards
   const layers = useMemo(
-    () => geoJsonData?.features?.map((f) => f.properties) || [],
-    [geoJsonData]
+    () => geoJsonData?.attrazioni?.features?.map((f) => f.properties) || [],
+    [geoJsonData?.attrazioni]
   );
 
   // Find the index of the selected layer
