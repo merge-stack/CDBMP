@@ -27,7 +27,7 @@ import { flyTo, getDeckLayers } from '../../helpers/map';
 // Custom hook for data fetching
 const useMapData = () => {
   const { selectedFilters } = useFiltersStore();
-  const { setGeoJsonData, updateAttrazioniData } = useMapStore();
+  const { updateAttrazioniData, updateLayerData } = useMapStore();
   const { setIsLoading } = useUIStore();
   const { execute: getMapAreas } = useApi(apiService.getMapAreas);
 
@@ -49,45 +49,7 @@ const useMapData = () => {
       }, {});
   }, [selectedFilters]);
 
-  // Fetch all layers initially
-  const fetchAllLayers = useCallback(async () => {
-    try {
-      setIsLoading(true);
-
-      // Fetch all three layers in parallel
-      const [
-        attrazioniResponse,
-        fontiResponse,
-        incendioResponse,
-        sentieriResponse,
-      ] = await Promise.all([
-        getMapAreas({
-          layerType: MAP_LAYER_TYPES.ATTRazioni,
-        }),
-        getMapAreas({ layerType: MAP_LAYER_TYPES.FONTI }),
-        getMapAreas({ layerType: MAP_LAYER_TYPES.INCENDIO }),
-        getMapAreas({ layerType: MAP_LAYER_TYPES.SENTIERI }),
-      ]);
-
-      // Store layer data directly (backend now includes layerType in properties)
-      const geoJsonData = {
-        [MAP_LAYER_TYPES.ATTRazioni]: attrazioniResponse,
-        [MAP_LAYER_TYPES.FONTI]: fontiResponse,
-        [MAP_LAYER_TYPES.INCENDIO]: incendioResponse,
-        [MAP_LAYER_TYPES.SENTIERI]: sentieriResponse,
-      };
-
-      setGeoJsonData(geoJsonData);
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message;
-      toast.error('Error loading map data: ' + errorMessage);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [getMapAreas, setGeoJsonData, setIsLoading]);
-
-  // Fetch only attrazioni data
+  // Fetch only attrazioni data (with filters)
   const fetchAttrazioniData = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -98,8 +60,6 @@ const useMapData = () => {
       };
 
       const attrazioniData = await getMapAreas(queryParams);
-
-      // Backend now includes layerType in properties, so no processing needed
       updateAttrazioniData(attrazioniData);
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
@@ -110,7 +70,29 @@ const useMapData = () => {
     }
   }, [buildQueryParams, getMapAreas, updateAttrazioniData, setIsLoading]);
 
-  return { fetchAllLayers, fetchAttrazioniData };
+  // Generic fetch for any layer (no filters except attrazioni)
+  const fetchLayerData = useCallback(
+    async (layerType) => {
+      if (layerType === MAP_LAYER_TYPES.ATTRazioni) {
+        // Use fetchAttrazioniData for attrazioni (with filters)
+        return fetchAttrazioniData();
+      }
+      try {
+        setIsLoading(true);
+        const data = await getMapAreas({ layerType });
+        updateLayerData(layerType, data);
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message;
+        toast.error(`Error loading ${layerType} data: ` + errorMessage);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [getMapAreas, updateLayerData, setIsLoading, fetchAttrazioniData]
+  );
+
+  return { fetchAttrazioniData, fetchLayerData };
 };
 
 // Custom hook for map interactions
@@ -221,9 +203,10 @@ const MapView = () => {
     setMapViewState,
   } = useMapStore();
   const { isLoading } = useUIStore();
+  const { selectedFilters } = useFiltersStore();
 
   // Custom hooks
-  const { fetchAllLayers, fetchAttrazioniData } = useMapData();
+  const { fetchAttrazioniData, fetchLayerData } = useMapData();
   const {
     mapRef,
     hoveredObject,
@@ -234,15 +217,29 @@ const MapView = () => {
   } = useMapInteractions();
   const { getTooltip } = useMapTooltips();
 
-  // Initial data fetch
+  // Initial data fetch: only attrazioni
   useEffect(() => {
-    fetchAllLayers().catch(setError);
-  }, [fetchAllLayers]);
+    fetchAttrazioniData().catch(setError);
+  }, [fetchAttrazioniData]);
 
   // Re-fetch attrazioni data when filters change
   useEffect(() => {
     fetchAttrazioniData().catch(setError);
-  }, [fetchAttrazioniData]);
+  }, [fetchAttrazioniData, selectedFilters]);
+
+  // Fetch data for toggled-on layers if not already present
+  useEffect(() => {
+    const layersToFetch = Array.from(displayLayers).filter(
+      (layerType) =>
+        layerType !== MAP_LAYER_TYPES.ATTRazioni && !geoJsonData[layerType]
+    );
+    if (layersToFetch.length > 0) {
+      layersToFetch.forEach((layerType) => {
+        fetchLayerData(layerType).catch(setError);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayLayers]);
 
   // Clean up debounce on unmount
   useEffect(() => {
