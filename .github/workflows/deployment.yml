@@ -26,7 +26,7 @@ jobs:
         run: npm run build
 
       - name: Tar build files
-        run: tar -czf build.tar.gz dist
+        run: tar -czf build.tar.gz dist Dockerfile
 
       - name: Deploy to remote server
         uses: appleboy/scp-action@v0.1.4
