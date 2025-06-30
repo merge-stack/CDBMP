@@ -45,10 +45,10 @@ jobs:
           key: ${{ secrets.REMOTE_SSH_KEY }}
           script: |
             # Extract the build files to the deployment directory
-            tar -xzf /tmp/build.tar.gz -C ~/cdbmp-maps
+            tar -xzf /tmp/build.tar.gz -C ~root/cdbmp-maps/frontend
             rm /tmp/build.tar.gz
             
             # Build and restart the Docker container
-            cd ~/cdbmp-maps
+            cd ~root/cdbmp-maps
             docker-compose down
             docker-compose up -d --build
