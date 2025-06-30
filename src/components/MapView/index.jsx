@@ -55,20 +55,26 @@ const useMapData = () => {
       setIsLoading(true);
 
       // Fetch all three layers in parallel
-      const [attrazioniResponse, fontiResponse, incendioResponse] =
-        await Promise.all([
-          getMapAreas({
-            layerType: MAP_LAYER_TYPES.ATTRazioni,
-          }),
-          getMapAreas({ layerType: MAP_LAYER_TYPES.FONTI }),
-          getMapAreas({ layerType: MAP_LAYER_TYPES.INCENDIO }),
-        ]);
+      const [
+        attrazioniResponse,
+        fontiResponse,
+        incendioResponse,
+        sentieriResponse,
+      ] = await Promise.all([
+        getMapAreas({
+          layerType: MAP_LAYER_TYPES.ATTRazioni,
+        }),
+        getMapAreas({ layerType: MAP_LAYER_TYPES.FONTI }),
+        getMapAreas({ layerType: MAP_LAYER_TYPES.INCENDIO }),
+        getMapAreas({ layerType: MAP_LAYER_TYPES.SENTIERI }),
+      ]);
 
       // Store layer data directly (backend now includes layerType in properties)
       const geoJsonData = {
         [MAP_LAYER_TYPES.ATTRazioni]: attrazioniResponse,
         [MAP_LAYER_TYPES.FONTI]: fontiResponse,
         [MAP_LAYER_TYPES.INCENDIO]: incendioResponse,
+        [MAP_LAYER_TYPES.SENTIERI]: sentieriResponse,
       };
 
       setGeoJsonData(geoJsonData);

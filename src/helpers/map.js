@@ -6,7 +6,11 @@ import { easeCubic } from 'd3-ease';
 import { toast } from 'react-toastify';
 
 import { GeoJsonLayer, IconLayer } from '@deck.gl/layers';
-import { LAYER_CONFIG, INTERACTION_CONFIG } from '../constants/map';
+import {
+  LAYER_CONFIG,
+  INTERACTION_CONFIG,
+  MAP_LAYER_TYPES,
+} from '../constants/map';
 
 const DEFAULT_TRANSITION_PROPS = {
   transitionDuration: 1000,
@@ -66,13 +70,16 @@ export const getDeckLayers = ({
 
   const layers = [];
 
-  const isFonti = displayLayers.has('fonti');
-  const isIncendio = displayLayers.has('incendio_2018');
+  const isFonti = displayLayers.has(MAP_LAYER_TYPES.FONTI);
+  const isIncendio = displayLayers.has(MAP_LAYER_TYPES.INCENDIO);
+  const isSentieri = displayLayers.has(MAP_LAYER_TYPES.SENTIERI);
 
   // Get data for each layer type directly from geoJsonData
-  const attrazioniData = geoJsonData.attrazioni || DEFAULT_GEOJSON;
-  const fontiData = geoJsonData.fonti || DEFAULT_GEOJSON;
-  const incendioData = geoJsonData.incendio_2018 || DEFAULT_GEOJSON;
+  const attrazioniData =
+    geoJsonData[MAP_LAYER_TYPES.ATTRazioni] || DEFAULT_GEOJSON;
+  const fontiData = geoJsonData[MAP_LAYER_TYPES.FONTI] || DEFAULT_GEOJSON;
+  const incendioData = geoJsonData[MAP_LAYER_TYPES.INCENDIO] || DEFAULT_GEOJSON;
+  const sentieriData = geoJsonData[MAP_LAYER_TYPES.SENTIERI] || DEFAULT_GEOJSON;
 
   // Attrazioni layer (GeoJsonLayer with fill and border) - always visible
   if (attrazioniData.features.length > 0) {
@@ -184,6 +191,21 @@ export const getDeckLayers = ({
         parameters: {
           depthTest: false,
         },
+      })
+    );
+  }
+
+  if (sentieriData.features.length > 0) {
+    layers.push(
+      new GeoJsonLayer({
+        id: 'sentieri-line',
+        data: sentieriData,
+        visible: isSentieri, // Only visible when toggled on
+        filled: false,
+        stroked: true,
+        getLineColor: [30, 30, 30, 200],
+        getLineWidth: 20,
+        pickable: true,
       })
     );
   }

@@ -83,6 +83,7 @@ export const MAP_LAYER_TYPES = {
   ATTRazioni: 'attrazioni',
   FONTI: 'fonti',
   INCENDIO: 'incendio_2018',
+  SENTIERI: 'sentieri',
 };
 
 export const MAP_LAYERS = [
@@ -92,7 +93,7 @@ export const MAP_LAYERS = [
     icon: '/svg/incendio.svg',
   },
   {
-    id: 'paths',
+    id: MAP_LAYER_TYPES.SENTIERI,
     name: 'Sentieri',
     icon: '/svg/sentieri.svg',
   },
