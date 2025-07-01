@@ -16,11 +16,11 @@ const ImageCarousel = ({ images, currentIndex, onImageSelect }) => {
               }`}
             >
               <img
-                src={image || 'images/placeholder.jpg'}
+                src={image || 'images/placeholder.png'}
                 alt={`Thumbnail ${index + 1}`}
                 className="w-12 aspect-square object-cover"
                 onError={(e) => {
-                  e.target.src = 'images/placeholder.jpg';
+                  e.target.src = 'images/placeholder.png';
                 }}
               />
             </button>

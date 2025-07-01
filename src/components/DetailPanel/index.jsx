@@ -21,11 +21,11 @@ const HeaderRow = ({
 }) => (
   <div className="flex pb-2 gap-2">
     <img
-      src={currentImage || '/images/placeholder.jpg'}
+      src={currentImage || '/images/placeholder.png'}
       alt={`Anteprima area ${code || title}`}
       className="w-[46px] h-[46px] rounded-full object-cover border-2 border-white shadow mr-1"
       onError={(e) => {
-        e.target.src = '/images/placeholder.jpg';
+        e.target.src = '/images/placeholder.png';
       }}
     />
     <div className="flex-1 min-w-0">
@@ -177,13 +177,13 @@ const DetailPanel = () => {
           <div className="relative">
             <div className="relative group">
               <img
-                src={currentImage || 'images/placeholder.jpg'}
+                src={currentImage || 'images/placeholder.png'}
                 alt={`${selectedLayer.code || selectedLayer.title} - Image ${
                   currentImageIndex + 1
                 }`}
                 className="w-full h-[300px] object-cover"
                 onError={(e) => {
-                  e.target.src = 'images/placeholder.jpg';
+                  e.target.src = 'images/placeholder.png';
                 }}
               />
 

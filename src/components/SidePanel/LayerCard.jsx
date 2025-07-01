@@ -17,12 +17,12 @@ const LayerCard = ({
 
   const imageUrl = useMemo(() => {
     if (imgError || !layer.immagine)
-      return `${window.location.origin}/images/placeholder.jpg`;
+      return `${window.location.origin}/images/placeholder.png`;
     try {
       return new URL(layer.immagine, window.location.origin).href;
     } catch {
       toast.error('Error creating image URL');
-      return `${window.location.origin}/images/placeholder.jpg`;
+      return `${window.location.origin}/images/placeholder.png`;
     }
   }, [imgError, layer.immagine]);
 
