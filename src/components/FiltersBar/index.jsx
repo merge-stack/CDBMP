@@ -12,7 +12,8 @@ const FiltersBar = () => {
   const [dropdownRect, setDropdownRect] = useState(null);
 
   // Filter store states
-  const { selectedFilters, setSelectedFilters } = useFiltersStore();
+  const { selectedFilters, setSelectedFilters, setFilterToInitial } =
+    useFiltersStore();
 
   const { selectedMobileMenu } = useUIStore();
   const isFilterBarOpen = selectedMobileMenu?.id === 'filter';
@@ -56,7 +57,10 @@ const FiltersBar = () => {
     () =>
       FILTERS.map((filter) => (
         <div key={filter.id} className="flex-none relative">
-          <button onClick={() => console.log('Close Btn!')} className="px-1 mx-3 absolute right-[15px] top-[10px]">
+          <button
+            onClick={() => setFilterToInitial(filter.id)}
+            className="px-1 mx-3 absolute right-[15px] top-[10px]"
+          >
             <X size={16} />
           </button>
           <button
@@ -75,7 +79,7 @@ const FiltersBar = () => {
           >
             <div className="flex items-center justify-between gap-7 w-full">
               <span>{filter.label}</span>
-              {filter.type === "range" ? (
+              {filter.type === 'range' ? (
                 <img
                   src="/svg/rangeFilterIcon.svg"
                   alt="Range filter"
@@ -84,7 +88,7 @@ const FiltersBar = () => {
               ) : (
                 <svg
                   className={`w-4 h-4 transition-transform duration-200 text-black ${
-                    openDropdown === filter.id ? "rotate-180" : ""
+                    openDropdown === filter.id ? 'rotate-180' : ''
                   }`}
                   fill="none"
                   viewBox="0 0 24 24"
@@ -102,7 +106,7 @@ const FiltersBar = () => {
           </button>
 
           {openDropdown === filter.id &&
-            (filter.type === "range" ? (
+            (filter.type === 'range' ? (
               <BudgetFilter
                 filter={filter}
                 selectedValue={selectedFilters[filter.id]}
@@ -128,6 +132,7 @@ const FiltersBar = () => {
       handleFilterClick,
       handleOptionSelect,
       handleCloseDropdown,
+      setFilterToInitial,
     ]
   );
 

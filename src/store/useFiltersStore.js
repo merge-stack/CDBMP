@@ -21,6 +21,13 @@ export const useFiltersStore = create(
       set(() => ({
         selectedFilters: initialFiltersState,
       })),
+    setFilterToInitial: (filterKey) =>
+      set((state) => ({
+        selectedFilters: {
+          ...state.selectedFilters,
+          [filterKey]: initialFiltersState[filterKey],
+        },
+      })),
   }))
 );
 
