@@ -6,9 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment: production
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,9 +24,14 @@ jobs:
       - name: Build
         run: npm run build
 
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: build
+    steps:
       - name: Tar build files
-        run: tar -czf build.tar.gz dist Dockerfile
-
+        run: tar -czf build.tar.gz .
+  
       - name: Deploy to remote server
         uses: appleboy/scp-action@v0.1.4
         with:
