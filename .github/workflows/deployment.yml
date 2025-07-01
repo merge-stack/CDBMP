@@ -37,7 +37,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.REMOTE_SSH_KEY }}
           ARGS: '-rltgoDzvO --delete'
           SOURCE: '/'
-          TARGET: '/~root/cdbmp-maps/frontend'
+          TARGET: '/~root/cdbmp_maps/frontend'
 
       - name: Execute remote deployment commands
         uses: appleboy/ssh-action@v1.0.0
