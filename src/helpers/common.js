@@ -1,8 +1,21 @@
 export function formatNumericValue(value, fractionDigits, useGrouping = false) {
   if (typeof value !== 'number' || isNaN(value)) return 'N/A';
 
+  const absValue = Math.abs(value); // to handle negatives
+
+  if (absValue >= 10000) {
+    // Get first 4 digits only
+    const digitsOnly = Math.floor(absValue).toString().slice(0, 4);
+    const formatted = useGrouping
+      ? Number(digitsOnly).toLocaleString('en-US')
+      : digitsOnly;
+    return `${formatted}...`;
+  }
+
+  const isWhole = Number.isInteger(value);
+
   return value.toLocaleString('en-US', {
-    minimumFractionDigits: fractionDigits,
+    minimumFractionDigits: isWhole ? 0 : fractionDigits,
     maximumFractionDigits: fractionDigits,
     useGrouping,
   });
