@@ -12,7 +12,7 @@ import StatusTag from '../SidePanel/StatusTag';
 import { formatBudgetRange, formatNumericValue } from '../../helpers/common';
 
 const HeaderRow = ({ currentImage, code, status, onClose }) => (
-  <div className="flex pb-2 gap-2">
+  <div className="flex pb-2 gap-2 items-center">
     <img
       src={currentImage || '/images/placeholder.png'}
       alt={`Anteprima area ${code}`}
@@ -111,15 +111,15 @@ const DetailPanel = () => {
   const images = useMemo(() => {
     // Using different images for demo purposes
     return [
-      '/images/forest1.jpeg',
-      '/images/forest2.jpeg',
-      '/images/forest1.jpeg',
-      '/images/forest2.jpeg',
-      '/images/forest1.jpeg',
+      "/images/forest1.jpeg",
+      "/images/forest2.jpeg",
+      "/images/forest1.jpeg",
+      "/images/forest2.jpeg",
+      "/images/forest1.jpeg",
     ];
   }, []);
 
-  const currentImage = images[currentImageIndex] || '/images/forest1.jpeg';
+  const currentImage = images[currentImageIndex] || "/images/forest1.jpeg";
 
   const handleImageSelect = useCallback((index) => {
     setCurrentImageIndex(index);
@@ -143,10 +143,10 @@ const DetailPanel = () => {
           url: window.location.href,
         })
         .catch(() => {
-          toast.error('Sharing failed');
+          toast.error("Sharing failed");
         });
     } catch {
-      toast.error('Share API not supported');
+      toast.error("Share API not supported");
     }
   }, [selectedLayer?.code]);
 
@@ -167,13 +167,13 @@ const DetailPanel = () => {
           <div className="sticky top-0 z-50">
             <div className="relative group">
               <img
-                src={currentImage || 'images/placeholder.png'}
+                src={currentImage || "images/placeholder.png"}
                 alt={`${selectedLayer.code || selectedLayer.title} - Image ${
                   currentImageIndex + 1
                 }`}
                 className="w-full h-[300px] rounded-lg object-cover mx-auto mb-4"
                 onError={(e) => {
-                  e.target.src = 'images/placeholder.png';
+                  e.target.src = "images/placeholder.png";
                 }}
               />
 
@@ -213,15 +213,15 @@ const DetailPanel = () => {
           {/* Content area with scroll */}
           <div className="flex-1">
             <div className="">
-              <div className="flex flex-col items-start mb-3 relative w-full">
+              <div className="flex flex-col items-start mb-3 w-full">
                 <h3 className="text-xl font-semibold text-[#202020] mb-1 w-full text-left">
-                  {selectedLayer.code || 'N/A'}
+                  {selectedLayer.code || "N/A"}
                 </h3>
 
                 {/* Info Blocks */}
-                <div className="flex justify-between w-full mb-6 gap-x-4">
+                <div className="flex justify-between w-full mb-6 gap-2">
                   {/* Area */}
-                  <div className="flex flex-col w-[20%] items-center justify-center bg-[#E3F1E4] rounded-lg px-4 py-2 text-center">
+                  <div className="flex flex-col w-[20%] items-center justify-center bg-[#E3F1E4] rounded-md p-2 text-center">
                     <div className="flex items-center justify-center mb-1">
                       <img
                         src="/public/svg/areaIcon.svg"
@@ -229,7 +229,7 @@ const DetailPanel = () => {
                         className={`w-4 h-4 mr-2`}
                       />
 
-                      <p className="text-lg font-bold text-[#40523F]">
+                      <p className="text-sm font-bold text-[#40523F]">
                         {`${formatNumericValue(selectedLayer.area_ha, 2)} ha`}
                       </p>
                     </div>
@@ -237,29 +237,29 @@ const DetailPanel = () => {
                   </div>
 
                   {/* Intervento */}
-                  <div className="flex flex-col w-[50%] items-center justify-center bg-[#E3F1E4] rounded-lg px-4 py-2 text-center">
+                  <div className="flex flex-col w-[50%] items-center justify-center bg-[#E3F1E4] rounded-md p-2 text-center">
                     <div className="flex items-center justify-center mb-1">
                       <img
                         src="/public/svg/treeIcon.svg"
                         alt="Area"
                         className={`w-4 h-4 mr-2`}
                       />
-                      <p className="text-lg font-bold text-[#40523F]">
-                        {selectedLayer.intervento || 'N/A'}
+                      <p className="text-sm font-bold text-[#40523F]">
+                        {selectedLayer.intervento || "N/A"}
                       </p>
                     </div>
                     <p className="text-xs text-[#818181]">Intervento</p>
                   </div>
 
                   {/* Budget */}
-                  <div className="flex flex-col w-[30%] items-center justify-center bg-[#E3F1E4] rounded-lg px-4 py-2 text-center">
+                  <div className="flex flex-col w-[30%] items-center justify-center bg-[#E3F1E4] rounded-md p-2 text-center">
                     <div className="flex items-center justify-center mb-1">
                       <img
                         src="/public/svg/budgetIcon.svg"
                         alt="Area"
                         className={`w-4 h-4 mr-2`}
                       />
-                      <p className="text-lg font-bold text-[#40523F]">
+                      <p className="text-sm font-bold text-[#40523F]">
                         {formatBudgetRange(
                           selectedLayer.budget_min,
                           selectedLayer.budget_max
@@ -286,7 +286,7 @@ const DetailPanel = () => {
                   Dettagli area
                 </h4>
 
-                <div className="mt-2">
+                <div className="mt-2 w-full">
                   <TechnicalDetails selectedLayer={selectedLayer} />
                 </div>
               </div>
@@ -340,42 +340,42 @@ const DetailPanel = () => {
           </>
         )}
 
-        {/* Gallery title */}
-        <div className="mb-1">
-          <h4 className="text-base font-semibold text-[#484848] mb-2">
-            Foto e Video
-          </h4>
+          {/* Gallery title */}
+          <div className="mb-1">
+            <h4 className="text-base font-semibold text-[#484848] mb-2">
+              Foto e Video
+            </h4>
+          </div>
+          <Gallery
+            images={images}
+            currentImageIndex={currentImageIndex}
+            setCurrentImageIndex={setCurrentImageIndex}
+          />
+          {/* Details section */}
+          <div>
+            <h4 className="text-base font-bold text-[#202020] mb-2">
+              Dettagli area
+            </h4>
+            <TechnicalDetails selectedLayer={selectedLayer} />
+          </div>
+          {/* Contact Buttons */}
+          <div className="flex gap-3">
+            <button className="bg-[#426345] text-white py-3 px-6 rounded-md flex-1 font-medium transition-all duration-200 hover:bg-[#2f4e30]">
+              Contattaci
+            </button>
+            <button
+              onClick={handleShare}
+              className="bg-[#E3F1E4] text-[#426345] p-4 rounded-md transition-all duration-200 hover:bg-[#cde6cf] hover:shadow-sm"
+              aria-label="Condividi area"
+            >
+              <img
+                src="/public/svg/shareIcon.svg"
+                alt="Condividi"
+                className="w-4 h-4"
+              />
+            </button>
+          </div>
         </div>
-        <Gallery
-          images={images}
-          currentImageIndex={currentImageIndex}
-          setCurrentImageIndex={setCurrentImageIndex}
-        />
-        {/* Details section */}
-        <div>
-          <h4 className="text-lg font-bold text-[#202020] mb-2">
-            Dettagli area
-          </h4>
-          <TechnicalDetails selectedLayer={selectedLayer} />
-        </div>
-        {/* Contact Buttons */}
-        <div className="flex gap-3">
-          <button className="bg-[#426345] text-white py-3 px-6 rounded-md flex-1 font-medium transition-all duration-200 hover:bg-[#2f4e30]">
-            Contattaci
-          </button>
-          <button
-            onClick={handleShare}
-            className="bg-[#E3F1E4] text-[#426345] p-4 rounded-md transition-all duration-200 hover:bg-[#cde6cf] hover:shadow-sm"
-            aria-label="Condividi area"
-          >
-            <img
-              src="/public/svg/shareIcon.svg"
-              alt="Condividi"
-              className="w-4 h-4"
-            />
-          </button>
-        </div>
-      </div>
     </>
   );
 };

@@ -46,7 +46,7 @@ const TechnicalDetails = ({ selectedLayer }) => {
           </div>
         </div>
       ))}
-      <button className="text-sm text-[#4F7E53] font-semibold underline mt-3 hover:text-[#3d6340] transition-colors">
+      <button className="text-sm text-[#4F7E53] font-medium underline mt-3 hover:text-[#3d6340] transition-colors">
         Carica altre
       </button>
     </div>
