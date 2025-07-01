@@ -75,7 +75,7 @@ export const getDeckLayers = ({
   const isSentieri = displayLayers.has(MAP_LAYER_TYPES.SENTIERI);
 
   // Get data for each layer type directly from geoJsonData
-  const attrazioniData =
+  const defaultLayerData =
     geoJsonData[MAP_LAYER_TYPES.DEFAULT] || DEFAULT_GEOJSON;
   const fontiData = geoJsonData[MAP_LAYER_TYPES.FONTI] || DEFAULT_GEOJSON;
   const incendioData = geoJsonData[MAP_LAYER_TYPES.INCENDIO] || DEFAULT_GEOJSON;
@@ -137,12 +137,12 @@ export const getDeckLayers = ({
     );
   }
 
-  // Attrazioni layer (GeoJsonLayer with fill and border) - always visible
-  if (attrazioniData.features.length > 0) {
+  // Default layer (GeoJsonLayer with fill and border) - always visible
+  if (defaultLayerData.features.length > 0) {
     layers.push(
       new GeoJsonLayer({
         id: 'default-fill',
-        data: attrazioniData,
+        data: defaultLayerData,
         visible: true,
         filled: true,
         stroked: false, // This layer only handles the fill
@@ -171,7 +171,7 @@ export const getDeckLayers = ({
     layers.push(
       new GeoJsonLayer({
         id: 'default-border',
-        data: attrazioniData,
+        data: defaultLayerData,
         visible: true,
         filled: false, // This layer only handles the border
         stroked: true,

@@ -27,7 +27,7 @@ import { flyTo, getDeckLayers } from '../../helpers/map';
 // Custom hook for data fetching
 const useMapData = () => {
   const { selectedFilters } = useFiltersStore();
-  const { updateAttrazioniData, updateLayerData } = useMapStore();
+  const { updateDefaultLayerData, updateLayerData } = useMapStore();
   const { setIsLoading } = useUIStore();
   const { execute: getMapAreas } = useApi(apiService.getMapAreas);
 
@@ -50,7 +50,7 @@ const useMapData = () => {
   }, [selectedFilters]);
 
   // Fetch only default data (with filters)
-  const fetchAttrazioniData = useCallback(async () => {
+  const fetchDefaultLayerData = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -59,8 +59,8 @@ const useMapData = () => {
         layerType: MAP_LAYER_TYPES.DEFAULT,
       };
 
-      const attrazioniData = await getMapAreas(queryParams);
-      updateAttrazioniData(attrazioniData);
+      const defaultLayerData = await getMapAreas(queryParams);
+      updateDefaultLayerData(defaultLayerData);
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
       toast.error('Error loading default data: ' + errorMessage);
@@ -68,14 +68,14 @@ const useMapData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [buildQueryParams, getMapAreas, updateAttrazioniData, setIsLoading]);
+  }, [buildQueryParams, getMapAreas, updateDefaultLayerData, setIsLoading]);
 
   // Generic fetch for any layer (no filters except default)
   const fetchLayerData = useCallback(
     async (layerType) => {
       if (layerType === MAP_LAYER_TYPES.DEFAULT) {
-        // Use fetchAttrazioniData for default (with filters)
-        return fetchAttrazioniData();
+        // Use fetchDefaultLayerData for default (with filters)
+        return fetchDefaultLayerData();
       }
       try {
         setIsLoading(true);
@@ -89,10 +89,10 @@ const useMapData = () => {
         setIsLoading(false);
       }
     },
-    [getMapAreas, updateLayerData, setIsLoading, fetchAttrazioniData]
+    [getMapAreas, updateLayerData, setIsLoading, fetchDefaultLayerData]
   );
 
-  return { fetchAttrazioniData, fetchLayerData };
+  return { fetchDefaultLayerData, fetchLayerData };
 };
 
 // Custom hook for map interactions
@@ -166,7 +166,7 @@ const useMapTooltips = () => {
     };
   }, []);
 
-  const getAttrazioniTooltip = useCallback((object) => {
+  const getDefaultLayerTooltip = useCallback((object) => {
     if (object.properties.layerType !== MAP_LAYER_TYPES.DEFAULT) {
       return null;
     }
@@ -182,9 +182,9 @@ const useMapTooltips = () => {
   const getTooltip = useCallback(
     ({ object }) => {
       if (!object) return null;
-      return getFontiTooltip(object) || getAttrazioniTooltip(object);
+      return getFontiTooltip(object) || getDefaultLayerTooltip(object);
     },
-    [getFontiTooltip, getAttrazioniTooltip]
+    [getFontiTooltip, getDefaultLayerTooltip]
   );
 
   return { getTooltip };
@@ -206,7 +206,7 @@ const MapView = () => {
   const { selectedFilters } = useFiltersStore();
 
   // Custom hooks
-  const { fetchAttrazioniData, fetchLayerData } = useMapData();
+  const { fetchDefaultLayerData, fetchLayerData } = useMapData();
   const {
     mapRef,
     hoveredObject,
@@ -219,13 +219,13 @@ const MapView = () => {
 
   // Initial data fetch: only default
   useEffect(() => {
-    fetchAttrazioniData().catch(setError);
-  }, [fetchAttrazioniData]);
+    fetchDefaultLayerData().catch(setError);
+  }, [fetchDefaultLayerData]);
 
   // Re-fetch default data when filters change
   useEffect(() => {
-    fetchAttrazioniData().catch(setError);
-  }, [fetchAttrazioniData, selectedFilters]);
+    fetchDefaultLayerData().catch(setError);
+  }, [fetchDefaultLayerData, selectedFilters]);
 
   // Fetch data for toggled-on layers if not already present
   useEffect(() => {

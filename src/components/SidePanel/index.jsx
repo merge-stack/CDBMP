@@ -17,7 +17,7 @@ const SidePanel = () => {
   const { selectedLayer, setSelectedLayer, geoJsonData } = useMapStore();
   const { setShowDetailPanel, isLoading } = useUIStore();
 
-  // Memoize layers for performance - only show Attrazioni data in cards
+  // Memoize layers for performance - only show default layer data in cards
   const layers = useMemo(
     () => geoJsonData?.default?.features?.map((f) => f.properties) || [],
     [geoJsonData?.default]

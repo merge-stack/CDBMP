@@ -25,8 +25,7 @@ const useMapStore = create((set, get) => ({
   displayLayers: new Set([]),
 
   // Improved state setters with better immutability
-  setGeoJsonData: (data) => 
-    set(() => ({ geoJsonData: data })),
+  setGeoJsonData: (data) => set(() => ({ geoJsonData: data })),
 
   // Update specific layer data without affecting other layers
   updateLayerData: (layerType, layerData) =>
@@ -38,22 +37,21 @@ const useMapStore = create((set, get) => ({
     })),
 
   // Update only default data while preserving other layers
-  updateAttrazioniData: (attrazioniData) =>
+  updateDefaultLayerData: (defaultLayerData) =>
     set((state) => ({
       geoJsonData: {
         ...state.geoJsonData,
-        default: attrazioniData,
+        default: defaultLayerData,
       },
     })),
 
-  setSelectedLayer: (layer) => 
-    set(() => ({ selectedLayer: layer })),
+  setSelectedLayer: (layer) => set(() => ({ selectedLayer: layer })),
 
   setMapViewState: (viewState) =>
     set((state) => ({
       mapViewState: { ...state.mapViewState, ...viewState },
     })),
-  
+
   // Toggle map layer on/off (for display purposes only)
   toggleMapLayer: (layerId) =>
     set((state) => {
@@ -65,19 +63,19 @@ const useMapStore = create((set, get) => ({
       }
       return { displayLayers: newDisplayLayers };
     }),
-  
+
   // Check if a layer is active for display
   isMapLayerActive: (layerId) => {
     const state = get();
-    // Attrazioni is always active for data, others are in displayLayers
+    // Default layer is always active for data, others are in displayLayers
     if (layerId === 'default') return true;
     return state.displayLayers.has(layerId);
   },
-  
+
   // Set specific layers as active for display
   setDisplayLayers: (layerIds) =>
     set(() => ({ displayLayers: new Set(layerIds) })),
-  
+
   resetMapViewState: () => set(() => ({ mapViewState: initialMapViewState })),
   resetMap: () =>
     set({
@@ -93,7 +91,7 @@ const useMapStore = create((set, get) => ({
     }),
 
   // Getters for better data access
-  getAttrazioniData: () => {
+  getDefaultLayerData: () => {
     const state = get();
     return state.geoJsonData?.default || null;
   },
