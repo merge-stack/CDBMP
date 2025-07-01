@@ -5,6 +5,7 @@ import DefaultFilter from './DefaultFilter';
 import { FILTERS } from '../../constants/filters';
 import useFiltersStore from '../../store/useFiltersStore';
 import useUIStore from '../../store/useUIStore';
+import { X } from 'lucide-react';
 
 const FiltersBar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -71,7 +72,10 @@ const FiltersBar = () => {
           >
             <div className="flex items-center justify-between gap-2 w-full">
               <span>{filter.label}</span>
-              {filter.type === 'range' ? (
+              <button className='px-1'>
+                <X size={16} />
+              </button>
+              {filter.type === "range" ? (
                 <img
                   src="/svg/rangeFilterIcon.svg"
                   alt="Range filter"
@@ -80,7 +84,7 @@ const FiltersBar = () => {
               ) : (
                 <svg
                   className={`w-4 h-4 transition-transform duration-200 text-black ${
-                    openDropdown === filter.id ? 'rotate-180' : ''
+                    openDropdown === filter.id ? "rotate-180" : ""
                   }`}
                   fill="none"
                   viewBox="0 0 24 24"
@@ -98,7 +102,7 @@ const FiltersBar = () => {
           </button>
 
           {openDropdown === filter.id &&
-            (filter.type === 'range' ? (
+            (filter.type === "range" ? (
               <BudgetFilter
                 filter={filter}
                 selectedValue={selectedFilters[filter.id]}

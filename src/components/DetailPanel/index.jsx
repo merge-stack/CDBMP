@@ -312,33 +312,36 @@ const DetailPanel = () => {
       </div>
 
       {/* Mobile layout: floating card */}
-      <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 w-full max-h-[80vh] rounded-t-3xl shadow-xl bg-white p-4 z-[1000] block md:hidden overflow-y-auto">
-        <HeaderRow
-          currentImage={currentImage}
-          code={selectedLayer.code}
-          status={selectedLayer.stato_area || 'N/A'}
-          onClose={handleClose}
-        />
-        <InfoCards
-          area={`${formatNumericValue(selectedLayer.area_ha, 2)} ha`}
-          intervent={selectedLayer.intervento}
-          budget={formatBudgetRange(
-            selectedLayer.budget_min,
-            selectedLayer.budget_max
+      <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 w-full rounded-t-3xl shadow-xl bg-white p-4 pr-0 z-[1000] block md:hidden">
+        <div className="sticky top-0 pr-4">
+          <HeaderRow
+            currentImage={currentImage}
+            code={selectedLayer.code}
+            status={selectedLayer.stato_area || "N/A"}
+            onClose={handleClose}
+          />
+        </div>
+        <div className="overflow-auto max-h-[65vh] h-full pr-4">
+          <InfoCards
+            area={`${formatNumericValue(selectedLayer.area_ha, 2)} ha`}
+            intervent={selectedLayer.intervento}
+            budget={formatBudgetRange(
+              selectedLayer.budget_min,
+              selectedLayer.budget_max
+            )}
+          />
+
+          {selectedLayer?.descrizione && (
+            <>
+              <h4 className="text-xl font-bold text-gray-900 mb-4">
+                Dettagli intervento
+              </h4>
+
+              <p className="text-base text-[#484848] leading-relaxed mb-6 text-left w-full">
+                {selectedLayer.descrizione}
+              </p>
+            </>
           )}
-        />
-
-        {selectedLayer?.descrizione && (
-          <>
-            <h4 className="text-xl font-bold text-gray-900 mb-4">
-              Dettagli intervento
-            </h4>
-
-            <p className="text-base text-[#484848] leading-relaxed mb-6 text-left w-full">
-              {selectedLayer.descrizione}
-            </p>
-          </>
-        )}
 
           {/* Gallery title */}
           <div className="mb-1">
@@ -376,6 +379,7 @@ const DetailPanel = () => {
             </button>
           </div>
         </div>
+      </div>
     </>
   );
 };
