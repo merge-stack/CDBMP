@@ -171,17 +171,17 @@ const DetailPanel = () => {
   return (
     <>
       {/* Desktop layout: Right dialog/sidebar */}
-      <div className="fixed right-0 h-full w-[500px] bg-white shadow-2xl z-[1000] hidden md:block">
-        <div className="h-full flex flex-col">
+      <div className="fixed right-0 top-[163px] py-[20px] px-[15px] h-[calc(100vh-163px)] overflow-auto w-[500px] bg-white shadow-2xl z-[1000] hidden md:block">
+        <div className="flex flex-col">
           {/* Header with image */}
-          <div className="relative">
+          <div className="sticky top-0 z-50">
             <div className="relative group">
               <img
                 src={currentImage || 'images/placeholder.jpg'}
                 alt={`${selectedLayer.code || selectedLayer.title} - Image ${
                   currentImageIndex + 1
                 }`}
-                className="w-full h-[300px] object-cover"
+                className="w-full h-[300px] rounded-lg object-cover mx-auto mb-4"
                 onError={(e) => {
                   e.target.src = 'images/placeholder.jpg';
                 }}
@@ -221,13 +221,13 @@ const DetailPanel = () => {
           </div>
 
           {/* Content area with scroll */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-6">
+          <div className="flex-1">
+            <div className="">
               <div className="flex flex-col items-start mb-3 relative w-full">
-                <h3 className="text-4xl font-extrabold text-gray-900 mb-1 w-full text-left">
+                <h3 className="text-xl font-semibold text-[#202020] mb-1 w-full text-left">
                   {selectedLayer.code}
                 </h3>
-                <p className="text-base text-gray-600 w-full text-left mb-4">
+                <p className="text-base text-[#202020] w-full text-left mb-4">
                   {selectedLayer.coordinates || '40.4002192 N - 12.302934 O'}
                 </p>
 
@@ -291,7 +291,7 @@ const DetailPanel = () => {
                   accumsan.
                 </p>
 
-                <h4 className="text-xl font-bold text-gray-900 mb-4">
+                <h4 className="text-xl font-bold text-[#202020] mb-4">
                   Dettagli area
                 </h4>
 
@@ -301,12 +301,12 @@ const DetailPanel = () => {
               </div>
               {/* Contact Buttons */}
               <div className="flex gap-3">
-                <button className="bg-[#426345] text-white py-3 px-6 rounded-lg flex-1 font-medium">
+                <button className="bg-[#426345] text-white py-3 px-6 rounded-md flex-1 font-medium transition-all duration-200 hover:bg-[#2f4e30]">
                   Contattaci
                 </button>
                 <button
                   onClick={handleShare}
-                  className="bg-[#E3F1E4] text-[#426345] p-3 rounded-lg"
+                  className="bg-[#E3F1E4] text-[#426345] p-3 rounded-md transition-all duration-200 hover:bg-[#cde6cf] hover:shadow-sm"
                 >
                   <img
                     src="/public/svg/shareIcon.svg"
@@ -348,19 +348,19 @@ const DetailPanel = () => {
         />
         {/* Details section */}
         <div>
-          <h4 className="text-lg font-bold text-gray-900 mb-2">
+          <h4 className="text-lg font-bold text-[#202020] mb-2">
             Dettagli area
           </h4>
           <TechnicalDetails details={TECHNICAL_DETAILS.primary} />
         </div>
         {/* Contact Buttons */}
         <div className="flex gap-3">
-          <button className="bg-[#426345] text-white py-3 px-6 rounded-lg flex-1 font-medium">
+          <button className="bg-[#426345] text-white py-3 px-6 rounded-md flex-1 font-medium transition-all duration-200 hover:bg-[#2f4e30]">
             Contattaci
           </button>
           <button
             onClick={handleShare}
-            className="bg-[#E3F1E4] text-[#426345] p-4 rounded-lg"
+            className="bg-[#E3F1E4] text-[#426345] p-4 rounded-md transition-all duration-200 hover:bg-[#cde6cf] hover:shadow-sm"
             aria-label="Condividi area"
           >
             <img

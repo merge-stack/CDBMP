@@ -54,7 +54,7 @@ const LayerCardList = () => {
   );
 
   return (
-    <div className="fixed bottom-[88px] left-0 right-0 z-50 md:hidden bg-transparent">
+    <div className="fixed bottom-[88px] left-2 right-0 z-50 md:hidden bg-transparent">
       <AutoSizer disableHeight>
         {({ width }) => (
           <Grid

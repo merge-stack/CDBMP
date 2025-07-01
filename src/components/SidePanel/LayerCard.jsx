@@ -28,7 +28,7 @@ const LayerCard = ({
   // Desktop layout (unchanged)
   const desktopCard = (
     <div
-      className={`hidden md:flex p-5 mb-4 cursor-pointer rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 w-full ${
+      className={`hidden md:flex p-5 mb-4 cursor-pointer rounded-xl min-w-[340px] transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 w-full ${
         selected
           ? 'bg-[#719374] text-white'
           : isMapTooltip
@@ -41,7 +41,7 @@ const LayerCard = ({
           <img
             src={imageUrl}
             alt={layer.code}
-            className="w-24 h-24 object-cover rounded-2xl"
+            className="w-[83px] h-[81px] object-cover rounded-md"
             onError={() => setImgError(true)}
           />
         ) : (
@@ -149,7 +149,7 @@ const LayerCard = ({
       <img
         src={imageUrl}
         alt={layer.code}
-        className="w-20 h-32 object-cover rounded-xl mr-3 flex-shrink-0"
+        className="w-[85px] h-[111px] object-cover rounded-md mr-3 flex-shrink-0"
         onError={() => setImgError(true)}
       />
       <div className="flex-1 flex flex-col min-w-0">
@@ -160,29 +160,29 @@ const LayerCard = ({
           </h3>
         </div>
         <div className="flex flex-col gap-1">
-          <div className="flex items-center text-sm text-[#818181]">
+          <div className="flex items-center text-xs text-[#818181]">
             <img
               src="/public/svg/areaIcon.svg"
               alt="Area"
-              className="w-4 h-4 mr-2"
+              className="w-3 h-w-3 mr-2"
             />
-            {`${formatNumericValue(layer.area_ha, 2)} ha`}
+            <span className='text-[10px]'>{`${formatNumericValue(layer.area_ha, 2)} ha`}</span>
           </div>
-          <div className="flex items-center text-sm text-[#818181]">
+          <div className="flex items-center text-xs text-[#818181]">
             <img
               src="/public/svg/treeIcon.svg"
               alt="Tree"
-              className="w-4 h-4 mr-2"
+              className="w-3 h-w-3 mr-2"
             />
-            {layer.intervento || 'N/A'}
+            {layer.status || 'Manutenzione'}
           </div>
-          <div className="flex items-center text-sm text-[#818181]">
+          <div className="flex items-center text-xs text-[#818181]">
             <img
               src="/public/svg/budgetIcon.svg"
               alt="Budget"
-              className="w-4 h-4 mr-2"
+              className="w-3 h-w-3 mr-2"
             />
-            {formatBudgetRange(layer.budget_min, layer.budget_max)}
+            {layer.budget || '200-250K euro'}
           </div>
         </div>
       </div>
