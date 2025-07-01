@@ -1,24 +1,27 @@
 import PropTypes from 'prop-types';
+import { TECHNICAL_DETAILS } from '../../constants/details';
 
-const TechnicalDetails = ({ details }) => {
+const TechnicalDetails = ({ selectedLayer }) => {
   return (
     <div className="bg-[#E3F1E4] rounded-lg p-4 mb-6">
-      {details.map((detail, index) => (
+      {TECHNICAL_DETAILS.map((detail, index) => (
         <div
           key={detail.id}
           className={`flex items-start py-3 ${
-            index < details.length - 1 ? 'border-b border-gray-200' : ''
+            index < TECHNICAL_DETAILS.length - 1
+              ? 'border-b border-gray-200'
+              : ''
           }`}
         >
           <div className="p-2 rounded-md mr-3 flex-shrink-0">
-            {detail.id === 'slope' && (
+            {detail.id === 'pendenza' && (
               <img
                 src="/svg/slopeIcon.svg"
                 alt="Pendenza"
                 className="w-5 h-5"
               />
             )}
-            {detail.id === 'transport' && (
+            {detail.id === 'trasporto' && (
               <img
                 src="/svg/transportIcon.svg"
                 alt="Trasporto"
@@ -37,7 +40,7 @@ const TechnicalDetails = ({ details }) => {
             </div>
             <div className="text-right ml-4">
               <p className="text-sm font-semibold text-gray-900 whitespace-pre-line">
-                {detail.formatter(detail.value)}
+                {selectedLayer?.[detail.id]}
               </p>
             </div>
           </div>

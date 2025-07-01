@@ -8,21 +8,14 @@ import useUIStore from '../../store/useUIStore';
 import ImageCarousel from './ImageCarousel';
 import TechnicalDetails from './TechnicalDetails';
 
-import { TECHNICAL_DETAILS } from '../../constants/details';
 import StatusTag from '../SidePanel/StatusTag';
+import { formatBudgetRange, formatNumericValue } from '../../helpers/common';
 
-const HeaderRow = ({
-  currentImage,
-  code,
-  title,
-  coordinates,
-  status,
-  onClose,
-}) => (
+const HeaderRow = ({ currentImage, code, status, onClose }) => (
   <div className="flex pb-2 gap-2">
     <img
       src={currentImage || '/images/placeholder.png'}
-      alt={`Anteprima area ${code || title}`}
+      alt={`Anteprima area ${code}`}
       className="w-[46px] h-[46px] rounded-full object-cover border-2 border-white shadow mr-1"
       onError={(e) => {
         e.target.src = '/images/placeholder.png';
@@ -30,14 +23,11 @@ const HeaderRow = ({
     />
     <div className="flex-1 min-w-0">
       <h3 className="text-lg font-bold text-gray-900 truncate">
-        {code || 'Area 125XXX'}
+        {code || 'N/A'}
       </h3>
-      <p className="text-xs text-gray-600 truncate">
-        {coordinates || '40.4002192° N – 12.302934° O'}
-      </p>
     </div>
     <span className="ml-2">
-      <StatusTag status={status || 'Da recuperare'} />
+      <StatusTag status={status || 'N/A'} />
     </span>
     <button
       onClick={onClose}
@@ -59,7 +49,7 @@ const InfoCards = ({ area, intervent, budget }) => (
           className="w-4 h-4 mr-1"
         />
         <span className="text-[14px] font-semibold text-[#40523F]">
-          {area || '12ha'}
+          {area || 'N/A'}
         </span>
       </div>
       <span className="text-[10px] text-[#818181]">Dimensioni</span>
@@ -72,7 +62,7 @@ const InfoCards = ({ area, intervent, budget }) => (
           className="w-4 h-4 mr-1"
         />
         <span className="text-[14px] font-semibold text-[#40523F]">
-          {intervent || 'Manutenzione'}
+          {intervent || 'N/A'}
         </span>
       </div>
       <span className="text-[10px] text-[#818181]">Intervento</span>
@@ -85,7 +75,7 @@ const InfoCards = ({ area, intervent, budget }) => (
           className="w-4 h-4 mr-1"
         />
         <span className="text-[14px] font-semibold text-[#40523F]">
-          {budget || '€200K'}
+          {budget || 'N/A'}
         </span>
       </div>
       <span className="text-[10px] text-[#818181]">Budget stimato</span>
@@ -224,12 +214,9 @@ const DetailPanel = () => {
           <div className="flex-1 overflow-y-auto">
             <div className="p-6">
               <div className="flex flex-col items-start mb-3 relative w-full">
-                <h3 className="text-4xl font-extrabold text-gray-900 mb-1 w-full text-left">
-                  {selectedLayer.code}
+                <h3 className="text-4xl font-extrabold text-gray-900 mb-4 w-full text-left">
+                  {selectedLayer.code || 'N/A'}
                 </h3>
-                <p className="text-base text-gray-600 w-full text-left mb-4">
-                  {selectedLayer.coordinates || '40.4002192 N - 12.302934 O'}
-                </p>
 
                 {/* Info Blocks */}
                 <div className="flex justify-between w-full mb-6 gap-x-4">
@@ -243,7 +230,7 @@ const DetailPanel = () => {
                       />
 
                       <p className="text-lg font-bold text-[#40523F]">
-                        {selectedLayer.area || '12ha'}
+                        {`${formatNumericValue(selectedLayer.area_ha, 2)} ha`}
                       </p>
                     </div>
                     <p className="text-xs text-[#818181]">Dimensioni</p>
@@ -258,7 +245,7 @@ const DetailPanel = () => {
                         className={`w-4 h-4 mr-2`}
                       />
                       <p className="text-lg font-bold text-[#40523F]">
-                        {selectedLayer.intervent || 'Manutenzione'}
+                        {selectedLayer.intervento || 'N/A'}
                       </p>
                     </div>
                     <p className="text-xs text-[#818181]">Intervento</p>
@@ -273,22 +260,22 @@ const DetailPanel = () => {
                         className={`w-4 h-4 mr-2`}
                       />
                       <p className="text-lg font-bold text-[#40523F]">
-                        {selectedLayer.budget_estimated || '€200K'}
+                        {formatBudgetRange(
+                          selectedLayer.budget_min,
+                          selectedLayer.budget_max
+                        )}
                       </p>
                     </div>
                     <p className="text-xs text-[#818181]">Budget stimato</p>
                   </div>
                 </div>
 
+                <h4 className="text-xl font-bold text-gray-900 mb-4">
+                  Dettagli intervento
+                </h4>
+
                 <p className="text-base text-[#484848] leading-relaxed mb-6 text-left w-full">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  diam nonummy nibh euismod tincidunt ut laoreet dolore magna
-                  aliquam erat volutpat. Ut wisi enim ad minim veniam, quis
-                  nostrud exerci tation ullamcorper suscipit lobortis nisl ut
-                  aliquip ex ea commodo consequat. Duis autem vel eum iriure
-                  dolor in hendrerit in vulputate velit esse molestie consequat,
-                  vel illum dolore eu feugiat nulla facilisis at vero eros et
-                  accumsan.
+                  {selectedLayer.descrizione || ''}
                 </p>
 
                 <h4 className="text-xl font-bold text-gray-900 mb-4">
@@ -296,7 +283,7 @@ const DetailPanel = () => {
                 </h4>
 
                 <div className="mt-2">
-                  <TechnicalDetails details={TECHNICAL_DETAILS.primary} />
+                  <TechnicalDetails selectedLayer={selectedLayer} />
                 </div>
               </div>
               {/* Contact Buttons */}
@@ -325,16 +312,26 @@ const DetailPanel = () => {
         <HeaderRow
           currentImage={currentImage}
           code={selectedLayer.code}
-          title={selectedLayer.title}
-          coordinates={selectedLayer.coordinates}
-          status={selectedLayer.status}
+          status={selectedLayer.stato_area || 'N/A'}
           onClose={handleClose}
         />
         <InfoCards
-          area={selectedLayer.area}
-          intervent={selectedLayer.intervent}
-          budget={selectedLayer.budget_estimated}
+          area={`${formatNumericValue(selectedLayer.area_ha, 2)} ha`}
+          intervent={selectedLayer.intervento}
+          budget={formatBudgetRange(
+            selectedLayer.budget_min,
+            selectedLayer.budget_max
+          )}
         />
+
+        <h4 className="text-xl font-bold text-gray-900 mb-4">
+          Dettagli intervento
+        </h4>
+
+        <p className="text-base text-[#484848] leading-relaxed mb-6 text-left w-full">
+          {selectedLayer.descrizione || ''}
+        </p>
+
         {/* Gallery title */}
         <div className="mb-1">
           <h4 className="text-base font-semibold text-[#484848] mb-2">
@@ -351,7 +348,7 @@ const DetailPanel = () => {
           <h4 className="text-lg font-bold text-gray-900 mb-2">
             Dettagli area
           </h4>
-          <TechnicalDetails details={TECHNICAL_DETAILS.primary} />
+          <TechnicalDetails selectedLayer={selectedLayer} />
         </div>
         {/* Contact Buttons */}
         <div className="flex gap-3">
