@@ -270,13 +270,17 @@ const DetailPanel = () => {
                   </div>
                 </div>
 
-                <h4 className="text-xl font-bold text-gray-900 mb-4">
-                  Dettagli intervento
-                </h4>
+                {selectedLayer?.descrizione && (
+                  <>
+                    <h4 className="text-xl font-bold text-gray-900 mb-4">
+                      Dettagli intervento
+                    </h4>
 
-                <p className="text-base text-[#484848] leading-relaxed mb-6 text-left w-full">
-                  {selectedLayer.descrizione || ''}
-                </p>
+                    <p className="text-base text-[#484848] leading-relaxed mb-6 text-left w-full">
+                      {selectedLayer.descrizione}
+                    </p>
+                  </>
+                )}
 
                 <h4 className="text-xl font-bold text-[#202020] mb-4">
                   Dettagli area
@@ -324,13 +328,17 @@ const DetailPanel = () => {
           )}
         />
 
-        <h4 className="text-xl font-bold text-gray-900 mb-4">
-          Dettagli intervento
-        </h4>
+        {selectedLayer?.descrizione && (
+          <>
+            <h4 className="text-xl font-bold text-gray-900 mb-4">
+              Dettagli intervento
+            </h4>
 
-        <p className="text-base text-[#484848] leading-relaxed mb-6 text-left w-full">
-          {selectedLayer.descrizione || ''}
-        </p>
+            <p className="text-base text-[#484848] leading-relaxed mb-6 text-left w-full">
+              {selectedLayer.descrizione}
+            </p>
+          </>
+        )}
 
         {/* Gallery title */}
         <div className="mb-1">
