@@ -25,7 +25,7 @@ jobs:
         run: npm run build
 
       - name: Tar build files
-        run: tar -czf build.tar.gz .
+        run: tar --exclude=build.tar.gz -czf build.tar.gz .
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
