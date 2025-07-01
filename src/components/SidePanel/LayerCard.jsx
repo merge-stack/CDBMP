@@ -41,7 +41,7 @@ const LayerCard = ({
         {imageUrl ? (
           <img
             src={imageUrl}
-            alt={layer.code}
+            alt={layer?.code}
             className="w-[83px] h-[81px] object-cover rounded-md"
             onError={() => setImgError(true)}
           />
@@ -58,7 +58,7 @@ const LayerCard = ({
               selected ? 'text-white' : 'text-[#484747]'
             }`}
           >
-            {layer.code || 'N/A'}
+            {layer.id ? `Area ${layer.id}` : 'N/A'}
           </h3>
           <StatusTag status={layer.stato_area || 'N/A'} selected={selected} />
         </div>
@@ -95,7 +95,7 @@ const LayerCard = ({
                       : 'filter invert() brightness(0.51)'
                   }`}
                 />
-                {layer.intervento || 'N/A'}
+                {layer.tipo_intervento || 'N/A'}
               </p>
             </div>
             <p
@@ -149,7 +149,7 @@ const LayerCard = ({
     >
       <img
         src={imageUrl}
-        alt={layer.code}
+        alt={layer?.code}
         className="w-[85px] h-[111px] object-cover rounded-md mr-3 flex-shrink-0"
         onError={() => setImgError(true)}
       />
@@ -157,7 +157,7 @@ const LayerCard = ({
         <div className="flex flex-col mb-1">
           <StatusTag status={layer.stato_area || 'N/A'} selected={selected} />
           <h3 className="text-base font-semibold text-[#484747] truncate mt-1">
-            {layer.code || 'N/A'}
+            {layer.id ? `Area ${layer.id}` : 'N/A'}
           </h3>
         </div>
         <div className="flex flex-col gap-1">
@@ -167,7 +167,10 @@ const LayerCard = ({
               alt="Area"
               className="w-3 h-w-3 mr-2"
             />
-            <span className='text-[10px]'>{`${formatNumericValue(layer.area_ha, 2)} ha`}</span>
+            <span className="text-[10px]">{`${formatNumericValue(
+              layer.area_ha,
+              2
+            )} ha`}</span>
           </div>
           <div className="flex items-center text-xs text-[#818181]">
             <img

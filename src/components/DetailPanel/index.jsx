@@ -11,11 +11,11 @@ import TechnicalDetails from './TechnicalDetails';
 import StatusTag from '../SidePanel/StatusTag';
 import { formatBudgetRange, formatNumericValue } from '../../helpers/common';
 
-const HeaderRow = ({ currentImage, code, status, onClose }) => (
+const HeaderRow = ({ currentImage, id, status, onClose }) => (
   <div className="flex pb-2 gap-2 items-center">
     <img
       src={currentImage || '/images/placeholder.png'}
-      alt={`Anteprima area ${code}`}
+      alt={`Anteprima area ${id}`}
       className="w-[46px] h-[46px] rounded-full object-cover border-2 border-white shadow mr-1"
       onError={(e) => {
         e.target.src = '/images/placeholder.png';
@@ -23,7 +23,7 @@ const HeaderRow = ({ currentImage, code, status, onClose }) => (
     />
     <div className="flex-1 min-w-0">
       <h3 className="text-lg font-bold text-gray-900 truncate">
-        {code || 'N/A'}
+        {id ? `Area ${id}` : 'N/A'}
       </h3>
     </div>
     <span className="ml-2">
@@ -111,15 +111,15 @@ const DetailPanel = () => {
   const images = useMemo(() => {
     // Using different images for demo purposes
     return [
-      "/images/forest1.jpeg",
-      "/images/forest2.jpeg",
-      "/images/forest1.jpeg",
-      "/images/forest2.jpeg",
-      "/images/forest1.jpeg",
+      '/images/forest1.jpeg',
+      '/images/forest2.jpeg',
+      '/images/forest1.jpeg',
+      '/images/forest2.jpeg',
+      '/images/forest1.jpeg',
     ];
   }, []);
 
-  const currentImage = images[currentImageIndex] || "/images/forest1.jpeg";
+  const currentImage = images[currentImageIndex] || '/images/forest1.jpeg';
 
   const handleImageSelect = useCallback((index) => {
     setCurrentImageIndex(index);
@@ -143,10 +143,10 @@ const DetailPanel = () => {
           url: window.location.href,
         })
         .catch(() => {
-          toast.error("Sharing failed");
+          toast.error('Sharing failed');
         });
     } catch {
-      toast.error("Share API not supported");
+      toast.error('Share API not supported');
     }
   }, [selectedLayer?.code]);
 
@@ -167,13 +167,11 @@ const DetailPanel = () => {
           <div className="sticky top-0 z-50">
             <div className="relative group">
               <img
-                src={currentImage || "images/placeholder.png"}
-                alt={`${selectedLayer.code || selectedLayer.title} - Image ${
-                  currentImageIndex + 1
-                }`}
+                src={currentImage || 'images/placeholder.png'}
+                alt={`${selectedLayer?.code} - Image ${currentImageIndex + 1}`}
                 className="w-full h-[300px] rounded-lg object-cover mx-auto mb-4"
                 onError={(e) => {
-                  e.target.src = "images/placeholder.png";
+                  e.target.src = 'images/placeholder.png';
                 }}
               />
 
@@ -215,7 +213,7 @@ const DetailPanel = () => {
             <div className="">
               <div className="flex flex-col items-start mb-3 w-full">
                 <h3 className="text-xl font-semibold text-[#202020] mb-1 w-full text-left">
-                  {selectedLayer.code || "N/A"}
+                  {selectedLayer.id ? `Area ${selectedLayer.id}` : 'N/A'}
                 </h3>
 
                 {/* Info Blocks */}
@@ -245,7 +243,7 @@ const DetailPanel = () => {
                         className={`w-4 h-4 mr-2`}
                       />
                       <p className="text-sm font-bold text-[#40523F]">
-                        {selectedLayer.intervento || "N/A"}
+                        {selectedLayer.tipo_intervento || 'N/A'}
                       </p>
                     </div>
                     <p className="text-xs text-[#818181]">Intervento</p>
@@ -317,14 +315,14 @@ const DetailPanel = () => {
           <HeaderRow
             currentImage={currentImage}
             code={selectedLayer.code}
-            status={selectedLayer.stato_area || "N/A"}
+            status={selectedLayer.stato_area || 'N/A'}
             onClose={handleClose}
           />
         </div>
         <div className="overflow-auto max-h-[65vh] h-full pr-4">
           <InfoCards
             area={`${formatNumericValue(selectedLayer.area_ha, 2)} ha`}
-            intervent={selectedLayer.intervento}
+            intervent={selectedLayer.tipo_intervento}
             budget={formatBudgetRange(
               selectedLayer.budget_min,
               selectedLayer.budget_max

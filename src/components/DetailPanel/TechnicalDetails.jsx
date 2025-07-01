@@ -40,7 +40,7 @@ const TechnicalDetails = ({ selectedLayer }) => {
             </div>
             <div className="text-right ml-4">
               <p className="text-sm text-[#202020] whitespace-pre-line">
-                {selectedLayer?.[detail.id]}
+                {selectedLayer?.[detail.id] || 'N/A'}
               </p>
             </div>
           </div>

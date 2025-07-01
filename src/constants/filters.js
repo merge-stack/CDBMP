@@ -8,8 +8,8 @@ export const FILTERS = [
         value: 'Da Recuperare',
       },
       {
-        label: 'In Recupero',
-        value: 'In Recupero',
+        label: 'In Corso',
+        value: 'In Corso',
       },
       {
         label: 'Recuperata',
