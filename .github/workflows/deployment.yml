@@ -36,7 +36,7 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USERNAME }}
           SSH_PRIVATE_KEY: ${{ secrets.REMOTE_SSH_KEY }}
           ARGS: '-rltgoDzvO --delete'
-          SOURCE: 'deploy_package/'
+          SOURCE: '/'
           TARGET: '/~root/cdbmp-maps/frontend'
 
       - name: Execute remote deployment commands
