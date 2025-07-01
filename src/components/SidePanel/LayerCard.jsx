@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { Plus, X } from 'lucide-react';
 import React from 'react';
 import StatusTag from './StatusTag';
+import { formatBudgetRange, formatNumericValue } from '../../helpers/common';
 
 const LayerCard = ({
   layer,
@@ -17,12 +18,12 @@ const LayerCard = ({
   const imageUrl = useMemo(() => {
     if (imgError) return '/images/placeholder.jpg';
     try {
-      return new URL('/images/forest1.jpeg', window.location.origin).href;
+      return new URL(layer.immagine, window.location.origin).href;
     } catch {
       toast.error('Error creating image URL');
       return '/images/placeholder.jpg';
     }
-  }, [imgError]);
+  }, [imgError, layer.immagine]);
 
   // Desktop layout (unchanged)
   const desktopCard = (
@@ -56,12 +57,9 @@ const LayerCard = ({
               selected ? 'text-white' : 'text-[#484747]'
             }`}
           >
-            {layer.code}
+            {layer.code || 'N/A'}
           </h3>
-          <StatusTag
-            status={layer.status || 'Da recuperare'}
-            selected={selected}
-          />
+          <StatusTag status={layer.stato_area || 'N/A'} selected={selected} />
         </div>
         <div className="flex justify-between items-end mt-2">
           <div className="flex-1 flex flex-col gap-1.5">
@@ -80,7 +78,7 @@ const LayerCard = ({
                       : 'filter invert() brightness(0.51)'
                   }`}
                 />
-                {layer.area || '12ha'}
+                {`${formatNumericValue(layer.area_ha, 2)} ha`}
               </p>
               <p
                 className={`flex items-center text-sm ${
@@ -96,7 +94,7 @@ const LayerCard = ({
                       : 'filter invert() brightness(0.51)'
                   }`}
                 />
-                {layer.status || 'Manutenzione'}
+                {layer.intervento || 'N/A'}
               </p>
             </div>
             <p
@@ -113,7 +111,7 @@ const LayerCard = ({
                     : 'filter invert() brightness(0.51)'
                 }`}
               />
-              {layer.budget || '200-250K euro'}
+              {formatBudgetRange(layer.budget_min, layer.budget_max)}
             </p>
           </div>
           {!isMapTooltip && (
@@ -156,12 +154,9 @@ const LayerCard = ({
       />
       <div className="flex-1 flex flex-col min-w-0">
         <div className="flex flex-col mb-1">
-          <StatusTag
-            status={layer.status || 'Da recuperare'}
-            selected={selected}
-          />
+          <StatusTag status={layer.stato_area || 'N/A'} selected={selected} />
           <h3 className="text-base font-semibold text-[#484747] truncate mt-1">
-            {layer.code}
+            {layer.code || 'N/A'}
           </h3>
         </div>
         <div className="flex flex-col gap-1">
@@ -171,7 +166,7 @@ const LayerCard = ({
               alt="Area"
               className="w-4 h-4 mr-2"
             />
-            {layer.area || '12ha'}
+            {`${formatNumericValue(layer.area_ha, 2)} ha`}
           </div>
           <div className="flex items-center text-sm text-[#818181]">
             <img
@@ -179,7 +174,7 @@ const LayerCard = ({
               alt="Tree"
               className="w-4 h-4 mr-2"
             />
-            {layer.status || 'Manutenzione'}
+            {layer.intervento || 'N/A'}
           </div>
           <div className="flex items-center text-sm text-[#818181]">
             <img
@@ -187,7 +182,7 @@ const LayerCard = ({
               alt="Budget"
               className="w-4 h-4 mr-2"
             />
-            {layer.budget || '200-250K euro'}
+            {formatBudgetRange(layer.budget_min, layer.budget_max)}
           </div>
         </div>
       </div>
