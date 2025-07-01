@@ -33,13 +33,13 @@ const LayerButton = () => {
         <button
           ref={buttonRef}
           onClick={handleButtonClick}
-          className="absolute top-[200px] left-[480px] z-30 w-12 h-12 rounded-full flex items-center justify-center bg-[#426345] shadow-lg transition-all duration-200 hover:bg-[#5C7A5E]"
+          className="absolute top-[200px] left-[480px] z-30 w-[42px] h-[42px] rounded-full flex items-center justify-center bg-[#426345] shadow-lg transition-all duration-200 hover:bg-[#5C7A5E]"
           aria-label="Toggle map layers"
         >
           {isPanelOpen ? (
-            <X className="w-6 h-6 text-white" />
+            <X className="w-5 h-5 text-white" />
           ) : (
-            <img src="/svg/layersIcon.svg" alt="Layers" className="w-6 h-6" />
+            <img src="/svg/layersIcon.svg" alt="Layers" className="w-5 h-5" />
           )}
         </button>
       </div>

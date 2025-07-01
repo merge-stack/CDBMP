@@ -94,7 +94,7 @@ const SidePanel = () => {
             rowHeight={CARD_HEIGHT}
             rowRenderer={rowRenderer}
             overscanRowCount={5}
-            style={{ outline: 'none' }}
+            style={{ outline: 'none', width: '430px' }}
             scrollToIndex={selectedIndex >= 0 ? selectedIndex : undefined}
           />
         )}

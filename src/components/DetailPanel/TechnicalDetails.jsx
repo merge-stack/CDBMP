@@ -3,7 +3,7 @@ import { TECHNICAL_DETAILS } from '../../constants/details';
 
 const TechnicalDetails = ({ selectedLayer }) => {
   return (
-    <div className="bg-[#E3F1E4] rounded-lg p-4 mb-6">
+    <div className="bg-[linear-gradient(0deg,_#FFF_0%,_#E3F1E4_29.81%)] rounded-md p-4 mb-6">
       {TECHNICAL_DETAILS.map((detail, index) => (
         <div
           key={detail.id}
@@ -31,15 +31,15 @@ const TechnicalDetails = ({ selectedLayer }) => {
           </div>
           <div className="flex-1 flex justify-between items-start">
             <div className="flex-1">
-              <p className="text-sm font-semibold text-gray-900 mb-0.5">
+              <p className="text-sm font-semibold text-[#202020] mb-0.5">
                 {detail.title}
               </p>
               {detail.subTitle && (
-                <p className="text-xs text-gray-600">{detail.subTitle}</p>
+                <p className="text-xs text-[#202020]">{detail.subTitle}</p>
               )}
             </div>
             <div className="text-right ml-4">
-              <p className="text-sm font-semibold text-gray-900 whitespace-pre-line">
+              <p className="text-sm text-[#202020] whitespace-pre-line">
                 {selectedLayer?.[detail.id]}
               </p>
             </div>
