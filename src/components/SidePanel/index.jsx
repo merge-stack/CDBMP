@@ -10,7 +10,7 @@ import LayerCardSkeleton from './LayerCardSkeleton';
  * Displays a list of forest layers with their details and allows selection
  */
 
-const CARD_HEIGHT = 150; // px, adjust to match LayerCard's desktop height (including margin)
+const CARD_HEIGHT = 140; // px, adjust to match LayerCard's desktop height (including margin)
 
 const SidePanel = () => {
   // Store states

@@ -25,7 +25,7 @@ const StatusTag = ({ status, selected }) => {
   };
   return (
     <span
-      className={`max-w-28 px-2 py-1 rounded-md text-xs font-normal border-2 ${bgColor} ${textColor} ${borderColor}`}
+      className={`max-w-28 px-2 py-1 rounded-md text-xs font-normal border-2 whitespace-nowrap ${bgColor} ${textColor} ${borderColor}`}
     >
       {status}
     </span>
