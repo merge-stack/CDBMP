@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 const initialFiltersState = {
-  layerType: 'attrazioni',
+  layerType: 'default',
   area: '',
   intervention: '',
   budget: { min: 0, max: 0 },

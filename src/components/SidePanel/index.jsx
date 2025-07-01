@@ -19,8 +19,8 @@ const SidePanel = () => {
 
   // Memoize layers for performance - only show Attrazioni data in cards
   const layers = useMemo(
-    () => geoJsonData?.attrazioni?.features?.map((f) => f.properties) || [],
-    [geoJsonData?.attrazioni]
+    () => geoJsonData?.default?.features?.map((f) => f.properties) || [],
+    [geoJsonData?.default]
   );
 
   // Find the index of the selected layer

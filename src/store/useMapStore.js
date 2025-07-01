@@ -14,7 +14,7 @@ const initialMapViewState = {
 
 const useMapStore = create((set, get) => ({
   geoJsonData: {
-    attrazioni: null,
+    default: null,
     fonti: null,
     incendio_2018: null,
     sentieri: null,
@@ -37,12 +37,12 @@ const useMapStore = create((set, get) => ({
       },
     })),
 
-  // Update only attrazioni data while preserving other layers
+  // Update only default data while preserving other layers
   updateAttrazioniData: (attrazioniData) =>
     set((state) => ({
       geoJsonData: {
         ...state.geoJsonData,
-        attrazioni: attrazioniData,
+        default: attrazioniData,
       },
     })),
 
@@ -70,7 +70,7 @@ const useMapStore = create((set, get) => ({
   isMapLayerActive: (layerId) => {
     const state = get();
     // Attrazioni is always active for data, others are in displayLayers
-    if (layerId === 'attrazioni') return true;
+    if (layerId === 'default') return true;
     return state.displayLayers.has(layerId);
   },
   
@@ -82,7 +82,7 @@ const useMapStore = create((set, get) => ({
   resetMap: () =>
     set({
       geoJsonData: {
-        attrazioni: null,
+        default: null,
         fonti: null,
         incendio_2018: null,
         sentieri: null,
@@ -95,7 +95,7 @@ const useMapStore = create((set, get) => ({
   // Getters for better data access
   getAttrazioniData: () => {
     const state = get();
-    return state.geoJsonData?.attrazioni || null;
+    return state.geoJsonData?.default || null;
   },
 
   getLayerData: (layerType) => {

@@ -49,32 +49,32 @@ const useMapData = () => {
       }, {});
   }, [selectedFilters]);
 
-  // Fetch only attrazioni data (with filters)
+  // Fetch only default data (with filters)
   const fetchAttrazioniData = useCallback(async () => {
     try {
       setIsLoading(true);
 
       const queryParams = {
         ...buildQueryParams,
-        layerType: MAP_LAYER_TYPES.ATTRazioni,
+        layerType: MAP_LAYER_TYPES.DEFAULT,
       };
 
       const attrazioniData = await getMapAreas(queryParams);
       updateAttrazioniData(attrazioniData);
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      toast.error('Error loading attrazioni data: ' + errorMessage);
+      toast.error('Error loading default data: ' + errorMessage);
       throw error;
     } finally {
       setIsLoading(false);
     }
   }, [buildQueryParams, getMapAreas, updateAttrazioniData, setIsLoading]);
 
-  // Generic fetch for any layer (no filters except attrazioni)
+  // Generic fetch for any layer (no filters except default)
   const fetchLayerData = useCallback(
     async (layerType) => {
-      if (layerType === MAP_LAYER_TYPES.ATTRazioni) {
-        // Use fetchAttrazioniData for attrazioni (with filters)
+      if (layerType === MAP_LAYER_TYPES.DEFAULT) {
+        // Use fetchAttrazioniData for default (with filters)
         return fetchAttrazioniData();
       }
       try {
@@ -114,7 +114,7 @@ const useMapInteractions = () => {
       if (!event.object) return;
 
       const feature = event.object;
-      if (feature.properties.layerType === MAP_LAYER_TYPES.ATTRazioni) {
+      if (feature.properties.layerType === MAP_LAYER_TYPES.DEFAULT) {
         setSelectedLayer({ ...feature.properties });
         setShowDetailPanel(true);
       }
@@ -167,7 +167,7 @@ const useMapTooltips = () => {
   }, []);
 
   const getAttrazioniTooltip = useCallback((object) => {
-    if (object.properties.layerType !== MAP_LAYER_TYPES.ATTRazioni) {
+    if (object.properties.layerType !== MAP_LAYER_TYPES.DEFAULT) {
       return null;
     }
 
@@ -217,12 +217,12 @@ const MapView = () => {
   } = useMapInteractions();
   const { getTooltip } = useMapTooltips();
 
-  // Initial data fetch: only attrazioni
+  // Initial data fetch: only default
   useEffect(() => {
     fetchAttrazioniData().catch(setError);
   }, [fetchAttrazioniData]);
 
-  // Re-fetch attrazioni data when filters change
+  // Re-fetch default data when filters change
   useEffect(() => {
     fetchAttrazioniData().catch(setError);
   }, [fetchAttrazioniData, selectedFilters]);
@@ -231,7 +231,7 @@ const MapView = () => {
   useEffect(() => {
     const layersToFetch = Array.from(displayLayers).filter(
       (layerType) =>
-        layerType !== MAP_LAYER_TYPES.ATTRazioni && !geoJsonData[layerType]
+        layerType !== MAP_LAYER_TYPES.DEFAULT && !geoJsonData[layerType]
     );
     if (layersToFetch.length > 0) {
       layersToFetch.forEach((layerType) => {
@@ -248,15 +248,15 @@ const MapView = () => {
 
   // Update bounds when selectedLayer changes
   useEffect(() => {
-    if (mapRef.current && selectedLayer && geoJsonData?.attrazioni?.features) {
-      const feature = geoJsonData.attrazioni.features.find(
+    if (mapRef.current && selectedLayer && geoJsonData?.default?.features) {
+      const feature = geoJsonData.default.features.find(
         (feature) => feature.properties.id === selectedLayer.id
       );
       if (feature) {
         flyTo({ feature, setMapViewState });
       }
     }
-  }, [selectedLayer, geoJsonData?.attrazioni?.features, setMapViewState]);
+  }, [selectedLayer, geoJsonData?.default?.features, setMapViewState]);
 
   // Clear hovered object when display layers change
   useEffect(() => {
