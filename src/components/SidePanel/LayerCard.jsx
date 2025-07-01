@@ -112,7 +112,7 @@ const LayerCard = ({
                     : "filter invert() brightness(0.51)"
                 }`}
               />
-              <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis w-[10ch]">{formatBudgetRange(layer.budget_min, layer.budget_max)}</span>
+              <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis">{formatBudgetRange(layer.budget_min, layer.budget_max)}</span>
             </p>
           </div>
         </div>

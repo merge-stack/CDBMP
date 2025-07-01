@@ -76,7 +76,7 @@ const BudgetFilter = ({
 
   return createPortal(
     <div
-      className="fixed w-40 md:min-w-[190px] p-4 bg-white rounded-md shadow-lg z-50 filter-dropdown-content"
+      className="fixed w-40 md:min-w-[220px] p-4 bg-white rounded-md shadow-lg z-50 filter-dropdown-content"
       style={{
         top: `${buttonRect.bottom + 8}px`,
         left: `${buttonRect.left}px`,
