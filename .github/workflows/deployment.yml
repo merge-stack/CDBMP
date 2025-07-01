@@ -24,14 +24,27 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Tar build files
+        run: tar -czf build.tar.gz .
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: build.tar.gz
+          retention-days: 1
+
   deploy:
     runs-on: ubuntu-latest
     environment: production
     needs: build
     steps:
-      - name: Tar build files
-        run: tar -czf build.tar.gz .
-  
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: .
+
       - name: Deploy to remote server
         uses: appleboy/scp-action@v0.1.4
         with:
