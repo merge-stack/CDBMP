@@ -29,7 +29,7 @@ const LayerCardList = () => {
       const layer = layers[columnIndex];
       if (!layer) return null;
 
-      const isSelected = selectedLayer?.id === layer.id;
+      const isSelected = selectedLayer?.ID === layer.ID;
 
       return (
         <div
@@ -49,7 +49,7 @@ const LayerCardList = () => {
   );
 
   const selectedIndex = useMemo(
-    () => layers.findIndex((l) => l.id === selectedLayer?.id),
+    () => layers.findIndex((l) => l.ID === selectedLayer?.ID),
     [layers, selectedLayer]
   );
 

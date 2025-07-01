@@ -111,7 +111,7 @@ export const getDeckLayers = ({
         pickable: LAYER_CONFIG.areas.pickable,
         autoHighlight: false,
         updateTriggers: {
-          getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
+          getFillColor: [selectedLayer?.ID, hoveredObject?.properties?.ID],
         },
         parameters: {
           depthTest: false,
@@ -148,8 +148,8 @@ export const getDeckLayers = ({
         stroked: false, // This layer only handles the fill
         getFillColor: (d) => {
           if (
-            d.properties.id === selectedLayer?.id ||
-            d.properties.id === hoveredObject?.properties?.id
+            d.properties.ID === selectedLayer?.ID ||
+            d.properties.ID === hoveredObject?.properties?.ID
           ) {
             return [0, 200, 0, 150]; // Highlight fill color for selected or hovered
           }
@@ -158,7 +158,7 @@ export const getDeckLayers = ({
         pickable: LAYER_CONFIG.areas.pickable, // Still pickable for click/hover events
         autoHighlight: false, // Disable autoHighlight for this layer
         updateTriggers: {
-          getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
+          getFillColor: [selectedLayer?.ID, hoveredObject?.properties?.ID],
         },
         parameters: {
           depthTest: false,

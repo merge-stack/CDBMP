@@ -250,7 +250,7 @@ const MapView = () => {
   useEffect(() => {
     if (mapRef.current && selectedLayer && geoJsonData?.default?.features) {
       const feature = geoJsonData.default.features.find(
-        (feature) => feature.properties.id === selectedLayer.id
+        (feature) => feature.properties.ID === selectedLayer.ID
       );
       if (feature) {
         flyTo({ feature, setMapViewState });

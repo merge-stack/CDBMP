@@ -25,7 +25,7 @@ const SidePanel = () => {
 
   // Find the index of the selected layer
   const selectedIndex = useMemo(
-    () => layers.findIndex((l) => l.id === selectedLayer?.id),
+    () => layers.findIndex((l) => l.ID === selectedLayer?.ID),
     [layers, selectedLayer]
   );
 
@@ -48,7 +48,7 @@ const SidePanel = () => {
   const rowRenderer = useCallback(
     ({ index, key, style }) => {
       const layer = layers[index];
-      const isSelected = selectedLayer?.id === layer.id;
+      const isSelected = selectedLayer?.ID === layer.ID;
       return (
         <div key={key} style={style}>
           <LayerCard
