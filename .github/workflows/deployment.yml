@@ -24,35 +24,23 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Tar build files
-        run: tar -czf build.tar.gz dist Dockerfile nginx.conf
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-files
-          path: build.tar.gz
-          retention-days: 1
-
   deploy:
     runs-on: ubuntu-latest
     environment: production
     needs: build
     steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-files
-          path: .
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Deploy to remote server
-        uses: appleboy/scp-action@v0.1.4
+        uses: easingthemes/ssh-deploy@main
         with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USERNAME }}
-          key: ${{ secrets.REMOTE_SSH_KEY }}
-          source: build.tar.gz
-          target: /tmp
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USERNAME }}
+          SSH_PRIVATE_KEY: ${{ secrets.REMOTE_SSH_KEY }}
+          ARGS: '-rltgoDzvO --delete'
+          SOURCE: '/'
+          TARGET: '~root/cdbmp_maps/frontend'
 
       - name: Execute remote deployment commands
         uses: appleboy/ssh-action@v1.0.0
@@ -61,10 +49,5 @@ jobs:
           username: ${{ secrets.REMOTE_USERNAME }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
           script: |
-            # Extract the build files to the deployment directory
-            tar -xzf /tmp/build.tar.gz -C ~root/cdbmp_maps/frontend/
-            rm /tmp/build.tar.gz
-            
             # Build and restart the Docker container
-            cd ~root/cdbmp_maps
-            docker-compose up -d frontend
+            docker-compose -f /root/cdbmp_maps/docker-compose.yaml up --build -d frontend
