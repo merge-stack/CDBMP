@@ -139,33 +139,6 @@ const useMapInteractions = () => {
 
 // Custom hook for map tooltips
 const useMapTooltips = () => {
-  const getFontiTooltip = useCallback((object) => {
-    if (
-      object.properties.layerType !== MAP_LAYER_TYPES.FONTI ||
-      !object.properties?.name
-    ) {
-      return null;
-    }
-
-    return {
-      html: `
-        <div role="tooltip" aria-live="polite" style="
-          min-width:300px; max-width:400px; padding:16px 20px;
-          background:white; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15);
-          border: 1px solid #e5e7eb; font-family: Arial, sans-serif; word-break: break-word;
-        ">
-          <div style="font-weight:bold; font-size:1.1em; margin-bottom:8px; color:#000; line-height:1.3; word-break: break-word;">
-            ${object.properties.name}
-          </div>
-          <div style="color:#222; white-space:pre-line; font-size:1em; line-height:1.5; margin-bottom:2px; word-break: break-word;">
-            ${object.properties.description || ''}
-          </div>
-        </div>
-      `,
-      style: { background: 'none', pointerEvents: 'auto' },
-    };
-  }, []);
-
   const getDefaultLayerTooltip = useCallback((object) => {
     if (object.properties.layerType !== MAP_LAYER_TYPES.DEFAULT) {
       return null;
@@ -182,9 +155,9 @@ const useMapTooltips = () => {
   const getTooltip = useCallback(
     ({ object }) => {
       if (!object) return null;
-      return getFontiTooltip(object) || getDefaultLayerTooltip(object);
+      return getDefaultLayerTooltip(object);
     },
-    [getFontiTooltip, getDefaultLayerTooltip]
+    [getDefaultLayerTooltip]
   );
 
   return { getTooltip };
