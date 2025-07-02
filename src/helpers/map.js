@@ -194,8 +194,8 @@ export const getDeckLayers = ({
         data: fontiData.features,
         visible: isFonti, // Only visible when toggled on
         pickable: true,
-        getIcon: (d) => ({
-          url: d.properties.icon,
+        getIcon: () => ({
+          url: `${window.location.origin}/svg/fontiLayerIcon.svg`,
           width: 64,
           height: 64,
           anchorY: 64,
