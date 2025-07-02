@@ -3,7 +3,10 @@ import BudgetFilter from './BudgetFilter';
 import DefaultFilter from './DefaultFilter';
 
 import { FILTERS } from '../../constants/filters';
-import useFiltersStore from '../../store/useFiltersStore';
+import {
+  useFiltersStore,
+  initialFiltersState,
+} from '../../store/useFiltersStore';
 import useUIStore from '../../store/useUIStore';
 import { X } from 'lucide-react';
 
@@ -57,12 +60,14 @@ const FiltersBar = () => {
     () =>
       FILTERS.map((filter) => (
         <div key={filter.id} className="flex-none relative">
-          <button
-            onClick={() => setFilterToInitial(filter.id)}
-            className="px-1 mx-3 absolute right-[15px] top-[10px]"
-          >
-            <X size={16} />
-          </button>
+          {selectedFilters[filter.id] !== initialFiltersState[filter.id] && (
+            <button
+              onClick={() => setFilterToInitial(filter.id)}
+              className="px-1 mx-3 absolute right-[15px] top-[10px]"
+            >
+              <X size={16} />
+            </button>
+          )}
           <button
             ref={(el) => (buttonRefs.current[filter.id] = el)}
             className={`

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-const initialFiltersState = {
+export const initialFiltersState = {
   layerType: 'default',
   area: '',
   intervention: '',
