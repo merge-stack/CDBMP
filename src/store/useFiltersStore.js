@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-const initialFiltersState = {
-  layerType: 'attrazioni',
+export const initialFiltersState = {
+  layerType: 'default',
   area: '',
   intervention: '',
   budget: { min: 0, max: 0 },
-  priority: '',
+  servizi_ecosistemici: '',
 };
 
 export const useFiltersStore = create(
@@ -20,6 +20,13 @@ export const useFiltersStore = create(
     resetFilters: () =>
       set(() => ({
         selectedFilters: initialFiltersState,
+      })),
+    setFilterToInitial: (filterKey) =>
+      set((state) => ({
+        selectedFilters: {
+          ...state.selectedFilters,
+          [filterKey]: initialFiltersState[filterKey],
+        },
       })),
   }))
 );

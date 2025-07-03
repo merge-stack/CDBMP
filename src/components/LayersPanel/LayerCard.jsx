@@ -13,7 +13,7 @@ const LayerCard = ({ layer, isActive, onToggle }) => {
         }`}
       >
         <img
-          src={layer.icon || 'images/placeholder.jpg'}
+          src={layer.icon || 'images/placeholder.png'}
           alt={layer.name}
           className={`w-[60px] h-[60px]`}
         />

@@ -12,8 +12,8 @@ const LayerCardList = () => {
   const { setShowDetailPanel } = useUIStore();
 
   const layers = useMemo(
-    () => geoJsonData?.attrazioni?.features?.map((f) => f.properties) || [],
-    [geoJsonData?.attrazioni]
+    () => geoJsonData?.default?.features?.map((f) => f.properties) || [],
+    [geoJsonData?.default]
   );
 
   const handleLayerClick = useCallback(
@@ -29,7 +29,7 @@ const LayerCardList = () => {
       const layer = layers[columnIndex];
       if (!layer) return null;
 
-      const isSelected = selectedLayer?.id === layer.id;
+      const isSelected = selectedLayer?.ID === layer.ID;
 
       return (
         <div
@@ -49,12 +49,12 @@ const LayerCardList = () => {
   );
 
   const selectedIndex = useMemo(
-    () => layers.findIndex((l) => l.id === selectedLayer?.id),
+    () => layers.findIndex((l) => l.ID === selectedLayer?.ID),
     [layers, selectedLayer]
   );
 
   return (
-    <div className="fixed bottom-[88px] left-0 right-0 z-50 md:hidden bg-transparent">
+    <div className="fixed bottom-[88px] left-2 right-0 z-50 md:hidden bg-transparent">
       <AutoSizer disableHeight>
         {({ width }) => (
           <Grid

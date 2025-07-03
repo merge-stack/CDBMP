@@ -80,7 +80,7 @@ export const INTERACTION_CONFIG = {
 };
 
 export const MAP_LAYER_TYPES = {
-  ATTRazioni: 'attrazioni',
+  DEFAULT: 'default',
   FONTI: 'fonti',
   INCENDIO: 'incendio_2018',
   SENTIERI: 'sentieri',

@@ -75,8 +75,8 @@ export const getDeckLayers = ({
   const isSentieri = displayLayers.has(MAP_LAYER_TYPES.SENTIERI);
 
   // Get data for each layer type directly from geoJsonData
-  const attrazioniData =
-    geoJsonData[MAP_LAYER_TYPES.ATTRazioni] || DEFAULT_GEOJSON;
+  const defaultLayerData =
+    geoJsonData[MAP_LAYER_TYPES.DEFAULT] || DEFAULT_GEOJSON;
   const fontiData = geoJsonData[MAP_LAYER_TYPES.FONTI] || DEFAULT_GEOJSON;
   const incendioData = geoJsonData[MAP_LAYER_TYPES.INCENDIO] || DEFAULT_GEOJSON;
   const sentieriData = geoJsonData[MAP_LAYER_TYPES.SENTIERI] || DEFAULT_GEOJSON;
@@ -111,7 +111,7 @@ export const getDeckLayers = ({
         pickable: LAYER_CONFIG.areas.pickable,
         autoHighlight: false,
         updateTriggers: {
-          getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
+          getFillColor: [selectedLayer?.ID, hoveredObject?.properties?.ID],
         },
         parameters: {
           depthTest: false,
@@ -137,19 +137,19 @@ export const getDeckLayers = ({
     );
   }
 
-  // Attrazioni layer (GeoJsonLayer with fill and border) - always visible
-  if (attrazioniData.features.length > 0) {
+  // Default layer (GeoJsonLayer with fill and border) - always visible
+  if (defaultLayerData.features.length > 0) {
     layers.push(
       new GeoJsonLayer({
-        id: 'attrazioni-fill',
-        data: attrazioniData,
+        id: 'default-fill',
+        data: defaultLayerData,
         visible: true,
         filled: true,
         stroked: false, // This layer only handles the fill
         getFillColor: (d) => {
           if (
-            d.properties.id === selectedLayer?.id ||
-            d.properties.id === hoveredObject?.properties?.id
+            d.properties.ID === selectedLayer?.ID ||
+            d.properties.ID === hoveredObject?.properties?.ID
           ) {
             return [0, 200, 0, 150]; // Highlight fill color for selected or hovered
           }
@@ -158,7 +158,7 @@ export const getDeckLayers = ({
         pickable: LAYER_CONFIG.areas.pickable, // Still pickable for click/hover events
         autoHighlight: false, // Disable autoHighlight for this layer
         updateTriggers: {
-          getFillColor: [selectedLayer?.id, hoveredObject?.properties?.id],
+          getFillColor: [selectedLayer?.ID, hoveredObject?.properties?.ID],
         },
         parameters: {
           depthTest: false,
@@ -170,8 +170,8 @@ export const getDeckLayers = ({
 
     layers.push(
       new GeoJsonLayer({
-        id: 'attrazioni-border',
-        data: attrazioniData,
+        id: 'default-border',
+        data: defaultLayerData,
         visible: true,
         filled: false, // This layer only handles the border
         stroked: true,
@@ -194,8 +194,8 @@ export const getDeckLayers = ({
         data: fontiData.features,
         visible: isFonti, // Only visible when toggled on
         pickable: true,
-        getIcon: (d) => ({
-          url: d.properties.icon,
+        getIcon: () => ({
+          url: `${window.location.origin}/svg/fontiLayerIcon.svg`,
           width: 64,
           height: 64,
           anchorY: 64,

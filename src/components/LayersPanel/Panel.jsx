@@ -15,7 +15,7 @@ const Panel = ({ isOpen }) => {
   return (
     <>
       {/* Panel */}
-      <div className="fixed left-0 top-[95px] w-full md:left-[540px] md:top-[200px] z-10 md:w-auto bg-white md:rounded-2xl shadow-xl border border-gray-100 p-4">
+      <div className="fixed left-0 top-[95px] w-full md:left-[500px] md:top-[200px] z-10 md:w-auto bg-white md:rounded-2xl shadow-xl border border-gray-100 p-4">
         <div className="flex gap-3 justify-evenly md:justify-between">
           {MAP_LAYERS.map((layer) => (
             <LayerCard

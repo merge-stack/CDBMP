@@ -76,14 +76,14 @@ const BudgetFilter = ({
 
   return createPortal(
     <div
-      className="fixed min-w-[300px] p-6 bg-white rounded-md shadow-lg z-50 filter-dropdown-content"
+      className="fixed w-40 md:min-w-[220px] p-4 bg-white rounded-md shadow-lg z-50 filter-dropdown-content"
       style={{
         top: `${buttonRect.bottom + 8}px`,
         left: `${buttonRect.left}px`,
       }}
     >
       <div className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {renderSelect('Min', range.min, options, handleChange('min'))}
           {renderSelect('Max', range.max, options, handleChange('max'))}
         </div>

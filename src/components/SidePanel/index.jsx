@@ -10,22 +10,22 @@ import LayerCardSkeleton from './LayerCardSkeleton';
  * Displays a list of forest layers with their details and allows selection
  */
 
-const CARD_HEIGHT = 150; // px, adjust to match LayerCard's desktop height (including margin)
+const CARD_HEIGHT = 140; // px, adjust to match LayerCard's desktop height (including margin)
 
 const SidePanel = () => {
   // Store states
   const { selectedLayer, setSelectedLayer, geoJsonData } = useMapStore();
   const { setShowDetailPanel, isLoading } = useUIStore();
 
-  // Memoize layers for performance - only show Attrazioni data in cards
+  // Memoize layers for performance - only show default layer data in cards
   const layers = useMemo(
-    () => geoJsonData?.attrazioni?.features?.map((f) => f.properties) || [],
-    [geoJsonData?.attrazioni]
+    () => geoJsonData?.default?.features?.map((f) => f.properties) || [],
+    [geoJsonData?.default]
   );
 
   // Find the index of the selected layer
   const selectedIndex = useMemo(
-    () => layers.findIndex((l) => l.id === selectedLayer?.id),
+    () => layers.findIndex((l) => l.ID === selectedLayer?.ID),
     [layers, selectedLayer]
   );
 
@@ -48,7 +48,7 @@ const SidePanel = () => {
   const rowRenderer = useCallback(
     ({ index, key, style }) => {
       const layer = layers[index];
-      const isSelected = selectedLayer?.id === layer.id;
+      const isSelected = selectedLayer?.ID === layer.ID;
       return (
         <div key={key} style={style}>
           <LayerCard
@@ -65,7 +65,7 @@ const SidePanel = () => {
 
   if (isLoading) {
     return (
-      <div className="hidden md:block w-[450px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
+      <div className="hidden md:block w-[430px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
         {Array.from({ length: 7 }).map((_, index) => (
           <LayerCardSkeleton key={index} />
         ))}
@@ -75,7 +75,7 @@ const SidePanel = () => {
 
   if (!layers.length) {
     return (
-      <div className="hidden md:block w-[450px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
+      <div className="hidden md:block w-[430px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
         <div className="h-full flex items-center justify-center text-gray-500">
           No layers available
         </div>
@@ -84,7 +84,7 @@ const SidePanel = () => {
   }
 
   return (
-    <div className="hidden md:block w-[450px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
+    <div className="hidden md:block w-[430px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
       <AutoSizer>
         {({ height, width }) => (
           <List
@@ -94,7 +94,7 @@ const SidePanel = () => {
             rowHeight={CARD_HEIGHT}
             rowRenderer={rowRenderer}
             overscanRowCount={5}
-            style={{ outline: 'none' }}
+            style={{ outline: 'none', width: '410px' }}
             scrollToIndex={selectedIndex >= 0 ? selectedIndex : undefined}
           />
         )}

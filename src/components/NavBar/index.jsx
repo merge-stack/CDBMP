@@ -14,8 +14,8 @@ function Navbar({ onLogoClick, onSignInClick }) {
   ];
 
   return (
-    <nav className="sticky top-0 bg-primary z-50">
-      <div className="flex justify-between items-center min-h-[95px] px-6 md:px-12">
+    <nav className="fixed left-0 right-0 top-0 bg-primary z-50">
+      <div className="flex justify-between items-center min-h-[95px] px-6 md:pl-[81px] md:pr-[56px]">
         {/* Logo */}
         <div
           onClick={onLogoClick}
@@ -36,14 +36,14 @@ function Navbar({ onLogoClick, onSignInClick }) {
             <a
               key={index}
               href={item.href}
-              className="text-white px-2 w-[126px] h-[38px] rounded-md hover:bg-white/10 text-[0.95rem] font-normal text-center leading-[38px]"
+              className="text-[#F2F2F2] px-2 w-[126px] h-[38px] rounded-md hover:bg-white/10 text-[13px] font-normal flex items-center justify-center"
             >
               {item.label}
             </a>
           ))}
           <button
             onClick={onSignInClick}
-            className="bg-white text-primary p-2 w-[126px] h-[38px] rounded-md hover:bg-white/90 font-medium flex items-center justify-center gap-2"
+            className="bg-white text-[#426345] p-2 w-[126px] h-[38px] text-[13px] rounded-md hover:bg-white/90 font-medium flex items-center justify-center gap-2"
           >
             Contattaci
             <img src="/svg/mailIcon.svg" alt="Mail icon" className="w-4 h-4" />
@@ -74,29 +74,30 @@ function Navbar({ onLogoClick, onSignInClick }) {
 
           {/* Mobile Menu Dropdown */}
           {isMobileMenuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden">
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden ring-1 ring-primary/10">
               <div className="py-2">
                 {menuItems.map((item, index) => (
                   <a
                     key={index}
                     href={item.href}
-                    className="block px-4 py-3 text-secondary-text hover:bg-white/10 text-[0.95rem] font-normal"
+                    className="flex items-center gap-2 px-4 py-3 text-[0.95rem] font-normal text-[#476A48] hover:bg-[#94B782]/20 hover:text-[#426345] transition-colors duration-200"
                   >
-                    {item.label}
+                    <span>{item.label}</span>
                   </a>
                 ))}
+
                 <button
                   onClick={() => {
                     onSignInClick();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="w-full text-left px-4 py-3 text-secondary-text hover:bg-white/10 text-[0.95rem] font-normal flex items-center gap-2"
+                  className="group w-full text-left flex items-center gap-2 px-4 py-3 text-[0.95rem] font-normal text-[#476A48] hover:bg-[#94B782]/20 hover:text-[#426345] transition-colors duration-200"
                 >
                   Contattaci
                   <img
                     src="/svg/mailIcon.svg"
                     alt="Mail icon"
-                    className="w-4 h-4"
+                    className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity duration-200"
                   />
                 </button>
               </div>

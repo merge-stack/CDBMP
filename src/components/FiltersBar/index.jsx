@@ -3,15 +3,20 @@ import BudgetFilter from './BudgetFilter';
 import DefaultFilter from './DefaultFilter';
 
 import { FILTERS } from '../../constants/filters';
-import useFiltersStore from '../../store/useFiltersStore';
+import {
+  useFiltersStore,
+  initialFiltersState,
+} from '../../store/useFiltersStore';
 import useUIStore from '../../store/useUIStore';
+import { X } from 'lucide-react';
 
 const FiltersBar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [dropdownRect, setDropdownRect] = useState(null);
 
   // Filter store states
-  const { selectedFilters, setSelectedFilters } = useFiltersStore();
+  const { selectedFilters, setSelectedFilters, setFilterToInitial } =
+    useFiltersStore();
 
   const { selectedMobileMenu } = useUIStore();
   const isFilterBarOpen = selectedMobileMenu?.id === 'filter';
@@ -54,21 +59,30 @@ const FiltersBar = () => {
   const filterButtons = useMemo(
     () =>
       FILTERS.map((filter) => (
-        <div key={filter.id} className="flex-none">
+        <div key={filter.id} className="flex-none relative">
+          {selectedFilters[filter.id] !== initialFiltersState[filter.id] && (
+            <button
+              onClick={() => setFilterToInitial(filter.id)}
+              className="px-1 mx-3 absolute right-[15px] top-[10px]"
+            >
+              <X size={16} />
+            </button>
+          )}
           <button
             ref={(el) => (buttonRefs.current[filter.id] = el)}
             className={`
               filter-button
-              px-4 py-2 text-sm font-medium whitespace-nowrap rounded-md
+              p-2 text-[13px] font-medium whitespace-nowrap rounded-md
               transition-colors duration-200 w-full md:w-auto md:min-w-0
-              bg-white text-black hover:bg-white/90
+              text-[#484747] hover:bg-white/90
               flex items-center justify-between gap-2
+              border border-[#D5D5D5] bg-[#FDFDFD]
             `}
             onClick={() => handleFilterClick(filter.id)}
             aria-expanded={openDropdown === filter.id}
             aria-haspopup="true"
           >
-            <div className="flex items-center justify-between gap-2 w-full">
+            <div className="flex items-center justify-between gap-7 w-full">
               <span>{filter.label}</span>
               {filter.type === 'range' ? (
                 <img
@@ -123,13 +137,14 @@ const FiltersBar = () => {
       handleFilterClick,
       handleOptionSelect,
       handleCloseDropdown,
+      setFilterToInitial,
     ]
   );
 
   return (
     <div className={`md:block ${isFilterBarOpen ? '' : 'hidden'}`}>
-      <div className="fixed left-0 top-[95px] z-10 md:static">
-        <div className="bg-secondary min-h-[68px] px-6 md:px-12 py-4 border-b border-primary/10">
+      <div className="fixed left-0 top-[95px] right-0 z-10">
+        <div className="bg-secondary min-h-[68px] px-6 md:pl-[81px] py-[14px] border-b border-primary/10">
           <div
             className="flex flex-row flex-wrap gap-3 overflow-x-auto"
             role="toolbar"
