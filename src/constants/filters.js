@@ -44,24 +44,6 @@ export const FILTERS = [
     ],
   },
   {
-    id: 'priority',
-    label: 'Priorità',
-    options: [
-      {
-        label: 'Urgente',
-        value: 'urgente',
-      },
-      {
-        label: 'Media',
-        value: 'media',
-      },
-      {
-        label: 'Bassa',
-        value: 'bassa',
-      },
-    ],
-  },
-  {
     id: 'budget',
     label: 'Budget stimato',
     type: 'range',
@@ -79,6 +61,10 @@ export const FILTERS = [
         value: 10000,
       },
       {
+        label: '€20K',
+        value: 20000,
+      },
+      {
         label: '€50K',
         value: 50000,
       },
@@ -87,8 +73,38 @@ export const FILTERS = [
         value: 100000,
       },
       {
+        label: '€200K',
+        value: 100000,
+      },
+      {
         label: '€300K',
         value: 300000,
+      },
+      {
+        label: '€500K',
+        value: 500000,
+      },
+      {
+        label: '€560K',
+        value: 560000,
+      },
+    ],
+  },
+  {
+    id: 'servizi_ecosistemici',
+    label: 'Servizi Ecosistemici',
+    options: [
+      {
+        label: 'Biodiversità',
+        value: 'Biodiversità',
+      },
+      {
+        label: 'Prevenzione Incendi',
+        value: 'Prevenzione incendi',
+      },
+      {
+        label: 'Sentieri Più Accessibili',
+        value: 'Sentieri più accessibili',
       },
     ],
   },

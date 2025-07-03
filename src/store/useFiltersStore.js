@@ -6,7 +6,7 @@ export const initialFiltersState = {
   area: '',
   intervention: '',
   budget: { min: 0, max: 0 },
-  priority: '',
+  servizi_ecosistemici: '',
 };
 
 export const useFiltersStore = create(
