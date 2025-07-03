@@ -8,8 +8,8 @@ const initialMapViewState = {
   maxZoom: MAP_CONFIG.maxZoom,
   minZoom: MAP_CONFIG.minZoom,
   padding: MAP_CONFIG.padding,
-  pitch: 0,
-  bearing: 0,
+  pitch: 70,
+  bearing: 20,
 };
 
 const useMapStore = create((set, get) => ({
