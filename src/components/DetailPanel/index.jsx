@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 import { toast } from 'react-toastify';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X } from 'lucide-react';
 
 import useMapStore from '../../store/useMapStore';
 import useUIStore from '../../store/useUIStore';
@@ -14,11 +14,11 @@ import { formatBudgetRange, formatNumericValue } from '../../helpers/common';
 const HeaderRow = ({ currentImage, id, status, onClose }) => (
   <div className="flex pb-2 gap-2 items-center">
     <img
-      src={currentImage || '/images/placeholder.png'}
+      src={currentImage || `${window.location.origin}/images/placeholder.png`}
       alt={`Anteprima area ${id}`}
       className="w-[46px] h-[46px] rounded-full object-cover border-2 border-white shadow mr-1"
       onError={(e) => {
-        e.target.src = '/images/placeholder.png';
+        e.target.src = `${window.location.origin}/images/placeholder.png`;
       }}
     />
     <div className="flex-1 min-w-0">
@@ -46,92 +46,47 @@ const InfoCards = ({ area, intervent, budget }) => (
         <img
           src="/public/svg/areaIcon.svg"
           alt="Icona area"
-          className="w-4 h-4 mr-1"
+          className="w-3 h-3 mr-1"
         />
-        <span className="text-[14px] font-semibold text-[#40523F]">
+        <span className="text-[10px] font-semibold text-[#40523F]">
           {area || 'N/A'}
         </span>
       </div>
-      <span className="text-[10px] text-[#818181]">Dimensioni</span>
+      <span className="text-[8px] text-[#818181]">Dimensioni</span>
     </div>
     <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
       <div className="flex items-center">
         <img
           src="/public/svg/treeIcon.svg"
           alt="Icona intervento"
-          className="w-4 h-4 mr-1"
+          className="w-3 h-3 mr-1"
         />
-        <span className="text-[14px] font-semibold text-[#40523F]">
+        <span className="text-[10px] font-semibold text-[#40523F]">
           {intervent || 'N/A'}
         </span>
       </div>
-      <span className="text-[10px] text-[#818181]">Intervento</span>
+      <span className="text-[8px] text-[#818181]">Intervento</span>
     </div>
     <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
       <div className="flex items-center">
         <img
           src="/public/svg/budgetIcon.svg"
           alt="Icona budget"
-          className="w-4 h-4 mr-1"
+          className="w-3 h-3 mr-1"
         />
-        <span className="text-[14px] font-semibold text-[#40523F]">
+        <span className="text-[10px] font-semibold text-[#40523F]">
           {budget || 'N/A'}
         </span>
       </div>
-      <span className="text-[10px] text-[#818181]">Budget stimato</span>
+      <span className="text-[8px] text-[#818181]">Budget stimato</span>
     </div>
   </div>
 );
 
-const Gallery = ({ images, currentImageIndex, setCurrentImageIndex }) => (
-  <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4">
-    {images.map((img, idx) => (
-      <img
-        key={idx}
-        src={img}
-        alt={`Foto area ${idx + 1}`}
-        className={`w-[112px] h-[140px] object-cover rounded-lg flex-shrink-0 border-2 shadow cursor-pointer ${
-          idx === currentImageIndex ? 'border-[#426345]' : 'border-white'
-        }`}
-        onClick={() => setCurrentImageIndex(idx)}
-        aria-label={`Seleziona foto ${idx + 1}`}
-      />
-    ))}
-  </div>
-);
-
 const DetailPanel = () => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
   // Store States
   const { selectedLayer, setSelectedLayer } = useMapStore();
   const { showDetailPanel, setShowDetailPanel } = useUIStore();
-
-  // Memoize the image URLs to prevent unnecessary re-renders
-  const images = useMemo(() => {
-    // Using different images for demo purposes
-    return [
-      '/images/forest1.jpeg',
-      '/images/forest2.jpeg',
-      '/images/forest1.jpeg',
-      '/images/forest2.jpeg',
-      '/images/forest1.jpeg',
-    ];
-  }, []);
-
-  const currentImage = images[currentImageIndex] || '/images/forest1.jpeg';
-
-  const handleImageSelect = useCallback((index) => {
-    setCurrentImageIndex(index);
-  }, []);
-
-  const handlePrevImage = useCallback(() => {
-    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
-  }, [images.length]);
-
-  const handleNextImage = useCallback(() => {
-    setCurrentImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
-  }, [images.length]);
 
   const handleShare = useCallback(() => {
     try {
@@ -167,36 +122,15 @@ const DetailPanel = () => {
           <div className="sticky top-0 z-50">
             <div className="relative group">
               <img
-                src={currentImage || 'images/placeholder.png'}
-                alt={`${selectedLayer?.code} - Image ${currentImageIndex + 1}`}
+                src={
+                  selectedLayer.immagine ||
+                  `${window.location.origin}/images/placeholder.png`
+                }
+                alt={`${selectedLayer?.code}`}
                 className="w-full h-[300px] rounded-lg object-cover mx-auto mb-4"
                 onError={(e) => {
-                  e.target.src = 'images/placeholder.png';
+                  e.target.src = `${window.location.origin}/images/placeholder.png`;
                 }}
-              />
-
-              {/* Navigation arrows */}
-              <button
-                onClick={handlePrevImage}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/40 text-white p-2 rounded-full transition-colors duration-200 hover:bg-black/60"
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-
-              <button
-                onClick={handleNextImage}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/40 text-white p-2 rounded-full transition-colors duration-200 hover:bg-black/60"
-                aria-label="Next image"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-
-              {/* Image carousel */}
-              <ImageCarousel
-                images={images}
-                currentIndex={currentImageIndex}
-                onImageSelect={handleImageSelect}
               />
             </div>
             <button
@@ -313,8 +247,8 @@ const DetailPanel = () => {
       <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 w-full rounded-t-3xl shadow-xl bg-white p-4 pr-0 z-[1000] block md:hidden">
         <div className="sticky top-0 pr-4">
           <HeaderRow
-            currentImage={currentImage}
-            code={selectedLayer.code}
+            currentImage={selectedLayer.immagine}
+            id={selectedLayer.id}
             status={selectedLayer.stato_area || 'N/A'}
             onClose={handleClose}
           />
@@ -331,27 +265,16 @@ const DetailPanel = () => {
 
           {selectedLayer?.descrizione && (
             <>
-              <h4 className="text-xl font-bold text-gray-900 mb-4">
+              <h4 className="text-base font-bold text-gray-900 mb-4">
                 Dettagli intervento
               </h4>
 
-              <p className="text-base text-[#484848] leading-relaxed mb-6 text-left w-full">
+              <p className="text-[14px] text-[#484848] leading-relaxed mb-6 text-left w-full">
                 {selectedLayer.descrizione}
               </p>
             </>
           )}
 
-          {/* Gallery title */}
-          <div className="mb-1">
-            <h4 className="text-base font-semibold text-[#484848] mb-2">
-              Foto e Video
-            </h4>
-          </div>
-          <Gallery
-            images={images}
-            currentImageIndex={currentImageIndex}
-            setCurrentImageIndex={setCurrentImageIndex}
-          />
           {/* Details section */}
           <div>
             <h4 className="text-base font-bold text-[#202020] mb-2">
