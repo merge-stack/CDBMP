@@ -5,10 +5,10 @@
 // Base map configuration
 export const MAP_CONFIG = {
   center: [10.529699204798701, 43.7430042609697], // Monte Pisano center coordinates
-  defaultZoom: 12,
-  maxZoom: 16,
+  defaultZoom: 13.5,
+  maxZoom: 17,
   minZoom: 8,
-  style: 'mapbox://styles/ciaomapbox/cmbt35xtc012q01sm1kvrg58s',
+  style: 'mapbox://styles/mapbox/outdoors-v12',
   bounds: {
     // Bounding box for Monte Pisano region
     southwest: [10.35, 43.67],

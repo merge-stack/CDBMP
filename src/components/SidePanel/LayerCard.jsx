@@ -31,10 +31,10 @@ const LayerCard = ({
     <div
       className={`hidden md:flex p-4 mb-4 cursor-pointer rounded-xl min-w-[340px] transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 w-full ${
         selected
-          ? "bg-[#719374] text-white"
+          ? 'bg-[#719374] text-white'
           : isMapTooltip
-          ? "bg-white"
-          : "bg-[#DEE8DC]"
+          ? 'bg-white'
+          : 'bg-[#DEE8DC]'
       }`}
     >
       <div className="flex items-center justify-center mr-4 flex-shrink-0">
@@ -55,64 +55,71 @@ const LayerCard = ({
         <div className="flex items-center justify-between gap-2">
           <h3
             className={`text-lg font-medium max-w-[150px] truncate ${
-              selected ? "text-white" : "text-[#484747]"
+              selected ? 'text-white' : 'text-[#484747]'
             }`}
           >
             {layer.id ? `Area ${layer.id}` : 'N/A'}
           </h3>
-          <StatusTag status={layer.stato_area || "N/A"} selected={selected} />
+          <StatusTag status={layer.stato_area || 'N/A'} selected={selected} />
         </div>
         <div className="flex justify-between items-end mt-2">
           <div className="flex-1 flex flex-col gap-1.5">
             <div className="flex justify-between">
               <p
                 className={`flex items-center text-sm ${
-                  selected ? "text-[#D3D3D3]" : "text-[#818181]"
+                  selected ? 'text-[#D3D3D3]' : 'text-[#818181]'
                 }`}
               >
                 <img
-                  src="/public/svg/areaIcon.svg"
+                  src="/svg/areaIcon.svg"
                   alt="Area"
                   className={`w-4 h-4 mr-2 ${
                     selected
-                      ? "filter invert() brightness(0.83)"
-                      : "filter invert() brightness(0.51)"
+                      ? 'filter invert() brightness(0.83)'
+                      : 'filter invert() brightness(0.51)'
                   }`}
                 />
-                <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis w-[10ch]">{`${formatNumericValue(layer.area_ha, 2)} ha`}</span>
+                <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis w-[10ch]">{`${formatNumericValue(
+                  layer.area_ha,
+                  2
+                )} ha`}</span>
               </p>
               <p
                 className={`flex items-center text-sm ${
-                  selected ? "text-[#D3D3D3]" : "text-[#818181]"
+                  selected ? 'text-[#D3D3D3]' : 'text-[#818181]'
                 }`}
               >
                 <img
-                  src="/public/svg/treeIcon.svg"
+                  src="/svg/treeIcon.svg"
                   alt="Tree"
                   className={`w-4 h-4 mr-2 ${
                     selected
-                      ? "filter invert() brightness(0.83)"
-                      : "filter invert() brightness(0.51)"
+                      ? 'filter invert() brightness(0.83)'
+                      : 'filter invert() brightness(0.51)'
                   }`}
                 />
-                <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis w-[10ch]">{layer.tipo_intervento || 'N/A'}</span>
+                <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis w-[10ch]">
+                  {layer.tipo_intervento || 'N/A'}
+                </span>
               </p>
             </div>
             <p
               className={`flex items-center text-sm ${
-                selected ? "text-[#D3D3D3]" : "text-[#818181]"
+                selected ? 'text-[#D3D3D3]' : 'text-[#818181]'
               }`}
             >
               <img
-                src="/public/svg/budgetIcon.svg"
+                src="/svg/budgetIcon.svg"
                 alt="Budget"
                 className={`w-4 h-4 mr-2 ${
                   selected
-                    ? "filter invert() brightness(0.83)"
-                    : "filter invert() brightness(0.51)"
+                    ? 'filter invert() brightness(0.83)'
+                    : 'filter invert() brightness(0.51)'
                 }`}
               />
-              <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis">{formatBudgetRange(layer.budget_min, layer.budget_max)}</span>
+              <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis">
+                {formatBudgetRange(layer.budget_min, layer.budget_max)}
+              </span>
             </p>
           </div>
         </div>
@@ -123,11 +130,11 @@ const LayerCard = ({
             type="button"
             className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ml-4 ${
               selected
-                ? "bg-[#DEE8DC] text-[#426345] hover:bg-gray-50"
-                : "bg-[#426345] text-white hover:bg-[#5C7A5E]"
+                ? 'bg-[#DEE8DC] text-[#426345] hover:bg-gray-50'
+                : 'bg-[#426345] text-white hover:bg-[#5C7A5E]'
             }`}
             onClick={selected ? onRemoveClick : onClick}
-            aria-label={selected ? "remove from selection" : "add to selection"}
+            aria-label={selected ? 'remove from selection' : 'add to selection'}
             aria-pressed={selected}
           >
             {selected ? (
@@ -163,7 +170,7 @@ const LayerCard = ({
         <div className="flex flex-col gap-1">
           <div className="flex items-center text-xs text-[#818181]">
             <img
-              src="/public/svg/areaIcon.svg"
+              src="/svg/areaIcon.svg"
               alt="Area"
               className="w-3 h-w-3 mr-2"
             />
@@ -174,7 +181,7 @@ const LayerCard = ({
           </div>
           <div className="flex items-center text-xs text-[#818181]">
             <img
-              src="/public/svg/treeIcon.svg"
+              src="/svg/treeIcon.svg"
               alt="Tree"
               className="w-3 h-w-3 mr-2"
             />
@@ -182,7 +189,7 @@ const LayerCard = ({
           </div>
           <div className="flex items-center text-xs text-[#818181]">
             <img
-              src="/public/svg/budgetIcon.svg"
+              src="/svg/budgetIcon.svg"
               alt="Budget"
               className="w-3 h-w-3 mr-2"
             />

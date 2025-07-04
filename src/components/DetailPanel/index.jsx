@@ -44,7 +44,7 @@ const InfoCards = ({ area, intervent, budget }) => (
     <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
       <div className="flex items-center">
         <img
-          src="/public/svg/areaIcon.svg"
+          src="/svg/areaIcon.svg"
           alt="Icona area"
           className="w-3 h-3 mr-1"
         />
@@ -57,7 +57,7 @@ const InfoCards = ({ area, intervent, budget }) => (
     <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
       <div className="flex items-center">
         <img
-          src="/public/svg/treeIcon.svg"
+          src="/svg/treeIcon.svg"
           alt="Icona intervento"
           className="w-3 h-3 mr-1"
         />
@@ -70,7 +70,7 @@ const InfoCards = ({ area, intervent, budget }) => (
     <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
       <div className="flex items-center">
         <img
-          src="/public/svg/budgetIcon.svg"
+          src="/svg/budgetIcon.svg"
           alt="Icona budget"
           className="w-3 h-3 mr-1"
         />
@@ -156,7 +156,7 @@ const DetailPanel = () => {
                   <div className="flex flex-col w-[20%] items-center justify-center bg-[#E3F1E4] rounded-md p-2 text-center">
                     <div className="flex items-center justify-center mb-1">
                       <img
-                        src="/public/svg/areaIcon.svg"
+                        src="/svg/areaIcon.svg"
                         alt="Area"
                         className={`w-4 h-4 mr-2`}
                       />
@@ -172,7 +172,7 @@ const DetailPanel = () => {
                   <div className="flex flex-col w-[50%] items-center justify-center bg-[#E3F1E4] rounded-md p-2 text-center">
                     <div className="flex items-center justify-center mb-1">
                       <img
-                        src="/public/svg/treeIcon.svg"
+                        src="/svg/treeIcon.svg"
                         alt="Area"
                         className={`w-4 h-4 mr-2`}
                       />
@@ -187,7 +187,7 @@ const DetailPanel = () => {
                   <div className="flex flex-col w-[30%] items-center justify-center bg-[#E3F1E4] rounded-md p-2 text-center">
                     <div className="flex items-center justify-center mb-1">
                       <img
-                        src="/public/svg/budgetIcon.svg"
+                        src="/svg/budgetIcon.svg"
                         alt="Area"
                         className={`w-4 h-4 mr-2`}
                       />
@@ -232,7 +232,7 @@ const DetailPanel = () => {
                   className="bg-[#E3F1E4] text-[#426345] p-3 rounded-md transition-all duration-200 hover:bg-[#cde6cf] hover:shadow-sm"
                 >
                   <img
-                    src="/public/svg/shareIcon.svg"
+                    src="/svg/shareIcon.svg"
                     alt="Area"
                     className={`w-5 h-5`}
                   />
@@ -293,7 +293,7 @@ const DetailPanel = () => {
               aria-label="Condividi area"
             >
               <img
-                src="/public/svg/shareIcon.svg"
+                src="/svg/shareIcon.svg"
                 alt="Condividi"
                 className="w-4 h-4"
               />
