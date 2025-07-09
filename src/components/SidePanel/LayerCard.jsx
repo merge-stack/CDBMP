@@ -174,10 +174,7 @@ const LayerCard = ({
               alt="Area"
               className="w-3 h-w-3 mr-2"
             />
-            <span className="text-[10px]">{`${formatNumericValue(
-              layer.area_ha,
-              2
-            )} ha`}</span>
+            {`${formatNumericValue(layer.area_ha, 2)} ha`}
           </div>
           <div className="flex items-center text-xs text-[#818181]">
             <img
