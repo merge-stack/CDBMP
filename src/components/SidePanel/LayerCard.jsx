@@ -193,7 +193,7 @@ const LayerCard = ({
               alt="Budget"
               className="w-3 h-w-3 mr-2"
             />
-            {layer.budget || '200-250K euro'}
+            {formatBudgetRange(layer.budget_min, layer.budget_max)}
           </div>
         </div>
       </div>
