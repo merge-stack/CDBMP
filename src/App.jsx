@@ -8,6 +8,7 @@ import SidePanel from './components/SidePanel';
 import DetailPanel from './components/DetailPanel';
 import LayersButton from './components/LayersPanel/LayerButton';
 import MobilePanel from './components/MobileView/Panel';
+import { Routes, Route } from 'react-router-dom';
 
 /**
  * Main App Component
@@ -26,7 +27,9 @@ function App() {
         <div className={`relative h-full w-full`}>
           <MapView />
         </div>
-        <DetailPanel />
+        <Routes>
+          <Route path="/area/:id" element={<DetailPanel />} />
+        </Routes>
       </div>
       <MobilePanel />
       <ToastContainer

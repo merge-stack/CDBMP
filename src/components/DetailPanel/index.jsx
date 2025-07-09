@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { X } from 'lucide-react';
 
@@ -10,6 +10,7 @@ import TechnicalDetails from './TechnicalDetails';
 
 import StatusTag from '../SidePanel/StatusTag';
 import { formatBudgetRange, formatNumericValue } from '../../helpers/common';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const HeaderRow = ({ currentImage, id, status, onClose }) => (
   <div className="flex pb-2 gap-2 items-center">
@@ -85,8 +86,25 @@ const InfoCards = ({ area, intervent, budget }) => (
 
 const DetailPanel = () => {
   // Store States
-  const { selectedLayer, setSelectedLayer } = useMapStore();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { geoJsonData, selectedLayer, setSelectedLayer } = useMapStore();
   const { showDetailPanel, setShowDetailPanel } = useUIStore();
+
+  // Find and set the selected layer by ID from params
+  useEffect(() => {
+    if (!id || !geoJsonData?.default?.features) return;
+    const found = geoJsonData.default.features.find(
+      (f) => String(f.properties.id) === String(id)
+    );
+    if (found) {
+      setSelectedLayer(found.properties);
+      setShowDetailPanel(true);
+    } else {
+      setShowDetailPanel(false);
+      setSelectedLayer(null);
+    }
+  }, [id, geoJsonData?.default]);
 
   const handleShare = useCallback(() => {
     try {
@@ -108,9 +126,10 @@ const DetailPanel = () => {
   const handleClose = () => {
     setShowDetailPanel(false);
     setSelectedLayer(null);
+    navigate('/');
   };
 
-  // Early return if no selectedLayer
+  // Early return if no selectedLayer or detail panel not shown
   if (!selectedLayer || !showDetailPanel) return null;
 
   return (

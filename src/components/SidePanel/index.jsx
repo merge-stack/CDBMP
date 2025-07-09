@@ -4,6 +4,7 @@ import useMapStore from '../../store/useMapStore';
 import useUIStore from '../../store/useUIStore';
 import LayerCard from './LayerCard';
 import LayerCardSkeleton from './LayerCardSkeleton';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * SidePanel Component
@@ -16,6 +17,7 @@ const SidePanel = () => {
   // Store states
   const { selectedLayer, setSelectedLayer, geoJsonData } = useMapStore();
   const { setShowDetailPanel, isLoading } = useUIStore();
+  const navigate = useNavigate();
 
   // Memoize layers for performance - only show default layer data in cards
   const layers = useMemo(
@@ -34,14 +36,16 @@ const SidePanel = () => {
     (layer) => {
       setSelectedLayer(layer);
       setShowDetailPanel(true);
+      navigate(`/area/${encodeURIComponent(layer.id)}`);
     },
-    [setSelectedLayer, setShowDetailPanel]
+    [setSelectedLayer, setShowDetailPanel, navigate]
   );
 
   // Click handler
   const handleRemoveClick = useCallback(() => {
     setShowDetailPanel(false);
     setSelectedLayer(null);
+    navigate('/');
   }, [setSelectedLayer, setShowDetailPanel]);
 
   // Memoized row renderer
