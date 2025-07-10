@@ -22,10 +22,6 @@ export const FILTERS = [
     label: 'Tipo di intervento',
     options: [
       {
-        label: 'Riforestazione',
-        value: 'Riforestazione',
-      },
-      {
         label: 'Avviamento ad alto fusto',
         value: 'Avviamento ad alto fusto',
       },
@@ -73,6 +69,10 @@ export const FILTERS = [
         value: 100000,
       },
       {
+        label: '€150K',
+        value: 150000,
+      },
+      {
         label: '€200K',
         value: 100000,
       },
@@ -85,8 +85,8 @@ export const FILTERS = [
         value: 500000,
       },
       {
-        label: '€560K',
-        value: 560000,
+        label: '€650K',
+        value: 650000,
       },
     ],
   },

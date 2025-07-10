@@ -3,6 +3,7 @@ import { Grid, AutoSizer } from 'react-virtualized';
 import useMapStore from '../../store/useMapStore';
 import useUIStore from '../../store/useUIStore';
 import LayerCard from '../SidePanel/LayerCard';
+import { useNavigate } from 'react-router-dom';
 
 const CARD_WIDTH = 270;
 const CARD_HEIGHT = 180;
@@ -10,6 +11,7 @@ const CARD_HEIGHT = 180;
 const LayerCardList = () => {
   const { geoJsonData, selectedLayer, setSelectedLayer } = useMapStore();
   const { setShowDetailPanel } = useUIStore();
+  const navigate = useNavigate();
 
   const layers = useMemo(
     () => geoJsonData?.default?.features?.map((f) => f.properties) || [],
@@ -20,8 +22,9 @@ const LayerCardList = () => {
     (layer) => {
       setSelectedLayer(layer);
       setShowDetailPanel(true);
+      navigate(`/area/${encodeURIComponent(layer.id)}`);
     },
-    [setSelectedLayer, setShowDetailPanel]
+    [setSelectedLayer, setShowDetailPanel, navigate]
   );
 
   const cellRenderer = useCallback(

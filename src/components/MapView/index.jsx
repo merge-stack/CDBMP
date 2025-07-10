@@ -2,6 +2,7 @@ import { useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import debounce from 'lodash/debounce';
 import { toast } from 'react-toastify';
 import ReactDOMServer from 'react-dom/server';
+import { useNavigate } from 'react-router-dom';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { DeckGL } from '@deck.gl/react';
@@ -101,6 +102,7 @@ const useMapInteractions = () => {
   const [hoveredObject, setHoveredObject] = useState(null);
   const { setSelectedLayer, setMapViewState } = useMapStore();
   const { setShowDetailPanel } = useUIStore();
+  const navigate = useNavigate();
 
   const onHover = useCallback((info) => {
     if (mapRef.current && INTERACTION_CONFIG.hover.enabled) {
@@ -117,9 +119,10 @@ const useMapInteractions = () => {
       if (feature.properties.layerType === MAP_LAYER_TYPES.DEFAULT) {
         setSelectedLayer({ ...feature.properties });
         setShowDetailPanel(true);
+        navigate(`/area/${encodeURIComponent(feature.properties.id)}`);
       }
     },
-    [setSelectedLayer, setShowDetailPanel]
+    [setSelectedLayer, setShowDetailPanel, navigate]
   );
 
   const debouncedViewStateUpdate = useMemo(
