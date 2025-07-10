@@ -22,10 +22,6 @@ export const FILTERS = [
     label: 'Tipo di intervento',
     options: [
       {
-        label: 'Riforestazione',
-        value: 'Riforestazione',
-      },
-      {
         label: 'Avviamento ad alto fusto',
         value: 'Avviamento ad alto fusto',
       },
