@@ -33,5 +33,5 @@ export function formatBudgetRange(min, max, fractionDigits = 0) {
   return `${formatNumericValue(
     min / 1000,
     fractionDigits
-  )}–${formatNumericValue(max / 1000, fractionDigits)}K euro`;
+  )}–${formatNumericValue(max / 1000, fractionDigits)}K €`;
 }
