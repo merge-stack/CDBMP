@@ -90,16 +90,16 @@ const LayerCard = ({
                 }`}
               >
                 <img
-                  src="/svg/treeIcon.svg"
-                  alt="Tree"
+                  src="/svg/budgetIcon.svg"
+                  alt="Budget"
                   className={`w-4 h-4 mr-2 ${
                     selected
                       ? 'filter invert() brightness(0.83)'
                       : 'filter invert() brightness(0.51)'
                   }`}
                 />
-                <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis w-[10ch]">
-                  {layer.tipo_intervento || 'N/A'}
+                <span className="truncate whitespace-nowrap overflow-hidden">
+                  {formatBudgetRange(layer.budget_min, layer.budget_max)}
                 </span>
               </p>
             </div>
@@ -109,16 +109,16 @@ const LayerCard = ({
               }`}
             >
               <img
-                src="/svg/budgetIcon.svg"
-                alt="Budget"
+                src="/svg/treeIcon.svg"
+                alt="Tree"
                 className={`w-4 h-4 mr-2 ${
                   selected
                     ? 'filter invert() brightness(0.83)'
                     : 'filter invert() brightness(0.51)'
                 }`}
               />
-              <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis">
-                {formatBudgetRange(layer.budget_min, layer.budget_max)}
+              <span className="truncate whitespace-nowrap overflow-hidden">
+                {layer.tipo_intervento || 'N/A'}
               </span>
             </p>
           </div>
@@ -168,29 +168,47 @@ const LayerCard = ({
           </h3>
         </div>
         <div className="flex flex-col gap-1">
-          <div className="flex items-center text-xs text-[#818181]">
+          <div
+            className={`flex items-center text-xs ${
+              selected ? 'text-[#D3D3D3]' : 'text-[#818181]'
+            }`}
+          >
             <img
               src="/svg/areaIcon.svg"
               alt="Area"
               className="w-3 h-w-3 mr-2"
             />
-            {`${formatNumericValue(layer.area_ha, 2)} ha`}
+            <span className="truncate whitespace-nowrap overflow-hidden text-ellipsis w-[10ch]">
+              {`${formatNumericValue(layer.area_ha, 2)} ha`}
+            </span>
           </div>
-          <div className="flex items-center text-xs text-[#818181]">
-            <img
-              src="/svg/treeIcon.svg"
-              alt="Tree"
-              className="w-3 h-w-3 mr-2"
-            />
-            {layer.status || 'Manutenzione'}
-          </div>
-          <div className="flex items-center text-xs text-[#818181]">
+          <div
+            className={`flex items-center text-xs ${
+              selected ? 'text-[#D3D3D3]' : 'text-[#818181]'
+            }`}
+          >
             <img
               src="/svg/budgetIcon.svg"
               alt="Budget"
               className="w-3 h-w-3 mr-2"
             />
-            {formatBudgetRange(layer.budget_min, layer.budget_max)}
+            <span className="truncate whitespace-nowrap overflow-hidden">
+              {formatBudgetRange(layer.budget_min, layer.budget_max)}
+            </span>
+          </div>
+          <div
+            className={`flex items-center text-xs ${
+              selected ? 'text-[#D3D3D3]' : 'text-[#818181]'
+            }`}
+          >
+            <img
+              src="/svg/treeIcon.svg"
+              alt="Tree"
+              className="w-3 h-w-3 mr-2"
+            />
+            <span className="truncate whitespace-nowrap overflow-hidden">
+              {layer.tipo_intervento || 'N/A'}
+            </span>
           </div>
         </div>
       </div>

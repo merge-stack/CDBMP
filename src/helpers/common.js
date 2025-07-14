@@ -1,4 +1,4 @@
-export function formatNumericValue(value, fractionDigits, useGrouping = false) {
+export function formatNumericValue(value, fractionDigits, useGrouping = true) {
   if (typeof value !== 'number' || isNaN(value)) return 'N/A';
 
   const absValue = Math.abs(value); // to handle negatives
@@ -32,7 +32,6 @@ export function formatBudgetRange(min, max, fractionDigits = 0) {
 
   return `${formatNumericValue(
     min / 1000,
-    fractionDigits,
-    true
-  )}–${formatNumericValue(max / 1000, fractionDigits, true)}K euro`;
+    fractionDigits
+  )}–${formatNumericValue(max / 1000, fractionDigits)}K €`;
 }
