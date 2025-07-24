@@ -13,7 +13,7 @@ import { formatBudgetRange, formatNumericValue } from '../../helpers/common';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const HeaderRow = ({ currentImage, id, status, onClose }) => (
-  <div className="flex pb-2 gap-2 items-center">
+  <div className="flex pb-2 gap-2 items-center mb-3">
     <img
       src={currentImage || `${window.location.origin}/images/placeholder.png`}
       alt={`Anteprima area ${id}`}
@@ -22,20 +22,21 @@ const HeaderRow = ({ currentImage, id, status, onClose }) => (
         e.target.src = `${window.location.origin}/images/placeholder.png`;
       }}
     />
-    <div className="flex-1 min-w-0">
+    <div className="min-w-0">
       <h3 className="text-lg font-bold text-gray-900 truncate">
         {id ? `Area ${id}` : 'N/A'}
       </h3>
+      <span className='text-[#202020] text-xs'>San Giuliano Terme</span>
     </div>
-    <span className="ml-2">
+    <span className="ml-2 self-start">
       <StatusTag status={status || 'N/A'} />
     </span>
     <button
       onClick={onClose}
       aria-label="Chiudi pannello dettagli"
-      className="ml-2 bg-[#A3A4A3] text-[#FFFFFF] rounded-full w-7 h-7 flex items-center justify-center"
+      className="ml-auto bg-[#DEE8DC] text-[#FFFFFF] rounded-full w-10 h-10 flex items-center justify-center"
     >
-      <X className="w-5 h-5" />
+      <X className="w-4 h-4 text-[#426345]" />
     </button>
   </div>
 );
@@ -135,27 +136,40 @@ const DetailPanel = () => {
   return (
     <>
       {/* Desktop layout: Right dialog/sidebar */}
-      <div className="fixed right-0 top-[163px] py-[20px] px-[15px] h-[calc(100vh-163px)] overflow-auto w-[500px] bg-white shadow-2xl z-[1000] hidden md:block">
+      <div className="fixed right-0 top-[163px] pb-[20px] px-[15px] h-[calc(100vh-163px)] overflow-auto w-[400px] bg-white shadow-2xl z-[1000] hidden lg:block">
         <div className="flex flex-col">
           {/* Header with image */}
-          <div className="sticky top-0 z-50">
-            <div className="relative group">
+          <div className="sticky top-0 z-50 bg-white pt-[20px]">
+            <div className="relative w-full">
               <img
                 src={
                   selectedLayer.immagine ||
                   `${window.location.origin}/images/placeholder.png`
                 }
                 alt={`${selectedLayer?.code}`}
-                className="w-full h-[300px] rounded-lg object-cover mx-auto mb-4"
+                className="w-full h-[250px] rounded-lg object-cover mx-auto mb-4"
                 onError={(e) => {
                   e.target.src = `${window.location.origin}/images/placeholder.png`;
                 }}
               />
+              <div className="absolute bottom-[16px] w-[90%] left-[14px] flex items-center justify-between">
+                <div className="flex flex-col">
+                  <h3 className="text-xl font-semibold text-[#F4F4F4] w-full text-left">
+                    Fianziatatori
+                  </h3>
+                  <span className="text-[#D0D0D0] text-[10px]">
+                    San Giuliano Terme
+                  </span>
+                </div>
+                <span className="max-w-28 px-2 py-1 rounded-md text-xs font-normal border-2 whitespace-nowrap bg-[#FFB3B3] text-[#484747] border-[#C68A8A]">
+                  Da recuperare
+                </span>
+              </div>
             </div>
             <button
               onClick={handleClose}
               aria-label="close panel"
-              className="absolute top-3 left-3 bg-[#E3F1E4] text-[#426345] rounded-full w-10 h-10 flex items-center justify-center"
+              className="absolute top-7 left-3 bg-[#E3F1E4] text-[#426345] rounded-full w-10 h-10 flex items-center justify-center"
             >
               <X className="w-6 h-6" />
             </button>
@@ -165,59 +179,52 @@ const DetailPanel = () => {
           <div className="flex-1">
             <div className="">
               <div className="flex flex-col items-start mb-3 w-full">
-                <h3 className="text-xl font-semibold text-[#202020] mb-1 w-full text-left">
-                  {selectedLayer.id ? `Area ${selectedLayer.id}` : 'N/A'}
-                </h3>
-
                 {/* Info Blocks */}
-                <div className="flex justify-between w-full mb-6 gap-2">
-                  {/* Area */}
-                  <div className="flex flex-col w-[20%] items-center justify-center bg-[#E3F1E4] rounded-md p-2 text-center">
-                    <div className="flex items-center justify-center mb-1">
-                      <img
-                        src="/svg/areaIcon.svg"
-                        alt="Area"
-                        className={`w-4 h-4 mr-2`}
-                      />
-
-                      <p className="text-sm font-bold text-[#40523F]">
-                        {`${formatNumericValue(selectedLayer.area_ha, 2)} ha`}
-                      </p>
+                <div className="flex justify-between w-full mb-6 gap-7 overflow-auto hide-scrollbar">
+                  <div className="flex gap-2 items-center flex-shrink-0">
+                    <img className="w-9" src="/svg/starticon.svg" alt="start" />
+                    <div className="flex flex-col">
+                      <span className="text-[#484848] text-xs font-bold">
+                        Barilla SPA
+                      </span>
+                      <span className="text-[#484848] text-xs">Parma, IT</span>
                     </div>
-                    <p className="text-xs text-[#818181]">Dimensioni</p>
                   </div>
-
-                  {/* Intervento */}
-                  <div className="flex flex-col w-[50%] items-center justify-center bg-[#E3F1E4] rounded-md p-2 text-center">
-                    <div className="flex items-center justify-center mb-1">
-                      <img
-                        src="/svg/treeIcon.svg"
-                        alt="Area"
-                        className={`w-4 h-4 mr-2`}
-                      />
-                      <p className="text-sm font-bold text-[#40523F]">
-                        {selectedLayer.tipo_intervento || 'N/A'}
-                      </p>
+                  <div className="flex gap-2 items-center flex-shrink-0">
+                    <img className="w-9" src="/svg/starticon.svg" alt="start" />
+                    <div className="flex flex-col">
+                      <span className="text-[#484848] text-xs font-bold">
+                        Barilla SPA
+                      </span>
+                      <span className="text-[#484848] text-xs">Parma, IT</span>
                     </div>
-                    <p className="text-xs text-[#818181]">Intervento</p>
                   </div>
-
-                  {/* Budget */}
-                  <div className="flex flex-col w-[30%] items-center justify-center bg-[#E3F1E4] rounded-md p-2 text-center">
-                    <div className="flex items-center justify-center mb-1">
-                      <img
-                        src="/svg/budgetIcon.svg"
-                        alt="Area"
-                        className={`w-4 h-4 mr-2`}
-                      />
-                      <p className="text-sm font-bold text-[#40523F]">
-                        {formatBudgetRange(
-                          selectedLayer.budget_min,
-                          selectedLayer.budget_max
-                        )}
-                      </p>
+                  <div className="flex gap-2 items-center flex-shrink-0">
+                    <img className="w-9" src="/svg/starticon.svg" alt="start" />
+                    <div className="flex flex-col">
+                      <span className="text-[#484848] text-xs font-bold">
+                        Barilla SPA
+                      </span>
+                      <span className="text-[#484848] text-xs">Parma, IT</span>
                     </div>
-                    <p className="text-xs text-[#818181]">Budget stimato</p>
+                  </div>
+                  <div className="flex gap-2 items-center flex-shrink-0">
+                    <img className="w-9" src="/svg/starticon.svg" alt="start" />
+                    <div className="flex flex-col">
+                      <span className="text-[#484848] text-xs font-bold">
+                        Barilla SPA
+                      </span>
+                      <span className="text-[#484848] text-xs">Parma, IT</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 items-center flex-shrink-0">
+                    <img className="w-9" src="/svg/starticon.svg" alt="start" />
+                    <div className="flex flex-col">
+                      <span className="text-[#484848] text-xs font-bold">
+                        Barilla SPA
+                      </span>
+                      <span className="text-[#484848] text-xs">Parma, IT</span>
+                    </div>
                   </div>
                 </div>
 
@@ -234,12 +241,134 @@ const DetailPanel = () => {
                 )}
 
                 <h4 className="text-xl font-bold text-[#202020] mb-4">
-                  Dettagli area
+                  Servizi ecosistemico generati:
+                </h4>
+
+                <div className="flex items-center gap-2 mb-6">
+                  <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
+                    Biodiversita
+                  </span>
+                  <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
+                    Biodiver sita
+                  </span>
+                </div>
+
+                <h4 className="text-xl font-bold text-[#202020] mb-4">
+                  Informazioni tecniche
                 </h4>
 
                 <div className="mt-2 w-full">
                   <TechnicalDetails selectedLayer={selectedLayer} />
                 </div>
+
+                <h4 className="text-xl font-bold text-[#202020] mb-4">
+                  Foto e Video
+                </h4>
+
+                <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
+                  <div className="flex gap-[6px] w-max">
+                    <div className="relative w-24">
+                      <img
+                        className="h-28 w-full rounded-md"
+                        src="/public/images/forest1.jpeg"
+                      />
+                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        Monte Grande
+                      </span>
+                    </div>
+                    <div className="relative w-24">
+                      <img
+                        className="h-28 w-full rounded-md"
+                        src="/public/images/forest1.jpeg"
+                      />
+                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        Monte Grande
+                      </span>
+                    </div>
+                    <div className="relative w-24">
+                      <img
+                        className="h-28 w-full rounded-md"
+                        src="/public/images/forest1.jpeg"
+                      />
+                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        Monte Grande
+                      </span>
+                    </div>
+                    <div className="relative w-24">
+                      <img
+                        className="h-28 w-full rounded-md"
+                        src="/public/images/forest1.jpeg"
+                      />
+                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        Monte Grande
+                      </span>
+                    </div>
+                    <div className="relative w-24">
+                      <img
+                        className="h-28 w-full rounded-md"
+                        src="/public/images/forest1.jpeg"
+                      />
+                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        Monte Grande
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <h4 className="text-xl font-bold text-[#202020] mb-4">
+                  Press e Documentazione
+                </h4>
+
+                <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
+                  <div className="flex gap-[6px] w-max">
+                    <div className="relative w-24">
+                      <img
+                        className="h-28 w-full rounded-md"
+                        src="/public/images/forest1.jpeg"
+                      />
+                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        Monte Grande
+                      </span>
+                    </div>
+                    <div className="relative w-24">
+                      <img
+                        className="h-28 w-full rounded-md"
+                        src="/public/images/forest1.jpeg"
+                      />
+                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        Monte Grande
+                      </span>
+                    </div>
+                    <div className="relative w-24">
+                      <img
+                        className="h-28 w-full rounded-md"
+                        src="/public/images/forest1.jpeg"
+                      />
+                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        Monte Grande
+                      </span>
+                    </div>
+                    <div className="relative w-24">
+                      <img
+                        className="h-28 w-full rounded-md"
+                        src="/public/images/forest1.jpeg"
+                      />
+                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        Monte Grande
+                      </span>
+                    </div>
+                    <div className="relative w-24">
+                      <img
+                        className="h-28 w-full rounded-md"
+                        src="/public/images/forest1.jpeg"
+                      />
+                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        Monte Grande
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
               {/* Contact Buttons */}
               <div className="flex gap-3">
@@ -268,23 +397,14 @@ const DetailPanel = () => {
           <HeaderRow
             currentImage={selectedLayer.immagine}
             id={selectedLayer.id}
-            status={selectedLayer.stato_area || 'N/A'}
+            status={selectedLayer.stato_area || "N/A"}
             onClose={handleClose}
           />
         </div>
         <div className="overflow-auto max-h-[65vh] h-full pr-4">
-          <InfoCards
-            area={`${formatNumericValue(selectedLayer.area_ha, 2)} ha`}
-            intervent={selectedLayer.tipo_intervento}
-            budget={formatBudgetRange(
-              selectedLayer.budget_min,
-              selectedLayer.budget_max
-            )}
-          />
-
           {selectedLayer?.descrizione && (
             <>
-              <h4 className="text-base font-bold text-gray-900 mb-4">
+              <h4 className="text-base font-bold text-[#202020] mb-4">
                 Dettagli intervento
               </h4>
 
@@ -294,6 +414,19 @@ const DetailPanel = () => {
             </>
           )}
 
+          <h4 className="text-base font-bold text-[#202020] mb-4">
+            Servizi ecosistemico generati:
+          </h4>
+
+          <div className="flex items-center gap-2 mb-6">
+            <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
+              Biodiversita
+            </span>
+            <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
+              Sentieri più accessibili
+            </span>
+          </div>
+
           {/* Details section */}
           <div>
             <h4 className="text-base font-bold text-[#202020] mb-2">
@@ -301,6 +434,88 @@ const DetailPanel = () => {
             </h4>
             <TechnicalDetails selectedLayer={selectedLayer} />
           </div>
+
+          <h4 className="text-base font-bold text-[#202020] mb-4">
+            Foto e Video
+          </h4>
+
+          <div className="overflow-auto flex gap-[6px] hide-scrollbar mb-4">
+            <img
+              className="h-[168px] w-36 rounded-md"
+              src="/public/images/forest1.jpeg"
+            />
+            <img
+              className="h-[168px] w-36 rounded-md"
+              src="/public/images/forest1.jpeg"
+            />
+            <img
+              className="h-[168px] w-36 rounded-md"
+              src="/public/images/forest1.jpeg"
+            />
+            <img
+              className="h-[168px] w-36 rounded-md"
+              src="/public/images/forest1.jpeg"
+            />
+            <img
+              className="h-[168px] w-36 rounded-md"
+              src="/public/images/forest1.jpeg"
+            />
+          </div>
+
+          <h4 className="text-base font-bold text-[#202020] mb-4">
+            Press e Documentazione
+          </h4>
+
+          <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
+            <div className="flex gap-[6px] w-max">
+              <div className="relative w-36">
+                <img
+                  className="h-[168px] w-full rounded-md"
+                  src="/public/images/forest1.jpeg"
+                />
+                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                  Monte Grande
+                </span>
+              </div>
+              <div className="relative w-36">
+                <img
+                  className="h-[168px] w-full rounded-md"
+                  src="/public/images/forest1.jpeg"
+                />
+                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                  Monte Grande
+                </span>
+              </div>
+              <div className="relative w-36">
+                <img
+                  className="h-[168px] w-full rounded-md"
+                  src="/public/images/forest1.jpeg"
+                />
+                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                  Monte Grande
+                </span>
+              </div>
+              <div className="relative w-36">
+                <img
+                  className="h-[168px] w-full rounded-md"
+                  src="/public/images/forest1.jpeg"
+                />
+                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                  Monte Grande
+                </span>
+              </div>
+              <div className="relative w-36">
+                <img
+                  className="h-[168px] w-full rounded-md"
+                  src="/public/images/forest1.jpeg"
+                />
+                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                  Monte Grande
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* Contact Buttons */}
           <div className="flex gap-3">
             <button className="bg-[#426345] text-white py-3 px-6 rounded-md flex-1 font-medium transition-all duration-200 hover:bg-[#2f4e30]">

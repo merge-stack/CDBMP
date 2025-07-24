@@ -15,7 +15,7 @@ function Navbar({ onLogoClick, onSignInClick }) {
 
   return (
     <nav className="fixed left-0 right-0 top-0 bg-primary z-50">
-      <div className="flex justify-between items-center min-h-[95px] px-6 md:pl-[81px] md:pr-[56px]">
+      <div className="flex justify-between items-center min-h-[95px] px-6 lg:pl-[81px] lg:pr-[56px]">
         {/* Logo */}
         <div
           onClick={onLogoClick}
@@ -31,7 +31,7 @@ function Navbar({ onLogoClick, onSignInClick }) {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           {menuItems.map((item, index) => (
             <a
               key={index}
@@ -51,7 +51,7 @@ function Navbar({ onLogoClick, onSignInClick }) {
         </div>
 
         {/* Mobile Menu Container */}
-        <div className="md:hidden relative">
+        <div className="lg:hidden relative">
           {/* Mobile Menu Button */}
           <button
             className="text-white p-2"

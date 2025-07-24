@@ -33,7 +33,7 @@ const MobilePanel = () => {
       {selectedMobileMenu?.id !== 'home' && <LayerCardList />}
 
       {/* Mobile Navigation Menu */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[344px] h-[64px] bg-[#426345] rounded-2xl flex items-center justify-between px-8 py-4 md:hidden shadow-lg">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[344px] h-[64px] bg-[#426345] rounded-2xl flex items-center justify-between px-8 py-4 lg:hidden shadow-lg">
         {menus.map((menu) => (
           <button
             key={menu.id}

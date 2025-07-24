@@ -21,7 +21,7 @@ function App() {
       <FiltersBar />
       <LayersButton />
       <div
-        className={`grid grid-cols-1 mt-[95px] md:mt-[163px] md:grid-cols-[auto_1fr] h-[calc(100vh-95px)] md:h-[calc(100vh-163px)]`}
+        className={`grid grid-cols-1 mt-[95px] lg:mt-[163px] lg:grid-cols-[auto_1fr] h-[calc(100vh-95px)] lg:h-[calc(100vh-163px)]`}
       >
         <SidePanel />
         <div className={`relative h-full w-full`}>

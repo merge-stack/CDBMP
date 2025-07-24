@@ -3,11 +3,11 @@ import { TECHNICAL_DETAILS } from '../../constants/details';
 
 const TechnicalDetails = ({ selectedLayer }) => {
   return (
-    <div className="bg-[linear-gradient(0deg,_#FFF_0%,_#E3F1E4_29.81%)] rounded-md p-4 mb-6">
+    <div className="bg-[#EBF2EB] rounded-md p-2 mb-6">
       {TECHNICAL_DETAILS.map((detail, index) => (
         <div
           key={detail.id}
-          className={`flex items-start py-3 ${
+          className={`flex items-center py-3 ${
             index < TECHNICAL_DETAILS.length - 1
               ? 'border-b border-gray-200'
               : ''
@@ -28,8 +28,29 @@ const TechnicalDetails = ({ selectedLayer }) => {
                 className="w-5 h-5"
               />
             )}
+            {detail.id === 'area' && (
+              <img
+                src="/svg/areaIcon.svg"
+                alt="Area"
+                className="w-5 h-5"
+              />
+            )}
+            {detail.id === 'budget_stimato' && (
+              <img
+                src="/svg/budgetIcon.svg"
+                alt="Budget stimato"
+                className="w-5 h-5"
+              />
+            )}
+            {detail.id === 'intervento_forestale' && (
+              <img
+                src="/svg/treeIcon.svg"
+                alt="Intervento forestale"
+                className="w-5 h-5"
+              />
+            )}
           </div>
-          <div className="flex-1 flex justify-between items-start">
+          <div className="flex-1 flex justify-between items-center">
             <div className="flex-1">
               <p className="text-sm font-semibold text-[#202020] mb-0.5">
                 {detail.title}
@@ -46,9 +67,6 @@ const TechnicalDetails = ({ selectedLayer }) => {
           </div>
         </div>
       ))}
-      <button className="text-sm text-[#4F7E53] font-medium underline mt-3 hover:text-[#3d6340] transition-colors">
-        Carica altre
-      </button>
     </div>
   );
 };

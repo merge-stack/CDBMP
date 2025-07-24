@@ -142,7 +142,7 @@ const FiltersBar = () => {
   );
 
   return (
-    <div className={`md:block ${isFilterBarOpen ? '' : 'hidden'}`}>
+    <div className={`lg:block ${isFilterBarOpen ? '' : 'hidden'}`}>
       <div className="fixed left-0 top-[95px] right-0 z-10">
         <div className="bg-secondary min-h-[68px] px-6 md:pl-[81px] py-[14px] border-b border-primary/10">
           <div
