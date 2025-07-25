@@ -29,7 +29,7 @@ const LayerCard = ({
   // Desktop layout (unchanged)
   const desktopCard = (
     <div
-      className={`hidden md:flex p-4 mb-4 cursor-pointer rounded-xl min-w-[340px] transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 w-full ${
+      className={`hidden lg:flex p-4 mb-4 cursor-pointer rounded-xl min-w-[340px] transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 w-full ${
         selected
           ? 'bg-[#719374] text-white'
           : isMapTooltip
@@ -151,7 +151,7 @@ const LayerCard = ({
   // Mobile layout (compact horizontal card)
   const mobileCard = (
     <div
-      className="md:hidden flex flex-row items-center p-4 rounded-2xl shadow-md mb-4 bg-white w-[260px] min-w-[260px] max-w-[90vw] mx-2"
+      className="lg:hidden flex flex-row items-center p-4 rounded-2xl shadow-md mb-4 bg-white w-[260px] min-w-[260px] max-w-[90vw] mx-2"
       onClick={onClick}
     >
       <img

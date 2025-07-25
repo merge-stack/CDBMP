@@ -26,7 +26,7 @@ const HeaderRow = ({ currentImage, id, status, onClose }) => (
       <h3 className="text-lg font-bold text-gray-900 truncate">
         {id ? `Area ${id}` : 'N/A'}
       </h3>
-      <span className='text-[#202020] text-xs'>San Giuliano Terme</span>
+      <span className="text-[#202020] text-xs">San Giuliano Terme</span>
     </div>
     <span className="ml-2 self-start">
       <StatusTag status={status || 'N/A'} />
@@ -368,7 +368,6 @@ const DetailPanel = () => {
                     </div>
                   </div>
                 </div>
-
               </div>
               {/* Contact Buttons */}
               <div className="flex gap-3">
@@ -392,12 +391,12 @@ const DetailPanel = () => {
       </div>
 
       {/* Mobile layout: floating card */}
-      <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 w-full rounded-t-3xl shadow-xl bg-white p-4 pr-0 z-[1000] block md:hidden">
+      <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 w-full rounded-t-3xl shadow-xl bg-white p-4 pr-0 z-[1000] block lg:hidden">
         <div className="sticky top-0 pr-4">
           <HeaderRow
             currentImage={selectedLayer.immagine}
             id={selectedLayer.id}
-            status={selectedLayer.stato_area || "N/A"}
+            status={selectedLayer.stato_area || 'N/A'}
             onClose={handleClose}
           />
         </div>
@@ -439,27 +438,54 @@ const DetailPanel = () => {
             Foto e Video
           </h4>
 
-          <div className="overflow-auto flex gap-[6px] hide-scrollbar mb-4">
-            <img
-              className="h-[168px] w-36 rounded-md"
-              src="/public/images/forest1.jpeg"
-            />
-            <img
-              className="h-[168px] w-36 rounded-md"
-              src="/public/images/forest1.jpeg"
-            />
-            <img
-              className="h-[168px] w-36 rounded-md"
-              src="/public/images/forest1.jpeg"
-            />
-            <img
-              className="h-[168px] w-36 rounded-md"
-              src="/public/images/forest1.jpeg"
-            />
-            <img
-              className="h-[168px] w-36 rounded-md"
-              src="/public/images/forest1.jpeg"
-            />
+          <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
+            <div className="flex gap-[6px] w-max">
+              <div className="relative w-36">
+                <img
+                  className="h-[168px] w-full rounded-md"
+                  src="/public/images/forest1.jpeg"
+                />
+                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                  Monte Grande
+                </span>
+              </div>
+              <div className="relative w-36">
+                <img
+                  className="h-[168px] w-full rounded-md"
+                  src="/public/images/forest1.jpeg"
+                />
+                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                  Monte Grande
+                </span>
+              </div>
+              <div className="relative w-36">
+                <img
+                  className="h-[168px] w-full rounded-md"
+                  src="/public/images/forest1.jpeg"
+                />
+                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                  Monte Grande
+                </span>
+              </div>
+              <div className="relative w-36">
+                <img
+                  className="h-[168px] w-full rounded-md"
+                  src="/public/images/forest1.jpeg"
+                />
+                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                  Monte Grande
+                </span>
+              </div>
+              <div className="relative w-36">
+                <img
+                  className="h-[168px] w-full rounded-md"
+                  src="/public/images/forest1.jpeg"
+                />
+                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                  Monte Grande
+                </span>
+              </div>
+            </div>
           </div>
 
           <h4 className="text-base font-bold text-[#202020] mb-4">
