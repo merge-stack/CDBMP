@@ -12,7 +12,14 @@ import StatusTag from '../SidePanel/StatusTag';
 import { useParams, useNavigate } from 'react-router-dom';
 import ViewerModal from './ViewerModal.jsx';
 
-const HeaderRow = ({ currentImage, id, status, onClose, onImageClick }) => (
+const HeaderRow = ({
+  currentImage,
+  id,
+  municipality,
+  status,
+  onClose,
+  onImageClick,
+}) => (
   <div className="flex pb-2 gap-2 items-center mb-3">
     <img
       src={currentImage || `${window.location.origin}/images/placeholder.png`}
@@ -27,7 +34,7 @@ const HeaderRow = ({ currentImage, id, status, onClose, onImageClick }) => (
       <h3 className="text-lg font-bold text-gray-900 truncate">
         {id ? `Area ${id}` : 'N/A'}
       </h3>
-      <span className="text-[#202020] text-xs">San Giuliano Terme</span>
+      <span className="text-[#202020] text-xs">{municipality || 'N/A'}</span>
     </div>
     <span className="ml-2 self-start">
       <StatusTag status={status || 'N/A'} />
@@ -47,7 +54,8 @@ const DetailPanel = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { geoJsonData, selectedLayer, setSelectedLayer } = useMapStore();
-  const { showDetailPanel, setShowDetailPanel } = useUIStore();
+  const { showDetailPanel, setShowDetailPanel, setSelectedMobileMenu } =
+    useUIStore();
 
   // Viewer state
   const [viewerOpen, setViewerOpen] = useState(false);
@@ -76,6 +84,17 @@ const DetailPanel = () => {
       setSelectedLayer(null);
     }
   }, [id, geoJsonData?.default]);
+
+  // Switch to map menu when detail panel is opened
+  useEffect(() => {
+    if (showDetailPanel) {
+      setSelectedMobileMenu({
+        id: 'map',
+        label: 'Map',
+        src: '/svg/mapIcon.svg',
+      });
+    }
+  }, [showDetailPanel, setSelectedMobileMenu]);
 
   const handleShare = useCallback(() => {
     try {
@@ -326,6 +345,7 @@ const DetailPanel = () => {
           <HeaderRow
             currentImage={selectedLayer.immagine?.[0]?.url}
             id={selectedLayer.id}
+            municipality={selectedLayer.municipality}
             status={selectedLayer.stato_area || 'N/A'}
             onClose={handleClose}
             onImageClick={() =>
