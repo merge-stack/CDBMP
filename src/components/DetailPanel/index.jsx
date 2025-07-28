@@ -180,54 +180,37 @@ const DetailPanel = () => {
           <div className="flex-1">
             <div className="">
               <div className="flex flex-col items-start mb-3 w-full">
-                {/* Info Blocks */}
-                <div className="flex justify-between w-full mb-6 gap-7 overflow-auto hide-scrollbar">
-                  <div className="flex gap-2 items-center flex-shrink-0">
-                    <img className="w-9" src="/svg/starticon.svg" alt="start" />
-                    <div className="flex flex-col">
-                      <span className="text-[#484848] text-xs font-bold">
-                        Barilla SPA
-                      </span>
-                      <span className="text-[#484848] text-xs">Parma, IT</span>
+                {/* Sponsors */}
+                {selectedLayer.sponsors?.length > 0 && (
+                  <>
+                    <h4 className="text-xl font-bold text-gray-900 mb-4">
+                      Finanziatatori
+                    </h4>
+
+                    <div className="flex justify-between w-full mb-6 gap-7 overflow-auto hide-scrollbar">
+                      {selectedLayer.sponsors?.map((sponsor) => (
+                        <div className="flex gap-2 items-center flex-shrink-0">
+                          <img
+                            className="w-9"
+                            src={sponsor.url}
+                            alt={sponsor.name}
+                            onError={(e) => {
+                              e.target.src = `${window.location.origin}/images/placeholder.png`;
+                            }}
+                          />
+                          <div className="flex flex-col">
+                            <span className="text-[#484848] text-sm font-bold">
+                              {sponsor.name || 'N/A'}
+                            </span>
+                            <span className="text-[#484848] text-xs">
+                              {sponsor.place || 'N/A'}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                  <div className="flex gap-2 items-center flex-shrink-0">
-                    <img className="w-9" src="/svg/starticon.svg" alt="start" />
-                    <div className="flex flex-col">
-                      <span className="text-[#484848] text-xs font-bold">
-                        Barilla SPA
-                      </span>
-                      <span className="text-[#484848] text-xs">Parma, IT</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 items-center flex-shrink-0">
-                    <img className="w-9" src="/svg/starticon.svg" alt="start" />
-                    <div className="flex flex-col">
-                      <span className="text-[#484848] text-xs font-bold">
-                        Barilla SPA
-                      </span>
-                      <span className="text-[#484848] text-xs">Parma, IT</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 items-center flex-shrink-0">
-                    <img className="w-9" src="/svg/starticon.svg" alt="start" />
-                    <div className="flex flex-col">
-                      <span className="text-[#484848] text-xs font-bold">
-                        Barilla SPA
-                      </span>
-                      <span className="text-[#484848] text-xs">Parma, IT</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 items-center flex-shrink-0">
-                    <img className="w-9" src="/svg/starticon.svg" alt="start" />
-                    <div className="flex flex-col">
-                      <span className="text-[#484848] text-xs font-bold">
-                        Barilla SPA
-                      </span>
-                      <span className="text-[#484848] text-xs">Parma, IT</span>
-                    </div>
-                  </div>
-                </div>
+                  </>
+                )}
 
                 {selectedLayer?.descrizione && (
                   <>
@@ -354,7 +337,40 @@ const DetailPanel = () => {
             }
           />
         </div>
+
         <div className="overflow-auto max-h-[65vh] h-full pr-4">
+          {/* Sponsors */}
+          {selectedLayer.sponsors?.length > 0 && (
+            <>
+              <h4 className="text-base font-bold text-[#202020] mb-4">
+                Finanziatatori
+              </h4>
+
+              <div className="flex justify-between w-full mb-6 gap-7 overflow-auto hide-scrollbar">
+                {selectedLayer.sponsors?.map((sponsor) => (
+                  <div className="flex gap-2 items-center flex-shrink-0">
+                    <img
+                      className="w-9"
+                      src={sponsor.url}
+                      alt={sponsor.name}
+                      onError={(e) => {
+                        e.target.src = `${window.location.origin}/images/placeholder.png`;
+                      }}
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-[#484848] text-xs font-bold">
+                        {sponsor.name || 'N/A'}
+                      </span>
+                      <span className="text-[#484848] text-[10px]">
+                        {sponsor.place || 'N/A'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
           {selectedLayer?.descrizione && (
             <>
               <h4 className="text-base font-bold text-[#202020] mb-4">
