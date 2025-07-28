@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef, useMemo } from 'react';
+import { useCallback, useState, useRef, useMemo, useEffect } from 'react';
 import BudgetFilter from './BudgetFilter';
 import DefaultFilter from './DefaultFilter';
 
@@ -22,6 +22,12 @@ const FiltersBar = () => {
   const isFilterBarOpen = selectedMobileMenu?.id === 'filter';
 
   const buttonRefs = useRef({});
+
+  // Close dropdown when mobile menu changes
+  useEffect(() => {
+    setOpenDropdown(null);
+    setDropdownRect(null);
+  }, [selectedMobileMenu]);
 
   const handleFilterClick = useCallback(
     (filterId) => {
