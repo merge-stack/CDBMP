@@ -8,7 +8,7 @@ const TechnicalDetails = ({ selectedLayer }) => {
       {TECHNICAL_DETAILS.map((detail, index) => (
         <div
           key={detail.id}
-          className={`flex items-center py-3 ${
+          className={`flex items-center py-2 ${
             index < TECHNICAL_DETAILS.length - 1
               ? 'border-b border-gray-200'
               : ''
@@ -19,45 +19,45 @@ const TechnicalDetails = ({ selectedLayer }) => {
               <img
                 src="/svg/slopeIcon.svg"
                 alt="Pendenza"
-                className="w-5 h-5"
+                className="w-4 h-4"
               />
             )}
             {detail.id === 'trasporto' && (
               <img
                 src="/svg/transportIcon.svg"
                 alt="Trasporto"
-                className="w-5 h-5"
+                className="w-4 h-4"
               />
             )}
             {detail.id === 'area_ha' && (
-              <img src="/svg/areaIcon.svg" alt="Area" className="w-5 h-5" />
+              <img src="/svg/area_dark.svg" alt="Area" className="w-4 h-4" />
             )}
             {detail.id === 'budget' && (
               <img
-                src="/svg/budgetIcon.svg"
+                src="/svg/budget_dark.svg"
                 alt="Budget stimato"
-                className="w-5 h-5"
+                className="w-4 h-4"
               />
             )}
             {detail.id === 'tipo_intervento' && (
               <img
-                src="/svg/treeIcon.svg"
+                src="/svg/tree_dark.svg"
                 alt="Intervento forestale"
-                className="w-5 h-5"
+                className="w-4 h-4"
               />
             )}
           </div>
           <div className="flex-1 flex justify-between items-center">
             <div className="flex-1">
-              <p className="text-sm font-semibold text-[#202020] mb-0.5">
+              <p className="text-xs font-semibold text-[#202020] mb-0.5">
                 {detail.title}
               </p>
               {detail.subTitle && (
-                <p className="text-xs text-[#202020]">{detail.subTitle}</p>
+                <p className="text-[10px] text-[#202020]">{detail.subTitle}</p>
               )}
             </div>
             <div className="text-right ml-4">
-              <p className="text-sm text-[#202020] whitespace-pre-line">
+              <p className="text-xs text-[#202020] whitespace-pre-line">
                 {detail.id === 'budget'
                   ? formatBudgetRange(
                       selectedLayer?.budget_min,
