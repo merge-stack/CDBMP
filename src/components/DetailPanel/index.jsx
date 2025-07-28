@@ -1,26 +1,27 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { X } from 'lucide-react';
 
 import useMapStore from '../../store/useMapStore';
 import useUIStore from '../../store/useUIStore';
 
-import ImageCarousel from './ImageCarousel';
 import TechnicalDetails from './TechnicalDetails';
 
 import StatusTag from '../SidePanel/StatusTag';
-import { formatBudgetRange, formatNumericValue } from '../../helpers/common';
-import { useParams, useNavigate } from 'react-router-dom';
 
-const HeaderRow = ({ currentImage, id, status, onClose }) => (
+import { useParams, useNavigate } from 'react-router-dom';
+import ViewerModal from './ViewerModal.jsx';
+
+const HeaderRow = ({ currentImage, id, status, onClose, onImageClick }) => (
   <div className="flex pb-2 gap-2 items-center mb-3">
     <img
       src={currentImage || `${window.location.origin}/images/placeholder.png`}
       alt={`Anteprima area ${id}`}
-      className="w-[46px] h-[46px] rounded-full object-cover border-2 border-white shadow mr-1"
+      className="w-[46px] h-[46px] rounded-full object-cover border-2 border-white shadow mr-1 cursor-pointer"
       onError={(e) => {
         e.target.src = `${window.location.origin}/images/placeholder.png`;
       }}
+      onClick={onImageClick}
     />
     <div className="min-w-0">
       <h3 className="text-lg font-bold text-gray-900 truncate">
@@ -41,56 +42,25 @@ const HeaderRow = ({ currentImage, id, status, onClose }) => (
   </div>
 );
 
-const InfoCards = ({ area, intervent, budget }) => (
-  <div className="flex gap-2 mb-4 mt-2">
-    <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
-      <div className="flex items-center">
-        <img
-          src="/svg/areaIcon.svg"
-          alt="Icona area"
-          className="w-3 h-3 mr-1"
-        />
-        <span className="text-[10px] font-semibold text-[#40523F]">
-          {area || 'N/A'}
-        </span>
-      </div>
-      <span className="text-[8px] text-[#818181]">Dimensioni</span>
-    </div>
-    <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
-      <div className="flex items-center">
-        <img
-          src="/svg/treeIcon.svg"
-          alt="Icona intervento"
-          className="w-3 h-3 mr-1"
-        />
-        <span className="text-[10px] font-semibold text-[#40523F]">
-          {intervent || 'N/A'}
-        </span>
-      </div>
-      <span className="text-[8px] text-[#818181]">Intervento</span>
-    </div>
-    <div className="flex flex-auto flex-col items-center bg-[#E3F1E4] rounded-md py-2">
-      <div className="flex items-center">
-        <img
-          src="/svg/budgetIcon.svg"
-          alt="Icona budget"
-          className="w-3 h-3 mr-1"
-        />
-        <span className="text-[10px] font-semibold text-[#40523F]">
-          {budget || 'N/A'}
-        </span>
-      </div>
-      <span className="text-[8px] text-[#818181]">Budget stimato</span>
-    </div>
-  </div>
-);
-
 const DetailPanel = () => {
   // Store States
   const { id } = useParams();
   const navigate = useNavigate();
   const { geoJsonData, selectedLayer, setSelectedLayer } = useMapStore();
   const { showDetailPanel, setShowDetailPanel } = useUIStore();
+
+  // Viewer state
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerItem, setViewerItem] = useState(null); // { url, name }
+
+  const openViewer = (item) => {
+    setViewerItem(item);
+    setViewerOpen(true);
+  };
+  const closeViewer = () => {
+    setViewerOpen(false);
+    setViewerItem(null);
+  };
 
   // Find and set the selected layer by ID from params
   useEffect(() => {
@@ -135,6 +105,7 @@ const DetailPanel = () => {
 
   return (
     <>
+      <ViewerModal open={viewerOpen} onClose={closeViewer} item={viewerItem} />
       {/* Desktop layout: Right dialog/sidebar */}
       <div className="fixed right-0 top-[163px] pb-[20px] px-[15px] h-[calc(100vh-163px)] overflow-auto w-[400px] bg-white shadow-2xl z-[1000] hidden lg:block">
         <div className="flex flex-col">
@@ -151,13 +122,22 @@ const DetailPanel = () => {
                 onError={(e) => {
                   e.target.src = `${window.location.origin}/images/placeholder.png`;
                 }}
+                style={{
+                  cursor: selectedLayer.immagine?.[0]?.url
+                    ? 'pointer'
+                    : 'default',
+                }}
+                onClick={() =>
+                  selectedLayer.immagine?.[0]?.url &&
+                  openViewer(selectedLayer.immagine[0])
+                }
               />
               <div className="absolute bottom-[16px] w-[90%] left-[14px] flex items-center justify-between">
                 <div className="flex flex-col">
                   <h3 className="text-xl font-semibold text-[#F4F4F4] w-full text-left">
                     {selectedLayer.id ? `Area ${selectedLayer.id}` : 'N/A'}
                   </h3>
-                  <span className="text-[#D0D0D0] text-[10px]">
+                  <span className="text-[#D0D0D0] font-semibold text-[12px]">
                     {selectedLayer.municipality || 'N/A'}
                   </span>
                 </div>
@@ -270,14 +250,15 @@ const DetailPanel = () => {
 
                     <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
                       <div className="flex gap-[6px] w-max">
-                        {selectedLayer.immagine?.map((image) => (
-                          <div className="relative w-24">
+                        {selectedLayer.immagine?.map((image, idx) => (
+                          <div className="relative w-24" key={image.url + idx}>
                             <img
-                              className="h-28 w-full rounded-md"
+                              className="h-28 w-full rounded-md cursor-pointer"
                               src={image.url}
                               onError={(e) => {
                                 e.target.src = `${window.location.origin}/images/placeholder.png`;
                               }}
+                              onClick={() => openViewer(image)}
                             />
                             <span className="absolute text-[#EDEDED] font-semibold text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
                               {image.name || ''}
@@ -297,14 +278,15 @@ const DetailPanel = () => {
 
                     <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
                       <div className="flex gap-[6px] w-max">
-                        {selectedLayer.docs?.map((doc) => (
-                          <div className="relative w-24">
+                        {selectedLayer.docs?.map((doc, idx) => (
+                          <div className="relative w-24" key={doc.url + idx}>
                             <img
-                              className="h-28 w-full rounded-md"
+                              className="h-28 w-full rounded-md cursor-pointer"
                               src={doc.url}
                               onError={(e) => {
                                 e.target.src = `${window.location.origin}/images/placeholder.png`;
                               }}
+                              onClick={() => openViewer(doc)}
                             />
                             <span className="absolute text-[#EDEDED] font-semibold text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
                               {doc.name || ''}
@@ -346,6 +328,10 @@ const DetailPanel = () => {
             id={selectedLayer.id}
             status={selectedLayer.stato_area || 'N/A'}
             onClose={handleClose}
+            onImageClick={() =>
+              selectedLayer.immagine?.[0]?.url &&
+              openViewer(selectedLayer.immagine[0])
+            }
           />
         </div>
         <div className="overflow-auto max-h-[65vh] h-full pr-4">
@@ -393,14 +379,15 @@ const DetailPanel = () => {
 
               <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
                 <div className="flex gap-[6px] w-max">
-                  {selectedLayer.immagine?.map((image) => (
-                    <div className="relative w-36">
+                  {selectedLayer.immagine?.map((image, idx) => (
+                    <div className="relative w-36" key={image.url + idx}>
                       <img
-                        className="h-[168px] w-full rounded-md"
+                        className="h-[168px] w-full rounded-md cursor-pointer"
                         src={image.url}
                         onError={(e) => {
                           e.target.src = `${window.location.origin}/images/placeholder.png`;
                         }}
+                        onClick={() => openViewer(image)}
                       />
                       <span className="absolute text-[#EDEDED] font-semibold text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
                         {image.name || ''}
@@ -420,11 +407,12 @@ const DetailPanel = () => {
 
               <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
                 <div className="flex gap-[6px] w-max">
-                  {selectedLayer.docs?.map((doc) => (
-                    <div className="relative w-36">
+                  {selectedLayer.docs?.map((doc, idx) => (
+                    <div className="relative w-36" key={doc.url + idx}>
                       <img
-                        className="h-[168px] w-full rounded-md"
+                        className="h-[168px] w-full rounded-md cursor-pointer"
                         src={doc.url}
+                        onClick={() => openViewer(doc)}
                       />
                       <span className="absolute text-[#EDEDED] font-semibold text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
                         {doc.name || ''}
