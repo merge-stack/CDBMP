@@ -35,11 +35,21 @@ const useMapData = () => {
   // Convert filters to query parameters - memoized for performance
   const buildQueryParams = useMemo(() => {
     return Object.entries(selectedFilters || {})
-      .filter(
-        ([, value]) => value !== null && value !== undefined && value !== ''
-      )
+      .filter(([, value]) => {
+        // Filter out null, undefined, empty strings, and empty arrays
+        if (value === null || value === undefined || value === '') return false;
+        if (Array.isArray(value) && value.length === 0) return false;
+        if (typeof value === 'object' && !Array.isArray(value)) {
+          // For budget object, check if both min and max are 0 (default state)
+          if (value.min === 0 && value.max === 0) return false;
+        }
+        return true;
+      })
       .reduce((acc, [key, value]) => {
-        if (typeof value === 'object') {
+        if (Array.isArray(value)) {
+          // Handle multi-select filters - join values with commas
+          acc[key] = value.join(',');
+        } else if (typeof value === 'object') {
           // Handle range filters (budget)
           if (value.min) acc[`${key}_min`] = value.min;
           if (value.max) acc[`${key}_max`] = value.max;

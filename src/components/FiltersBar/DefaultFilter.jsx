@@ -5,6 +5,7 @@ const DefaultFilter = ({
   filter,
   selectedValue,
   onSelect,
+  onMultiSelect,
   buttonRect,
   onClose,
 }) => {
@@ -14,6 +15,13 @@ const DefaultFilter = ({
     onSelect(filterId, value);
     onClose();
   };
+
+  const handleMultiSelect = (filterId, value, isSelected) => {
+    onMultiSelect(filterId, value, isSelected);
+  };
+
+  const isMultiSelect = filter.multiSelect;
+  const selectedValues = isMultiSelect ? selectedValue || [] : [];
 
   return createPortal(
     <div
@@ -25,25 +33,45 @@ const DefaultFilter = ({
       }}
     >
       <div className="py-1 max-h-64 overflow-auto">
-        {filter.options.map((option) => (
-          <button
-            key={option.value}
-            className={`
-                w-full text-left px-4 py-2 text-sm
+        {filter.options.map((option) => {
+          const isSelected = isMultiSelect
+            ? selectedValues.includes(option.value)
+            : selectedValue === option.value;
+
+          return (
+            <button
+              key={option.value}
+              className={`
+                w-full text-left px-4 py-2 text-sm flex items-center gap-2
                 ${
-                  selectedValue === option.value
+                  isSelected
                     ? 'bg-primary/10 text-primary'
                     : 'text-gray-700 hover:bg-gray-100'
                 }
               `}
-            onClick={() => {
-              handleSelect(filter.id, option.value);
-              onClose();
-            }}
-          >
-            {option.label}
-          </button>
-        ))}
+              onClick={() => {
+                if (isMultiSelect) {
+                  handleMultiSelect(filter.id, option.value, !isSelected);
+                } else {
+                  handleSelect(filter.id, option.value);
+                }
+              }}
+            >
+              {isMultiSelect && (
+                <div className="flex-shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => {}} // Handled by button onClick
+                    className="w-4 h-4 text-secondary border-gray-300 rounded focus:ring-secondary accent-secondary"
+                    style={{ accentColor: '#6F8D70' }}
+                  />
+                </div>
+              )}
+              <span className="flex-1">{option.label}</span>
+            </button>
+          );
+        })}
       </div>
     </div>,
     document.body
@@ -53,6 +81,7 @@ const DefaultFilter = ({
 DefaultFilter.propTypes = {
   filter: PropTypes.shape({
     id: PropTypes.string.isRequired,
+    multiSelect: PropTypes.bool,
     options: PropTypes.arrayOf(
       PropTypes.shape({
         value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
@@ -64,8 +93,10 @@ DefaultFilter.propTypes = {
   selectedValue: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
+    PropTypes.array,
   ]),
   onSelect: PropTypes.func.isRequired,
+  onMultiSelect: PropTypes.func,
   buttonRect: PropTypes.shape({
     bottom: PropTypes.number,
     left: PropTypes.number,

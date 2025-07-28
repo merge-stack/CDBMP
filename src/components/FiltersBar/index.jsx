@@ -3,10 +3,7 @@ import BudgetFilter from './BudgetFilter';
 import DefaultFilter from './DefaultFilter';
 
 import { FILTERS } from '../../constants/filters';
-import {
-  useFiltersStore,
-  initialFiltersState,
-} from '../../store/useFiltersStore';
+import { useFiltersStore } from '../../store/useFiltersStore';
 import useUIStore from '../../store/useUIStore';
 import { X } from 'lucide-react';
 
@@ -15,8 +12,12 @@ const FiltersBar = () => {
   const [dropdownRect, setDropdownRect] = useState(null);
 
   // Filter store states
-  const { selectedFilters, setSelectedFilters, setFilterToInitial } =
-    useFiltersStore();
+  const {
+    selectedFilters,
+    setSelectedFilters,
+    setFilterToInitial,
+    updateMultiSelectFilter,
+  } = useFiltersStore();
 
   const { selectedMobileMenu } = useUIStore();
   const isFilterBarOpen = selectedMobileMenu?.id === 'filter';
@@ -56,17 +57,77 @@ const FiltersBar = () => {
     [setSelectedFilters]
   );
 
+  const handleMultiSelect = useCallback(
+    (filterId, value, isSelected) => {
+      updateMultiSelectFilter(filterId, value, isSelected);
+    },
+    [updateMultiSelectFilter]
+  );
+
   const handleCloseDropdown = useCallback(() => {
     setOpenDropdown(null);
     setDropdownRect(null);
   }, []);
+
+  // Helper function to get display text for filter button
+  const getFilterDisplayText = useCallback(
+    (filter) => {
+      const selectedValue = selectedFilters[filter.id];
+
+      // Handle budget filter specifically (it's an object with min/max)
+      if (filter.id === 'budget') {
+        if (
+          selectedValue &&
+          selectedValue.min !== 0 &&
+          selectedValue.max !== 0
+        ) {
+          return `€${selectedValue.min.toLocaleString()} - €${selectedValue.max.toLocaleString()}`;
+        }
+        return filter.label;
+      }
+
+      if (filter.multiSelect) {
+        if (Array.isArray(selectedValue) && selectedValue.length > 0) {
+          if (selectedValue.length === 1) {
+            return selectedValue[0];
+          } else {
+            return `${selectedValue.length} selezionati`;
+          }
+        }
+        return filter.label;
+      }
+
+      return selectedValue || filter.label;
+    },
+    [selectedFilters]
+  );
+
+  // Helper function to check if filter has selected values
+  const hasSelectedValues = useCallback(
+    (filter) => {
+      const selectedValue = selectedFilters[filter.id];
+
+      if (filter.id === 'budget') {
+        return (
+          selectedValue && selectedValue.min !== 0 && selectedValue.max !== 0
+        );
+      }
+
+      if (filter.multiSelect) {
+        return Array.isArray(selectedValue) && selectedValue.length > 0;
+      }
+
+      return selectedValue && selectedValue !== '';
+    },
+    [selectedFilters]
+  );
 
   // Memoize the filter buttons to prevent unnecessary re-renders
   const filterButtons = useMemo(
     () =>
       FILTERS.map((filter) => (
         <div key={filter.id} className="flex-none relative">
-          {selectedFilters[filter.id] !== initialFiltersState[filter.id] && (
+          {hasSelectedValues(filter) && (
             <button
               onClick={() => setFilterToInitial(filter.id)}
               className="px-1 mx-3 absolute right-[15px] top-[10px]"
@@ -89,7 +150,7 @@ const FiltersBar = () => {
             aria-haspopup="true"
           >
             <div className="flex items-center justify-between gap-7 w-full">
-              <span>{filter.label}</span>
+              <span>{getFilterDisplayText(filter)}</span>
               {filter.type === 'range' ? (
                 <img
                   src="/svg/rangeFilterIcon.svg"
@@ -130,6 +191,7 @@ const FiltersBar = () => {
                 filter={filter}
                 selectedValue={selectedFilters[filter.id]}
                 onSelect={handleOptionSelect}
+                onMultiSelect={handleMultiSelect}
                 buttonRect={dropdownRect}
                 onClose={handleCloseDropdown}
               />
@@ -142,8 +204,11 @@ const FiltersBar = () => {
       dropdownRect,
       handleFilterClick,
       handleOptionSelect,
+      handleMultiSelect,
       handleCloseDropdown,
       setFilterToInitial,
+      getFilterDisplayText,
+      hasSelectedValues,
     ]
   );
 
