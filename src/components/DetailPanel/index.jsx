@@ -301,7 +301,7 @@ const DetailPanel = () => {
                           <div className="relative w-24" key={doc.url + idx}>
                             <img
                               className="h-28 w-full rounded-md cursor-pointer"
-                              src={doc.url}
+                              src={doc.thumb || doc.url}
                               onError={(e) => {
                                 e.target.src = `${window.location.origin}/images/placeholder.png`;
                               }}
@@ -431,7 +431,7 @@ const DetailPanel = () => {
                     <div className="relative w-36" key={doc.url + idx}>
                       <img
                         className="h-[168px] w-full rounded-md cursor-pointer"
-                        src={doc.url}
+                        src={doc.thumb || doc.url}
                         onClick={() => openViewer(doc)}
                       />
                       <span className="absolute text-[#EDEDED] font-semibold text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
