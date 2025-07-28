@@ -102,14 +102,14 @@ const DetailPanel = () => {
       navigator
         .share({
           title: `Area ${selectedLayer?.id}`,
-          text: `Check out this forest area: Area ${selectedLayer?.id}`,
+          text: 'Dai un occhio a quest’area sul Monte Pisano',
           url: window.location.href,
         })
         .catch(() => {
-          toast.error('Sharing failed');
+          toast.error('Condivisione fallita"');
         });
     } catch {
-      toast.error('Share API not supported');
+      toast.error('API di condivisione non supportata');
     }
   }, [selectedLayer?.id]);
 
@@ -137,7 +137,7 @@ const DetailPanel = () => {
                   `${window.location.origin}/images/placeholder.png`
                 }
                 alt={`${selectedLayer?.code}`}
-                className="w-full h-[250px] rounded-lg object-cover mx-auto mb-4"
+                className="w-full h-[250px] rounded-lg object-cover mx-auto mb-4 shadow-xl"
                 onError={(e) => {
                   e.target.src = `${window.location.origin}/images/placeholder.png`;
                 }}
@@ -225,7 +225,7 @@ const DetailPanel = () => {
                 )}
 
                 <h4 className="text-xl font-bold text-[#202020] mb-4">
-                  Servizi ecosistemico generati:
+                  Servizi ecosistemici generati:
                 </h4>
 
                 <div className="flex items-center gap-2 mb-6">
@@ -255,7 +255,7 @@ const DetailPanel = () => {
                         {selectedLayer.immagine?.map((image, idx) => (
                           <div className="relative w-24" key={image.url + idx}>
                             <img
-                              className="h-28 w-full rounded-md cursor-pointer"
+                              className="h-28 w-full rounded-md cursor-pointer object-contain bg-gray-100"
                               src={image.url}
                               onError={(e) => {
                                 e.target.src = `${window.location.origin}/images/placeholder.png`;
@@ -386,7 +386,7 @@ const DetailPanel = () => {
           {selectedLayer.servizi_ecosistemici?.length > 0 && (
             <>
               <h4 className="text-base font-bold text-[#202020] mb-4">
-                Servizi ecosistemico generati:
+                Servizi ecosistemici generati:
               </h4>
 
               <div className="flex items-center gap-2 mb-6">
@@ -418,7 +418,7 @@ const DetailPanel = () => {
                   {selectedLayer.immagine?.map((image, idx) => (
                     <div className="relative w-36" key={image.url + idx}>
                       <img
-                        className="h-[168px] w-full rounded-md cursor-pointer"
+                        className="h-[168px] w-full rounded-md cursor-pointer object-contain bg-gray-100"
                         src={image.url}
                         onError={(e) => {
                           e.target.src = `${window.location.origin}/images/placeholder.png`;
