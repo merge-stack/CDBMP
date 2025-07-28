@@ -3,25 +3,25 @@
  */
 export const TECHNICAL_DETAILS = [
   {
-    id: "area",
-    title: "Area",
+    id: 'area_ha',
+    title: 'Area',
   },
   {
-    id: "intervento_forestale",
-    title: "Intervento forestale",
+    id: 'tipo_intervento',
+    title: 'Intervento forestale',
   },
   {
-    id: "budget_stimato",
-    title: "Budget stimato",
+    id: 'budget',
+    title: 'Budget stimato',
   },
   {
-    id: "pendenza",
-    title: "Pendenza",
-    subTitle: "(min / avg / max / classe)",
+    id: 'pendenza',
+    title: 'Pendenza',
+    subTitle: '(min / avg / max / classe)',
   },
   {
-    id: "trasporto",
-    title: "Trasporto",
-    subTitle: "(strade / sentieri / classe)",
+    id: 'trasporto',
+    title: 'Trasporto',
+    subTitle: '(strade / sentieri / classe)',
   },
 ];

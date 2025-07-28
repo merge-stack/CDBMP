@@ -143,7 +143,7 @@ const DetailPanel = () => {
             <div className="relative w-full">
               <img
                 src={
-                  selectedLayer.immagine ||
+                  selectedLayer.immagine?.[0]?.url ||
                   `${window.location.origin}/images/placeholder.png`
                 }
                 alt={`${selectedLayer?.code}`}
@@ -155,15 +155,17 @@ const DetailPanel = () => {
               <div className="absolute bottom-[16px] w-[90%] left-[14px] flex items-center justify-between">
                 <div className="flex flex-col">
                   <h3 className="text-xl font-semibold text-[#F4F4F4] w-full text-left">
-                    Fianziatatori
+                    {selectedLayer.id ? `Area ${selectedLayer.id}` : 'N/A'}
                   </h3>
                   <span className="text-[#D0D0D0] text-[10px]">
-                    San Giuliano Terme
+                    {selectedLayer.municipality || 'N/A'}
                   </span>
                 </div>
-                <span className="max-w-28 px-2 py-1 rounded-md text-xs font-normal border-2 whitespace-nowrap bg-[#FFB3B3] text-[#484747] border-[#C68A8A]">
-                  Da recuperare
-                </span>
+
+                <StatusTag
+                  status={selectedLayer.stato_area || 'N/A'}
+                  selected={true}
+                />
               </div>
             </div>
             <button
@@ -245,12 +247,11 @@ const DetailPanel = () => {
                 </h4>
 
                 <div className="flex items-center gap-2 mb-6">
-                  <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
-                    Biodiversita
-                  </span>
-                  <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
-                    Biodiver sita
-                  </span>
+                  {selectedLayer.servizi_ecosistemici?.map((service) => (
+                    <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
+                      {service}
+                    </span>
+                  ))}
                 </div>
 
                 <h4 className="text-xl font-bold text-[#202020] mb-4">
@@ -261,114 +262,61 @@ const DetailPanel = () => {
                   <TechnicalDetails selectedLayer={selectedLayer} />
                 </div>
 
-                <h4 className="text-xl font-bold text-[#202020] mb-4">
-                  Foto e Video
-                </h4>
+                {selectedLayer.immagine?.length > 0 && (
+                  <>
+                    <h4 className="text-xl font-bold text-[#202020] mb-4">
+                      Foto e Video
+                    </h4>
 
-                <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
-                  <div className="flex gap-[6px] w-max">
-                    <div className="relative w-24">
-                      <img
-                        className="h-28 w-full rounded-md"
-                        src="/public/images/forest1.jpeg"
-                      />
-                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                        Monte Grande
-                      </span>
+                    <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
+                      <div className="flex gap-[6px] w-max">
+                        {selectedLayer.immagine?.map((image) => (
+                          <div className="relative w-24">
+                            <img
+                              className="h-28 w-full rounded-md"
+                              src={image.url}
+                              onError={(e) => {
+                                e.target.src = `${window.location.origin}/images/placeholder.png`;
+                              }}
+                            />
+                            <span className="absolute text-[#EDEDED] font-semibold text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                              {image.name || ''}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="relative w-24">
-                      <img
-                        className="h-28 w-full rounded-md"
-                        src="/public/images/forest1.jpeg"
-                      />
-                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                        Monte Grande
-                      </span>
-                    </div>
-                    <div className="relative w-24">
-                      <img
-                        className="h-28 w-full rounded-md"
-                        src="/public/images/forest1.jpeg"
-                      />
-                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                        Monte Grande
-                      </span>
-                    </div>
-                    <div className="relative w-24">
-                      <img
-                        className="h-28 w-full rounded-md"
-                        src="/public/images/forest1.jpeg"
-                      />
-                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                        Monte Grande
-                      </span>
-                    </div>
-                    <div className="relative w-24">
-                      <img
-                        className="h-28 w-full rounded-md"
-                        src="/public/images/forest1.jpeg"
-                      />
-                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                        Monte Grande
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                  </>
+                )}
 
-                <h4 className="text-xl font-bold text-[#202020] mb-4">
-                  Press e Documentazione
-                </h4>
+                {selectedLayer.docs?.length > 0 && (
+                  <>
+                    <h4 className="text-xl font-bold text-[#202020] mb-4">
+                      Press e Documentazione
+                    </h4>
 
-                <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
-                  <div className="flex gap-[6px] w-max">
-                    <div className="relative w-24">
-                      <img
-                        className="h-28 w-full rounded-md"
-                        src="/public/images/forest1.jpeg"
-                      />
-                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                        Monte Grande
-                      </span>
+                    <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
+                      <div className="flex gap-[6px] w-max">
+                        {selectedLayer.docs?.map((doc) => (
+                          <div className="relative w-24">
+                            <img
+                              className="h-28 w-full rounded-md"
+                              src={doc.url}
+                              onError={(e) => {
+                                e.target.src = `${window.location.origin}/images/placeholder.png`;
+                              }}
+                            />
+                            <span className="absolute text-[#EDEDED] font-semibold text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                              {doc.name || ''}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="relative w-24">
-                      <img
-                        className="h-28 w-full rounded-md"
-                        src="/public/images/forest1.jpeg"
-                      />
-                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                        Monte Grande
-                      </span>
-                    </div>
-                    <div className="relative w-24">
-                      <img
-                        className="h-28 w-full rounded-md"
-                        src="/public/images/forest1.jpeg"
-                      />
-                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                        Monte Grande
-                      </span>
-                    </div>
-                    <div className="relative w-24">
-                      <img
-                        className="h-28 w-full rounded-md"
-                        src="/public/images/forest1.jpeg"
-                      />
-                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                        Monte Grande
-                      </span>
-                    </div>
-                    <div className="relative w-24">
-                      <img
-                        className="h-28 w-full rounded-md"
-                        src="/public/images/forest1.jpeg"
-                      />
-                      <span className="absolute text-[#EDEDED] text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                        Monte Grande
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                  </>
+                )}
               </div>
+
               {/* Contact Buttons */}
               <div className="flex gap-3">
                 <button className="bg-[#426345] text-white py-3 px-6 rounded-md flex-1 font-medium transition-all duration-200 hover:bg-[#2f4e30]">
@@ -394,7 +342,7 @@ const DetailPanel = () => {
       <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 w-full rounded-t-3xl shadow-xl bg-white p-4 pr-0 z-[1000] block lg:hidden">
         <div className="sticky top-0 pr-4">
           <HeaderRow
-            currentImage={selectedLayer.immagine}
+            currentImage={selectedLayer.immagine?.[0]?.url}
             id={selectedLayer.id}
             status={selectedLayer.stato_area || 'N/A'}
             onClose={handleClose}
@@ -413,18 +361,21 @@ const DetailPanel = () => {
             </>
           )}
 
-          <h4 className="text-base font-bold text-[#202020] mb-4">
-            Servizi ecosistemico generati:
-          </h4>
+          {selectedLayer.servizi_ecosistemici?.length > 0 && (
+            <>
+              <h4 className="text-base font-bold text-[#202020] mb-4">
+                Servizi ecosistemico generati:
+              </h4>
 
-          <div className="flex items-center gap-2 mb-6">
-            <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
-              Biodiversita
-            </span>
-            <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
-              Sentieri più accessibili
-            </span>
-          </div>
+              <div className="flex items-center gap-2 mb-6">
+                {selectedLayer.servizi_ecosistemici?.map((service) => (
+                  <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
+                    {service}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
 
           {/* Details section */}
           <div>
@@ -434,113 +385,56 @@ const DetailPanel = () => {
             <TechnicalDetails selectedLayer={selectedLayer} />
           </div>
 
-          <h4 className="text-base font-bold text-[#202020] mb-4">
-            Foto e Video
-          </h4>
+          {selectedLayer.immagine?.length > 0 && (
+            <>
+              <h4 className="text-base font-bold text-[#202020] mb-4">
+                Foto e Video
+              </h4>
 
-          <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
-            <div className="flex gap-[6px] w-max">
-              <div className="relative w-36">
-                <img
-                  className="h-[168px] w-full rounded-md"
-                  src="/public/images/forest1.jpeg"
-                />
-                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                  Monte Grande
-                </span>
+              <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
+                <div className="flex gap-[6px] w-max">
+                  {selectedLayer.immagine?.map((image) => (
+                    <div className="relative w-36">
+                      <img
+                        className="h-[168px] w-full rounded-md"
+                        src={image.url}
+                        onError={(e) => {
+                          e.target.src = `${window.location.origin}/images/placeholder.png`;
+                        }}
+                      />
+                      <span className="absolute text-[#EDEDED] font-semibold text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        {image.name || ''}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="relative w-36">
-                <img
-                  className="h-[168px] w-full rounded-md"
-                  src="/public/images/forest1.jpeg"
-                />
-                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                  Monte Grande
-                </span>
-              </div>
-              <div className="relative w-36">
-                <img
-                  className="h-[168px] w-full rounded-md"
-                  src="/public/images/forest1.jpeg"
-                />
-                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                  Monte Grande
-                </span>
-              </div>
-              <div className="relative w-36">
-                <img
-                  className="h-[168px] w-full rounded-md"
-                  src="/public/images/forest1.jpeg"
-                />
-                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                  Monte Grande
-                </span>
-              </div>
-              <div className="relative w-36">
-                <img
-                  className="h-[168px] w-full rounded-md"
-                  src="/public/images/forest1.jpeg"
-                />
-                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                  Monte Grande
-                </span>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
 
-          <h4 className="text-base font-bold text-[#202020] mb-4">
-            Press e Documentazione
-          </h4>
+          {selectedLayer.docs?.length > 0 && (
+            <>
+              <h4 className="text-base font-bold text-[#202020] mb-4">
+                Press e Documentazione
+              </h4>
 
-          <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
-            <div className="flex gap-[6px] w-max">
-              <div className="relative w-36">
-                <img
-                  className="h-[168px] w-full rounded-md"
-                  src="/public/images/forest1.jpeg"
-                />
-                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                  Monte Grande
-                </span>
+              <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
+                <div className="flex gap-[6px] w-max">
+                  {selectedLayer.docs?.map((doc) => (
+                    <div className="relative w-36">
+                      <img
+                        className="h-[168px] w-full rounded-md"
+                        src={doc.url}
+                      />
+                      <span className="absolute text-[#EDEDED] font-semibold text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        {doc.name || ''}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="relative w-36">
-                <img
-                  className="h-[168px] w-full rounded-md"
-                  src="/public/images/forest1.jpeg"
-                />
-                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                  Monte Grande
-                </span>
-              </div>
-              <div className="relative w-36">
-                <img
-                  className="h-[168px] w-full rounded-md"
-                  src="/public/images/forest1.jpeg"
-                />
-                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                  Monte Grande
-                </span>
-              </div>
-              <div className="relative w-36">
-                <img
-                  className="h-[168px] w-full rounded-md"
-                  src="/public/images/forest1.jpeg"
-                />
-                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                  Monte Grande
-                </span>
-              </div>
-              <div className="relative w-36">
-                <img
-                  className="h-[168px] w-full rounded-md"
-                  src="/public/images/forest1.jpeg"
-                />
-                <span className="absolute text-[#EDEDED] text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
-                  Monte Grande
-                </span>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
 
           {/* Contact Buttons */}
           <div className="flex gap-3">

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-const StatusTag = ({ status, selected }) => {
+const StatusTag = ({ status, selected = false }) => {
   const statusConfig = {
     Recuperata: {
       bgColor: selected ? 'bg-[#BFFFB3]' : 'bg-[rgba(191,255,179,0.5)]',
@@ -37,4 +37,4 @@ StatusTag.propTypes = {
   selected: PropTypes.bool.isRequired,
 };
 
-export default StatusTag; 
+export default StatusTag;
