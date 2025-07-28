@@ -2,6 +2,7 @@ export const FILTERS = [
   {
     id: 'area',
     label: "Stato dell'area",
+    multiSelect: true,
     options: [
       {
         label: 'Da Recuperare',
@@ -20,6 +21,7 @@ export const FILTERS = [
   {
     id: 'intervention',
     label: 'Tipo di intervento',
+    multiSelect: true,
     options: [
       {
         label: 'Avviamento ad alto fusto',
@@ -93,6 +95,7 @@ export const FILTERS = [
   {
     id: 'servizi_ecosistemici',
     label: 'Servizi Ecosistemici',
+    multiSelect: true,
     options: [
       {
         label: 'Biodiversità',

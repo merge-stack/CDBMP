@@ -69,7 +69,7 @@ const SidePanel = () => {
 
   if (isLoading) {
     return (
-      <div className="hidden md:block w-[430px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
+      <div className="hidden lg:block w-[430px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
         {Array.from({ length: 7 }).map((_, index) => (
           <LayerCardSkeleton key={index} />
         ))}
@@ -79,7 +79,7 @@ const SidePanel = () => {
 
   if (!layers.length) {
     return (
-      <div className="hidden md:block w-[430px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
+      <div className="hidden lg:block w-[430px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
         <div className="h-full flex items-center justify-center text-gray-500">
           No layers available
         </div>
@@ -88,7 +88,7 @@ const SidePanel = () => {
   }
 
   return (
-    <div className="hidden md:block w-[430px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
+    <div className="hidden lg:block w-[430px] h-full overflow-y-auto bg-gray-50 p-4 border-r border-primary/10">
       <AutoSizer>
         {({ height, width }) => (
           <List

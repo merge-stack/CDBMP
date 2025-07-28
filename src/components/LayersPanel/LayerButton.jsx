@@ -29,7 +29,7 @@ const LayerButton = () => {
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <button
           ref={buttonRef}
           onClick={handleButtonClick}
