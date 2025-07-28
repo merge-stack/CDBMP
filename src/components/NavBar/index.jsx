@@ -9,8 +9,11 @@ function Navbar({ onLogoClick, onSignInClick }) {
   }, [isMobileMenuOpen]);
 
   const menuItems = [
-    { label: 'Il Progetto', href: '/Il_Progetto' },
-    { label: 'La Mappa', href: '/La_Mappa' },
+    {
+      label: 'Il Progetto',
+      href: 'https://comunitadelboscomontepisano.it/landing',
+    },
+    { label: 'La Mappa', href: '/' },
   ];
 
   return (

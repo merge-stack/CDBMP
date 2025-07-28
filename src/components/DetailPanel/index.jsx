@@ -101,8 +101,8 @@ const DetailPanel = () => {
       // Implement sharing functionality
       navigator
         .share({
-          title: selectedLayer?.code,
-          text: `Check out this forest area: ${selectedLayer?.code}`,
+          title: `Area ${selectedLayer?.id}`,
+          text: `Check out this forest area: Area ${selectedLayer?.id}`,
           url: window.location.href,
         })
         .catch(() => {
@@ -111,7 +111,7 @@ const DetailPanel = () => {
     } catch {
       toast.error('Share API not supported');
     }
-  }, [selectedLayer?.code]);
+  }, [selectedLayer?.id]);
 
   const handleClose = () => {
     setShowDetailPanel(false);
