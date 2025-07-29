@@ -255,7 +255,7 @@ const DetailPanel = () => {
                         {selectedLayer.immagine?.map((image, idx) => (
                           <div className="relative w-24" key={image.url + idx}>
                             <img
-                              className="h-28 w-full rounded-md cursor-pointer object-contain bg-gray-100"
+                              className="h-28 w-full rounded-md cursor-pointer object-cover"
                               src={image.url}
                               onError={(e) => {
                                 e.target.src = `${window.location.origin}/images/placeholder.png`;
@@ -283,7 +283,7 @@ const DetailPanel = () => {
                         {selectedLayer.docs?.map((doc, idx) => (
                           <div className="relative w-24" key={doc.url + idx}>
                             <img
-                              className="h-28 w-full rounded-md cursor-pointer"
+                              className="h-28 w-full rounded-md cursor-pointer object-cover"
                               src={doc.thumb || doc.url}
                               onError={(e) => {
                                 e.target.src = `${window.location.origin}/images/placeholder.png`;
@@ -418,7 +418,7 @@ const DetailPanel = () => {
                   {selectedLayer.immagine?.map((image, idx) => (
                     <div className="relative w-36" key={image.url + idx}>
                       <img
-                        className="h-[168px] w-full rounded-md cursor-pointer object-contain bg-gray-100"
+                        className="h-[168px] w-full rounded-md cursor-pointer object-cover"
                         src={image.url}
                         onError={(e) => {
                           e.target.src = `${window.location.origin}/images/placeholder.png`;
@@ -446,7 +446,7 @@ const DetailPanel = () => {
                   {selectedLayer.docs?.map((doc, idx) => (
                     <div className="relative w-36" key={doc.url + idx}>
                       <img
-                        className="h-[168px] w-full rounded-md cursor-pointer"
+                        className="h-[168px] w-full rounded-md cursor-pointer object-cover"
                         src={doc.thumb || doc.url}
                         onClick={() => openViewer(doc)}
                       />
