@@ -8,7 +8,7 @@ export const MAP_CONFIG = {
   defaultZoom: 13.5,
   maxZoom: 17,
   minZoom: 8,
-  style: 'mapbox://styles/ciaomapbox/cmbt35xtc012q01sm1kvrg58s',
+  style: 'mapbox://styles/ciaomapbox/cmdpq66ej004p01r597ykgmte',
   bounds: {
     // Bounding box for Monte Pisano region
     southwest: [10.35, 43.67],
