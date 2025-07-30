@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Helper to detect file type from url
 const getFileType = (url) => {
@@ -12,8 +12,38 @@ const getFileType = (url) => {
   return 'doc';
 };
 
+// Helper to detect mobile devices
+const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+};
+
+// Helper to detect production environment
+const isProduction = () => {
+  return (
+    window.location.hostname !== 'localhost' &&
+    !window.location.hostname.includes('127.0.0.1')
+  );
+};
+
 const ViewerModal = ({ open, onClose, item }) => {
   const [pdfError, setPdfError] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [isProd, setIsProd] = useState(false);
+  const [mimeTypeError, setMimeTypeError] = useState(false);
+
+  useEffect(() => {
+    const mobile = isMobile();
+    const production = isProduction();
+    setIsMobileDevice(mobile);
+    setIsProd(production);
+
+    // Debug logging for production mobile issues
+    if (production && mobile) {
+      console.log('Production mobile environment detected');
+    }
+  }, []);
 
   if (!open || !item) return null;
 
@@ -21,10 +51,33 @@ const ViewerModal = ({ open, onClose, item }) => {
 
   const handlePdfError = () => {
     setPdfError(true);
+    console.log('PDF iframe error detected');
+  };
+
+  const handleIframeLoad = (event) => {
+    try {
+      // Check if the iframe content contains the MIME type error
+      const iframe = event.target;
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      const iframeContent = iframeDoc.body?.innerHTML || '';
+
+      if (iframeContent.includes('no enabled plugin supports this MIME type')) {
+        console.log('MIME type error detected in iframe');
+        setMimeTypeError(true);
+        setPdfError(true);
+      } else {
+        setPdfError(false);
+        setMimeTypeError(false);
+      }
+    } catch (error) {
+      // Cross-origin restrictions might prevent access to iframe content
+      console.log('Cannot access iframe content due to CORS:', error);
+    }
   };
 
   const handleClose = () => {
     setPdfError(false);
+    setMimeTypeError(false);
     onClose();
   };
 
@@ -37,6 +90,12 @@ const ViewerModal = ({ open, onClose, item }) => {
     link.click();
     document.body.removeChild(link);
   };
+
+  // Show fallback for production mobile, MIME type errors, or general PDF errors
+  const shouldShowPdfFallback =
+    (isMobileDevice && isProd && fileType === 'pdf') ||
+    pdfError ||
+    mimeTypeError;
 
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black bg-opacity-70">
@@ -70,7 +129,7 @@ const ViewerModal = ({ open, onClose, item }) => {
               Your browser does not support the video tag.
             </video>
           ) : fileType === 'pdf' ? (
-            pdfError ? (
+            shouldShowPdfFallback ? (
               <div className="flex flex-col items-center justify-center p-8 text-center">
                 <div className="text-gray-500 mb-4">
                   <svg
@@ -85,11 +144,22 @@ const ViewerModal = ({ open, onClose, item }) => {
                     />
                   </svg>
                   <p className="text-lg font-medium mb-2">
-                    PDF non può essere visualizzato
+                    {mimeTypeError
+                      ? 'Errore del server PDF'
+                      : isMobileDevice && isProd
+                      ? 'PDF non supportato su mobile in produzione'
+                      : isMobileDevice
+                      ? 'PDF non supportato su mobile'
+                      : 'PDF non può essere visualizzato'}
                   </p>
                   <p className="text-sm text-gray-600 mb-4">
-                    Il server non supporta la visualizzazione diretta di questo
-                    PDF. Prova ad aprirlo in una nuova finestra o scaricalo.
+                    {mimeTypeError
+                      ? 'Il server non ha configurato correttamente i tipi MIME per i PDF. Apri il documento in una nuova finestra o scaricalo.'
+                      : isMobileDevice && isProd
+                      ? 'I dispositivi mobili in produzione non supportano la visualizzazione diretta dei PDF. Apri il documento in una nuova finestra o scaricalo.'
+                      : isMobileDevice
+                      ? 'I dispositivi mobili non supportano la visualizzazione diretta dei PDF. Apri il documento in una nuova finestra o scaricalo.'
+                      : 'Il server non supporta la visualizzazione diretta di questo PDF. Prova ad aprirlo in una nuova finestra o scaricalo.'}
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -117,7 +187,7 @@ const ViewerModal = ({ open, onClose, item }) => {
                 title={item.name || 'Documento'}
                 className="w-[70vw] h-[70vh] border rounded-md"
                 onError={handlePdfError}
-                onLoad={() => setPdfError(false)}
+                onLoad={handleIframeLoad}
               />
             )
           ) : (
