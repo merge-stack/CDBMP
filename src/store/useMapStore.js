@@ -23,6 +23,8 @@ const useMapStore = create((set, get) => ({
   mapViewState: initialMapViewState,
   // Track display layers that can be toggled (fonti and incendio)
   displayLayers: new Set([]),
+  // State for restored areas
+  restored_areas: null,
 
   // Improved state setters with better immutability
   setGeoJsonData: (data) => set(() => ({ geoJsonData: data })),
@@ -44,6 +46,10 @@ const useMapStore = create((set, get) => ({
         default: defaultLayerData,
       },
     })),
+
+  // New setter for restored areas
+  setRestoredAreas: (restoredAreasData) =>
+    set(() => ({ restored_areas: restoredAreasData })),
 
   setSelectedLayer: (layer) => set(() => ({ selectedLayer: layer })),
 
@@ -88,6 +94,7 @@ const useMapStore = create((set, get) => ({
       selectedLayer: null,
       mapViewState: initialMapViewState,
       displayLayers: new Set([]),
+      restored_areas: null,
     }),
 
   // Getters for better data access
@@ -99,6 +106,12 @@ const useMapStore = create((set, get) => ({
   getLayerData: (layerType) => {
     const state = get();
     return state.geoJsonData?.[layerType] || null;
+  },
+
+  // New getter for restored areas
+  getRestoredAreasData: () => {
+    const state = get();
+    return state.restored_areas || null;
   },
 }));
 

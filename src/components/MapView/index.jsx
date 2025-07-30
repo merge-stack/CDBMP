@@ -28,7 +28,8 @@ import { flyTo, getDeckLayers } from '../../helpers/map';
 // Custom hook for data fetching
 const useMapData = () => {
   const { selectedFilters } = useFiltersStore();
-  const { updateDefaultLayerData, updateLayerData } = useMapStore();
+  const { updateDefaultLayerData, updateLayerData, setRestoredAreas } =
+    useMapStore();
   const { setIsLoading } = useUIStore();
   const { execute: getMapAreas } = useApi(apiService.getMapAreas);
 
@@ -72,6 +73,17 @@ const useMapData = () => {
 
       const defaultLayerData = await getMapAreas(queryParams);
       updateDefaultLayerData(defaultLayerData);
+
+      // Filter and set restored areas data
+      if (defaultLayerData && defaultLayerData.features) {
+        const restoredAreasData = {
+          ...defaultLayerData,
+          features: defaultLayerData.features.filter(
+            (feature) => feature.properties.isRestored === true
+          ),
+        };
+        setRestoredAreas(restoredAreasData);
+      }
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
       toast.error('Error loading default data: ' + errorMessage);
@@ -79,7 +91,13 @@ const useMapData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [buildQueryParams, getMapAreas, updateDefaultLayerData, setIsLoading]);
+  }, [
+    buildQueryParams,
+    getMapAreas,
+    updateDefaultLayerData,
+    setRestoredAreas,
+    setIsLoading,
+  ]);
 
   // Generic fetch for any layer (no filters except default)
   const fetchLayerData = useCallback(

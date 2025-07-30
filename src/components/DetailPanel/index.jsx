@@ -53,7 +53,8 @@ const DetailPanel = () => {
   // Store States
   const { id } = useParams();
   const navigate = useNavigate();
-  const { geoJsonData, selectedLayer, setSelectedLayer } = useMapStore();
+  const { geoJsonData, selectedLayer, setSelectedLayer, restored_areas } =
+    useMapStore();
   const { showDetailPanel, setShowDetailPanel, setSelectedMobileMenu } =
     useUIStore();
 
@@ -102,7 +103,7 @@ const DetailPanel = () => {
       navigator
         .share({
           title: `Area ${selectedLayer?.id}`,
-          text: 'Dai un occhio a quest’area sul Monte Pisano',
+          text: "Dai un occhio a quest'area sul Monte Pisano",
           url: window.location.href,
         })
         .catch(() => {
@@ -119,8 +120,16 @@ const DetailPanel = () => {
     navigate('/');
   };
 
+  // Handle navigation to restored area
+  const handleRestoredAreaClick = (restoredArea) => {
+    navigate(`/area/${encodeURIComponent(restoredArea.id)}`);
+  };
+
   // Early return if no selectedLayer or detail panel not shown
   if (!selectedLayer || !showDetailPanel) return null;
+
+  // Check if current area is not restored
+  const isNotRestored = selectedLayer.isRestored === false;
 
   return (
     <>
@@ -224,17 +233,21 @@ const DetailPanel = () => {
                   </>
                 )}
 
-                <h4 className="text-xl font-bold text-[#202020] mb-4">
-                  Servizi ecosistemici generati:
-                </h4>
+                {selectedLayer.servizi_ecosistemici?.length > 0 && (
+                  <>
+                    <h4 className="text-xl font-bold text-[#202020] mb-4">
+                      Servizi ecosistemici generati:
+                    </h4>
 
-                <div className="flex items-center gap-2 mb-6">
-                  {selectedLayer.servizi_ecosistemici?.map((service) => (
-                    <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
-                      {service}
-                    </span>
-                  ))}
-                </div>
+                    <div className="flex items-center gap-2 mb-6">
+                      {selectedLayer.servizi_ecosistemici?.map((service) => (
+                        <span className="px-2 py-1 rounded-md text-xs font-normal border whitespace-nowrap bg-[#B8D9B960] text-[#484747] border-[#BBDDBD]">
+                          {service}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
 
                 <h4 className="text-xl font-bold text-[#202020] mb-4">
                   Informazioni tecniche
@@ -244,7 +257,46 @@ const DetailPanel = () => {
                   <TechnicalDetails selectedLayer={selectedLayer} />
                 </div>
 
-                {selectedLayer.immagine?.length > 0 && (
+                {/* Show restored areas section if current area is not restored */}
+                {isNotRestored && restored_areas?.features?.length > 0 && (
+                  <>
+                    <h4 className="text-xl font-bold text-[#202020] mb-4">
+                      Le aree già ripristinate
+                    </h4>
+
+                    <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
+                      <div className="flex gap-[6px] w-max">
+                        {restored_areas.features.map((restoredArea, idx) => (
+                          <div
+                            className="relative w-24 cursor-pointer"
+                            key={restoredArea.properties.id + idx}
+                            onClick={() =>
+                              handleRestoredAreaClick(restoredArea.properties)
+                            }
+                          >
+                            <img
+                              className="h-28 w-full rounded-md object-cover"
+                              src={
+                                restoredArea.properties.immagine?.[0]?.url ||
+                                `${window.location.origin}/images/placeholder.png`
+                              }
+                              onError={(e) => {
+                                e.target.src = `${window.location.origin}/images/placeholder.png`;
+                              }}
+                            />
+                            <span className="absolute text-[#EDEDED] font-semibold text-[10px] left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                              {restoredArea.properties.immagine?.[0]?.name ||
+                                restoredArea.properties.id}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Show foto and documents sections only if area is restored */}
+                {!isNotRestored && selectedLayer.immagine?.length > 0 && (
                   <>
                     <h4 className="text-xl font-bold text-[#202020] mb-4">
                       Foto e Video
@@ -272,7 +324,7 @@ const DetailPanel = () => {
                   </>
                 )}
 
-                {selectedLayer.docs?.length > 0 && (
+                {!isNotRestored && selectedLayer.docs?.length > 0 && (
                   <>
                     <h4 className="text-xl font-bold text-[#202020] mb-4">
                       Press e Documentazione
@@ -407,7 +459,46 @@ const DetailPanel = () => {
             <TechnicalDetails selectedLayer={selectedLayer} />
           </div>
 
-          {selectedLayer.immagine?.length > 0 && (
+          {/* Show restored areas section if current area is not restored */}
+          {isNotRestored && restored_areas?.features?.length > 0 && (
+            <>
+              <h4 className="text-base font-bold text-[#202020] mb-4">
+                Le aree già ripristinate
+              </h4>
+
+              <div className="w-full overflow-x-auto mb-4 hide-scrollbar">
+                <div className="flex gap-[6px] w-max">
+                  {restored_areas.features.map((restoredArea, idx) => (
+                    <div
+                      className="relative w-36 cursor-pointer"
+                      key={restoredArea.properties.id + idx}
+                      onClick={() =>
+                        handleRestoredAreaClick(restoredArea.properties)
+                      }
+                    >
+                      <img
+                        className="h-[168px] w-full rounded-md object-cover"
+                        src={
+                          restoredArea.properties.immagine?.[0]?.url ||
+                          `${window.location.origin}/images/placeholder.png`
+                        }
+                        onError={(e) => {
+                          e.target.src = `${window.location.origin}/images/placeholder.png`;
+                        }}
+                      />
+                      <span className="absolute text-[#EDEDED] font-semibold text-xs left-[6px] bottom-[10px] max-w-[15ch] truncate">
+                        {restoredArea.properties.immagine?.[0]?.name ||
+                          `Area ${restoredArea.properties.id}`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Show foto and documents sections only if area is restored */}
+          {!isNotRestored && selectedLayer.immagine?.length > 0 && (
             <>
               <h4 className="text-base font-bold text-[#202020] mb-4">
                 Foto e Video
@@ -435,7 +526,7 @@ const DetailPanel = () => {
             </>
           )}
 
-          {selectedLayer.docs?.length > 0 && (
+          {!isNotRestored && selectedLayer.docs?.length > 0 && (
             <>
               <h4 className="text-base font-bold text-[#202020] mb-4">
                 Press e Documentazione
